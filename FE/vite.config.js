@@ -1,7 +1,9 @@
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";   // ✅ dòng này rất quan trọng
 import tailwindcss from "@tailwindcss/vite";
+
 export default defineConfig({
-  plugins: [react(),tailwindcss()],
+  plugins: [react(), tailwindcss()],
   server: {
     port: 3000,
     proxy: {
