@@ -1,7 +1,10 @@
 import React from 'react'
+import Header from './components/header'
 
 export default function App() {
   return (
-    <div className='text-red-500'>Hello world</div>
+    <div className='flex min-h-screen flex-col'>
+        <Header/>
+        Hello world</div>
   )
 }
