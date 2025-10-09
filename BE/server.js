@@ -15,6 +15,9 @@ dotenv.config();
 // Connect DB
 connectDB();
 
+// Import routes
+import branchRoutes from "./routes/branchRoutes.js";
+
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,6 +58,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+
+// API Routes
+
+app.use("/api/branches", branchRoutes);
 
 // Make io available globally
 global.io = io;

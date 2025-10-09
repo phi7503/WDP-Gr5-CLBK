@@ -19,7 +19,7 @@ const branchSchema = new mongoose.Schema({
   theaters: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Theater",           // <-- phải khớp EXACT với tên model Theater
+      ref: "Theater",
       required: true,
     },
   ],
