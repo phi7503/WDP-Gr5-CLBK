@@ -5,7 +5,7 @@ const bookingSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: function() { return !this.employeeId; },
     },
     showtime: {
       type: mongoose.Schema.Types.ObjectId,
@@ -51,7 +51,7 @@ const bookingSchema = mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["momo", "zalopay", "credit_card", "e_wallet"],
+      enum: ["momo", "zalopay", "credit_card", "bank_transfer","cash"],
     },
     paymentStatus: {
       type: String,
@@ -75,6 +75,15 @@ const bookingSchema = mongoose.Schema(
     },
     transactionId: {
       type: String,
+    },
+    employeeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    customerInfo: {
+      name: { type: String },
+      email: { type: String },
+      phone: { type: String },
     },
   },
   {
