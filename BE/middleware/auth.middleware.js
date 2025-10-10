@@ -1,51 +1,57 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/userModel.js");
+import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
+import User from "../models/userModel.js";
 
-const protectRoute = async (req, res, next) => {
-  try {
-    const accessToken = req.cookies?.accessToken;
+// Protect routes - verify token
+const protect = asyncHandler(async (req, res, next) => {
+  let token;
 
-    if (!accessToken) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized - No access token provided" });
-    }
-    let decoded;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     try {
-      decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-      const user = await User.findById(decoded.userId).select("-password");
+      // Get token from header
+      token = req.headers.authorization.split(" ")[1];
 
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
-      }
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = user;
+      // Get user from the token
+      req.user = await User.findById(decoded.id).select("-password");
+
       next();
     } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        return res
-          .status(401)
-          .json({ message: "Unauthorized - Access token expired" });
-      }
-      throw error;
+      console.error(error);
+      res.status(401);
+      throw new Error("Not authorized, token failed");
     }
-  } catch (error) {
-    console.log("Error in protectRoute middleware", error.message);
-    return res
-      .status(401)
-      .json({ message: "Unauthorized - Invalid access token" });
   }
-};
 
-const sellerRoute = (req, res, next) => {
-  if (req.user && req.user.role === "seller") {
+  if (!token) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+});
+
+// Admin middleware
+const admin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
     next();
   } else {
-    return res.status(403).json({ message: "Access denied - Seller only" });
+    res.status(403);
+    throw new Error("Not authorized as an admin");
   }
 };
 
-module.exports = {
-  protectRoute,
-  sellerRoute,
+// Employee middleware
+const employee = (req, res, next) => {
+  if (req.user && (req.user.role === "employee" || req.user.role === "admin")) {
+    next();
+  } else {
+    res.status(403);
+    throw new Error("Not authorized as an employee");
+  }
 };
+
+export { protect, admin, employee };

@@ -16,7 +16,7 @@ dotenv.config();
 connectDB();
 
 // Import routes
-import branchRoutes from "./routes/branchRoutes.js";
+import branchRoutes from "./routes/branch.route.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
