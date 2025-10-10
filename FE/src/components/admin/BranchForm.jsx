@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Plus, X, Map, Building, MapPin, Phone, Clock, Loader2 } from "lucide-react"
+import { Plus, X, Navigation, Building2, MapPinned, PhoneCall, Clock3 } from "lucide-react"
 import MapSelector from "./MapSelector"
 
 const BranchForm = ({ branch, onSubmit, onCancel }) => {
@@ -96,7 +96,6 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
             }))
         }
 
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors((prev) => ({ ...prev, [name]: "" }))
         }
@@ -121,8 +120,6 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
 
     const handleLocationSelect = (locationData) => {
         console.log("Location selected:", locationData)
-
-        // Auto-fill location fields from map selection
         setFormData((prev) => ({
             ...prev,
             location: {
@@ -131,14 +128,12 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                     latitude: locationData.latitude,
                     longitude: locationData.longitude,
                 },
-                // Auto-fill address, city, and province if available
                 address: locationData.address || prev.location.address,
                 city: locationData.city || prev.location.city,
                 province: locationData.province || prev.location.province,
             },
         }))
 
-        // Clear related errors
         setErrors((prev) => {
             const newErrors = { ...prev }
             delete newErrors.address
@@ -161,9 +156,6 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
         if (!formData.contact.email.trim()) newErrors.email = "Email is required"
         else if (!/^\S+@\S+\.\S+$/.test(formData.contact.email)) newErrors.email = "Invalid email format"
 
-
-
-        // Validate coordinates
         const lat = formData.location.coordinates.latitude
         const lng = formData.location.coordinates.longitude
         if (lat < -90 || lat > 90) newErrors.latitude = "Latitude must be between -90 and 90"
@@ -188,14 +180,12 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
         }
     }
 
-    // Loading spinner component
     const LoadingSpinner = ({ size = "sm" }) => (
         <div
-            className={`animate-spin rounded-full border-b-2 border-red-600 ${size === "sm" ? "h-4 w-4" : "h-8 w-8"}`}
+            className={`animate-spin rounded-full border-b-2 border-blue-600 ${size === "sm" ? "h-4 w-4" : "h-8 w-8"}`}
         ></div>
     )
 
-    // Error message component
     const ErrorMessage = ({ message }) => (
         <div className="flex items-center space-x-2 text-red-600 text-sm mt-1">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -228,7 +218,7 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999] p-4">
             <div className="bg-white rounded-lg shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-y-auto border border-gray-200">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
                     <div>
                         <h2 className="text-3xl font-bold text-gray-900">{branch ? "Edit Branch" : "Add New Branch"}</h2>
                         <p className="text-gray-600 mt-2">
@@ -236,22 +226,23 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        <Button onClick={onCancel} variant="outline" size="sm" className="border-gray-300 bg-transparent">
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                        {/* Header primary action now submits the form */}
+                        <Button form="branchForm" type="submit" size="sm" className="bg-blue-600 hover:bg-blue-700">
+                            Save
+                        </Button>
+                        <Button onClick={onCancel} variant="outline" size="sm" className="border-blue-300 bg-transparent">
                             Cancel
                         </Button>
                     </div>
                 </div>
 
                 {/* Form Content */}
-                <form onSubmit={handleSubmit} className="p-6">
+                <form id="branchForm" onSubmit={handleSubmit} className="p-6">
                     <div className="space-y-8">
                         {/* Basic Information */}
                         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <Building className="w-5 h-5 mr-2 text-red-600" />
+                                <Building2 className="w-5 h-5 mr-2 text-blue-600" />
                                 Basic Information
                             </h3>
                             <div className="space-y-4">
@@ -280,14 +271,13 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                                     />
                                 </div>
 
-
                                 <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
                                     <input
                                         type="checkbox"
                                         name="isActive"
                                         checked={formData.isActive}
                                         onChange={handleChange}
-                                        className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                     />
                                     <label className="text-sm font-medium text-gray-700">Active Branch</label>
                                     <span className="text-xs text-gray-500">(Inactive branches won't appear in customer searches)</span>
@@ -295,11 +285,115 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                             </div>
                         </div>
 
-                        {/* Location Information */}
+                        {/* Contact Information — moved up */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <PhoneCall className="w-5 h-5 mr-2 text-blue-600" />
+                                Contact Information
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Phone <span className="text-red-500">*</span>
+                                    </label>
+                                    <Input
+                                        name="contact.phone"
+                                        value={formData.contact.phone}
+                                        onChange={handleChange}
+                                        placeholder="Enter phone number (e.g., 02812345678)"
+                                        className={`${errors.phone ? "border-red-500 bg-red-50" : "border-gray-300"} px-4 py-3`}
+                                    />
+                                    {errors.phone && <ErrorMessage message={errors.phone} />}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Email <span className="text-red-500">*</span>
+                                    </label>
+                                    <Input
+                                        name="contact.email"
+                                        type="email"
+                                        value={formData.contact.email}
+                                        onChange={handleChange}
+                                        placeholder="Enter email address"
+                                        className={`${errors.email ? "border-red-500 bg-red-50" : "border-gray-300"} px-4 py-3`}
+                                    />
+                                    {errors.email && <ErrorMessage message={errors.email} />}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Operating Hours — moved up */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <Clock3 className="w-5 h-5 mr-2 text-blue-600" />
+                                Operating Hours
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Opening Time</label>
+                                    <Input
+                                        name="operatingHours.open"
+                                        type="time"
+                                        value={formData.operatingHours.open}
+                                        onChange={handleChange}
+                                        className="px-4 py-3"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Closing Time</label>
+                                    <Input
+                                        name="operatingHours.close"
+                                        type="time"
+                                        value={formData.operatingHours.close}
+                                        onChange={handleChange}
+                                        className="px-4 py-3"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Facilities */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Facilities & Amenities</h3>
+                            <div className="space-y-4">
+                                <div className="flex gap-2">
+                                    <Input
+                                        value={newFacility}
+                                        onChange={(e) => setNewFacility(e.target.value)}
+                                        placeholder="Add facility (e.g., Parking, Food court, IMAX)"
+                                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addFacility())}
+                                        className="px-4 py-3"
+                                    />
+                                    <Button type="button" onClick={addFacility} size="sm" className="px-4 py-3 bg-blue-600 hover:bg-blue-700">
+                                        <Plus className="h-4 w-4" />
+                                    </Button>
+                                </div>
+
+                                <div className="flex flex-wrap gap-2">
+                                    {formData.facilities.map((facility, index) => (
+                                        <Badge key={index} variant="secondary" className="flex items-center gap-1 px-3 py-1">
+                                            {facility}
+                                            <button type="button" onClick={() => removeFacility(facility)} className="ml-1 hover:text-blue-600">
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                </div>
+
+                                {formData.facilities.length === 0 && (
+                                    <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
+                                        <p className="text-sm">No facilities added yet</p>
+                                        <p className="text-xs">Add facilities like parking, food court, accessibility features, etc.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Location Information — moved to bottom */}
                         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                                    <MapPin className="w-5 h-5 mr-2 text-red-600" />
+                                    <MapPinned className="w-5 h-5 mr-2 text-blue-600" />
                                     Location Information
                                 </h3>
                                 <Button
@@ -309,7 +403,7 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                                     onClick={() => setShowMap(true)}
                                     className="flex items-center gap-2 bg-blue-50 hover:bg-blue-100 border-blue-200"
                                 >
-                                    <Map className="h-4 w-4" />
+                                    <Navigation className="h-4 w-4" />
                                     Select on Map
                                 </Button>
                             </div>
@@ -398,122 +492,16 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Contact Information */}
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <Phone className="w-5 h-5 mr-2 text-red-600" />
-                                Contact Information
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Phone <span className="text-red-500">*</span>
-                                    </label>
-                                    <Input
-                                        name="contact.phone"
-                                        value={formData.contact.phone}
-                                        onChange={handleChange}
-                                        placeholder="Enter phone number (e.g., 02812345678)"
-                                        className={`${errors.phone ? "border-red-500 bg-red-50" : "border-gray-300"} px-4 py-3`}
-                                    />
-                                    {errors.phone && <ErrorMessage message={errors.phone} />}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Email <span className="text-red-500">*</span>
-                                    </label>
-                                    <Input
-                                        name="contact.email"
-                                        type="email"
-                                        value={formData.contact.email}
-                                        onChange={handleChange}
-                                        placeholder="Enter email address"
-                                        className={`${errors.email ? "border-red-500 bg-red-50" : "border-gray-300"} px-4 py-3`}
-                                    />
-                                    {errors.email && <ErrorMessage message={errors.email} />}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Operating Hours */}
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <Clock className="w-5 h-5 mr-2 text-red-600" />
-                                Operating Hours
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Opening Time</label>
-                                    <Input
-                                        name="operatingHours.open"
-                                        type="time"
-                                        value={formData.operatingHours.open}
-                                        onChange={handleChange}
-                                        className="px-4 py-3"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Closing Time</label>
-                                    <Input
-                                        name="operatingHours.close"
-                                        type="time"
-                                        value={formData.operatingHours.close}
-                                        onChange={handleChange}
-                                        className="px-4 py-3"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Facilities */}
-                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Facilities & Amenities</h3>
-                            <div className="space-y-4">
-                                <div className="flex gap-2">
-                                    <Input
-                                        value={newFacility}
-                                        onChange={(e) => setNewFacility(e.target.value)}
-                                        placeholder="Add facility (e.g., Parking, Food court, IMAX)"
-                                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addFacility())}
-                                        className="px-4 py-3"
-                                    />
-                                    <Button type="button" onClick={addFacility} size="sm" className="px-4 py-3">
-                                        <Plus className="h-4 w-4" />
-                                    </Button>
-                                </div>
-
-                                <div className="flex flex-wrap gap-2">
-                                    {formData.facilities.map((facility, index) => (
-                                        <Badge key={index} variant="secondary" className="flex items-center gap-1 px-3 py-1">
-                                            {facility}
-                                            <button type="button" onClick={() => removeFacility(facility)} className="ml-1 hover:text-red-500">
-                                                <X className="h-3 w-3" />
-                                            </button>
-                                        </Badge>
-                                    ))}
-                                </div>
-
-                                {formData.facilities.length === 0 && (
-                                    <div className="text-center py-6 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p className="text-sm">No facilities added yet</p>
-                                        <p className="text-xs">Add facilities like parking, food court, accessibility features, etc.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
                     </div>
 
                     {/* Form Actions */}
-                    <div className="flex items-center justify-between pt-8 border-t border-gray-200 mt-8 bg-gray-50 -mx-6 px-6 py-6 rounded-b-lg">
-                        <div className="text-sm text-gray-500">
+                    <div className="flex items-center justify-between pt-8 border-t border-gray-200 mt-8 bg-blue-50 -mx-6 px-6 py-6 rounded-b-lg">
+                        <div className="text-sm text-gray-600">
                             <span className="text-red-500">*</span> Required fields
                         </div>
                         <div className="flex items-center space-x-4">
-                            <Button type="button" onClick={onCancel} variant="outline" className="px-6 py-3 bg-transparent">
-                                Cancel
-                            </Button>
-                            <Button type="submit" disabled={loading} className="px-8 py-3 bg-red-600 hover:bg-red-700">
+                            {/* Swap order: primary first */}
+                            <Button type="submit" disabled={loading} className="px-8 py-3 bg-blue-600 hover:bg-blue-700">
                                 {loading ? (
                                     <div className="flex items-center">
                                         <LoadingSpinner size="sm" />
@@ -524,6 +512,9 @@ const BranchForm = ({ branch, onSubmit, onCancel }) => {
                                 ) : (
                                     "Create Branch"
                                 )}
+                            </Button>
+                            <Button type="button" onClick={onCancel} variant="outline" className="px-6 py-3 bg-transparent border-blue-300">
+                                Cancel
                             </Button>
                         </div>
                     </div>
