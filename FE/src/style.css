@@ -1,1 +1,78 @@
-@import "tailwindcss";
+@import 'antd/dist/reset.css';
+
+/* Custom styles for QuickShow */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #0a0a0a;
+  color: #ffffff;
+}
+
+/* Dark theme overrides */
+.ant-layout {
+  background: #0a0a0a !important;
+}
+
+.ant-layout-header {
+  background: #0a0a0a !important;
+  border-bottom: 1px solid #333;
+}
+
+.ant-menu-dark {
+  background: #0a0a0a !important;
+}
+
+.ant-card {
+  background: #1a1a1a !important;
+  border: 1px solid #333 !important;
+}
+
+.ant-card-body {
+  background: #1a1a1a !important;
+}
+
+/* Custom button styles */
+.primary-button {
+  background: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+  color: white !important;
+}
+
+.primary-button:hover {
+  background: #ff7875 !important;
+  border-color: #ff7875 !important;
+}
+
+/* Hero section */
+.hero-section {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Movie card hover effect */
+.movie-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+/* Seat selection */
+.seat-selected {
+  background: #ff4d4f !important;
+  border-color: #ff4d4f !important;
+}
+
+.seat-available {
+  background: #333 !important;
+  border-color: #666 !important;
+}
+
+.seat-occupied {
+  background: #666 !important;
+  border-color: #999 !important;
+  cursor: not-allowed;
+}
