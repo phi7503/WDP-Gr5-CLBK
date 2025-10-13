@@ -3,7 +3,7 @@ import { z } from "zod";
 const requiredString = z.string().trim().min(1, "Required");
 
 export const signUpSchema = z.object({
-  email: z.email("Invalid email address").string().trim().min(1, "Required"),
+  email: z.email("Invalid email address"),
   username: requiredString.regex(
     /^[a-zA-Z0-9_-]+$/,
     "Only letters, numbers, - and _ allowed"
