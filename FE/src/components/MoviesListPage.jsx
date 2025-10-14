@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Row, Col, Card, Input, Select, Button, Pagination, Spin, Empty } from 'antd';
-import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
+import { Layout, Typography, Row, Col, Card, Input, Select, Button, Pagination, Spin, Empty, Radio } from 'antd';
+import { SearchOutlined, FilterOutlined, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -22,6 +22,8 @@ const MoviesListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalMovies, setTotalMovies] = useState(0);
+  const [pageSize, setPageSize] = useState(20); // Increase default page size
+  const [viewMode, setViewMode] = useState('grid'); // Add view mode
 
   const genres = [
     'Action', 'Adventure', 'Comedy', 'Drama', 'Horror', 
@@ -43,7 +45,7 @@ const MoviesListPage = () => {
       setLoading(true);
       const params = {
         page: currentPage,
-        limit: 12,
+        limit: pageSize,
         search: searchTerm,
         genre: selectedGenre,
         status: selectedStatus,
@@ -103,12 +105,48 @@ const MoviesListPage = () => {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           {/* Page Header */}
           <div style={{ marginBottom: '32px' }}>
-            <Title level={2} style={{ color: '#fff', marginBottom: '8px' }}>
-              Danh sách phim
-            </Title>
-            <Text style={{ color: '#999' }}>
-              Tìm thấy {totalMovies} phim
-            </Text>
+            <Row justify="space-between" align="middle">
+              <Col>
+                <Title level={2} style={{ color: '#fff', marginBottom: '8px' }}>
+                  Danh sách phim
+                </Title>
+                <Text style={{ color: '#999' }}>
+                  Tìm thấy {totalMovies} phim
+                </Text>
+              </Col>
+              <Col>
+                <Row gutter={[16, 16]} align="middle">
+                  <Col>
+                    <Text style={{ color: '#999', marginRight: '8px' }}>Hiển thị:</Text>
+                    <Select
+                      value={pageSize}
+                      onChange={setPageSize}
+                      style={{ width: 80 }}
+                      size="small"
+                    >
+                      <Option value={12}>12</Option>
+                      <Option value={20}>20</Option>
+                      <Option value={40}>40</Option>
+                      <Option value={60}>60</Option>
+                    </Select>
+                  </Col>
+                  <Col>
+                    <Radio.Group
+                      value={viewMode}
+                      onChange={(e) => setViewMode(e.target.value)}
+                      size="small"
+                    >
+                      <Radio.Button value="grid">
+                        <AppstoreOutlined />
+                      </Radio.Button>
+                      <Radio.Button value="list">
+                        <UnorderedListOutlined />
+                      </Radio.Button>
+                    </Radio.Group>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
           </div>
 
           {/* Search and Filters */}
@@ -230,7 +268,7 @@ const MoviesListPage = () => {
                   <Pagination
                     current={currentPage}
                     total={totalMovies}
-                    pageSize={12}
+                    pageSize={pageSize}
                     onChange={(page) => setCurrentPage(page)}
                     showSizeChanger={false}
                     showQuickJumper

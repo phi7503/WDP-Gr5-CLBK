@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Button, Row, Col, Card, Space, message } from 'antd';
-import { PlayCircleOutlined, CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { Layout, Typography, Button, Row, Col, Card, Space, message, Rate } from 'antd';
+import { PlayCircleOutlined, CalendarOutlined, ClockCircleOutlined, StarFilled, FireFilled } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -13,9 +13,76 @@ const { Title, Text, Paragraph } = Typography;
 const HomePage = () => {
   const [featuredMovie, setFeaturedMovie] = useState(null);
   const [nowShowingMovies, setNowShowingMovies] = useState([]);
+  const [comingSoonMovies, setComingSoonMovies] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
   const [trailers, setTrailers] = useState([]);
   const [combos, setCombos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // ⭐ FEATURED MOVIES SLIDER - Danh sách phim nổi bật với ảnh ngang
+  // 🎬 THAY ĐỔI ẢNH NGANG TẠI ĐÂY - Thay thế 'backdropImage' bằng URL ảnh ngang của bạn
+  const featuredMoviesSlider = [
+    {
+      id: 1,
+      title: "Vân Cờ Vây - The Match",
+      backdropImage: "http://localhost:5000/uploads/backdrops/van.jpg", // 🔴 THAY TÊN FILE: van.jpg → tên ảnh của bạn (.jpg/.png/.webp)
+      description: "Phim hành động, tội phạm lấy bối cảnh thập niên 1980-1990, xoay quanh ký ức cờ vây huyền thoại Cho Hun Hyeon và học trò Lee Chang Ho.",
+      rating: 8.5,
+      duration: 130,
+      genre: ["Action", "Crime", "Drama"],
+      releaseDate: "2024"
+    },
+    {
+      id: 2,
+      title: "Avengers: Endgame",
+      backdropImage: "https://via.placeholder.com/1920x800/2a1a1a/fff?text=Avengers+Endgame+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      description: "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more.",
+      rating: 9.2,
+      duration: 181,
+      genre: ["Action", "Adventure", "Sci-Fi"],
+      releaseDate: "2024"
+    },
+    {
+      id: 3,
+      title: "Inception",
+      backdropImage: "https://via.placeholder.com/1920x800/1a2a1a/fff?text=Inception+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+      rating: 9.0,
+      duration: 148,
+      genre: ["Action", "Sci-Fi", "Thriller"],
+      releaseDate: "2024"
+    },
+    {
+      id: 4,
+      title: "Interstellar",
+      backdropImage: "https://via.placeholder.com/1920x800/1a1a2a/fff?text=Interstellar+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+      rating: 8.8,
+      duration: 169,
+      genre: ["Adventure", "Drama", "Sci-Fi"],
+      releaseDate: "2024"
+    },
+    {
+      id: 5,
+      title: "The Dark Knight",
+      backdropImage: "https://via.placeholder.com/1920x800/2a1a2a/fff?text=Dark+Knight+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest tests.",
+      rating: 9.1,
+      duration: 152,
+      genre: ["Action", "Crime", "Drama"],
+      releaseDate: "2024"
+    }
+  ];
+
+  // Auto-slide effect - Tự động chuyển slide sau mỗi 5 giây
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % featuredMoviesSlider.length);
+    }, 5000); // Thay đổi mỗi 5 giây
+    
+    return () => clearInterval(interval);
+  }, [featuredMoviesSlider.length]);
 
   useEffect(() => {
     loadMovies();
@@ -31,15 +98,28 @@ const HomePage = () => {
         setFeaturedMovie(trendingResponse[0]);
       }
       
-      // Load all movies for now showing
-      const moviesResponse = await movieAPI.getMovies();
+      // Load all movies for different sections
+      const moviesResponse = await movieAPI.getMovies({ limit: 100 });
       if (moviesResponse && moviesResponse.movies) {
-        // Filter movies with status "now-showing"
+        // Filter movies by status
         const nowShowing = moviesResponse.movies.filter(movie => movie.status === 'now-showing');
-        setNowShowingMovies(nowShowing.slice(0, 8)); // Limit to 8 movies
+        const comingSoon = moviesResponse.movies.filter(movie => movie.status === 'coming-soon');
         
-        // Use some movies as trailers
-        setTrailers(moviesResponse.movies.slice(0, 4));
+        setNowShowingMovies(nowShowing.slice(0, 12)); // Increase to 12 movies
+        setComingSoonMovies(comingSoon.slice(0, 8)); // Add coming soon movies
+        
+        // Use more movies as trailers
+        setTrailers(moviesResponse.movies.slice(0, 6));
+      }
+      
+      // Load trending movies separately
+      try {
+        const trendingResponse = await movieAPI.getTrendingMovies();
+        if (trendingResponse && trendingResponse.length > 0) {
+          setTrendingMovies(trendingResponse.slice(0, 8));
+        }
+      } catch (trendingError) {
+        console.error('Error loading trending movies:', trendingError);
       }
       
       // Load combos for promotional section
@@ -79,295 +159,697 @@ const HomePage = () => {
       <Header />
       
       <Content>
-        {/* Hero Section */}
-        {featuredMovie && (
-          <div 
-            className="hero-section"
-            style={{
-              backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url(${featuredMovie.poster})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              minHeight: '100vh',
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0 24px'
-            }}
-          >
-          <div style={{ maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
-            <Row gutter={[48, 48]} align="middle">
-              <Col xs={24} lg={12}>
-                <div style={{ color: '#fff' }}>
-                  <Text style={{ 
-                    color: '#ff4d4f', 
-                    fontSize: '14px', 
-                    fontWeight: 'bold',
-                    textTransform: 'uppercase',
-                    letterSpacing: '2px'
-                  }}>
-                    MARVEL STUDIOS
-                  </Text>
-                  
-                  <Title level={1} style={{ 
-                    color: '#fff', 
-                    fontSize: '48px',
-                    fontWeight: 'bold',
-                    margin: '16px 0'
-                  }}>
-                    {featuredMovie.title}
-                  </Title>
-                  
-                  <div style={{ marginBottom: '24px' }}>
-                    <Space size="large">
-                      <Text style={{ color: '#fff' }}>
-                        {featuredMovie.genre.join(' | ')}
-                      </Text>
-                      <Text style={{ color: '#fff' }}>
-                        <CalendarOutlined style={{ marginRight: '4px' }} />
-                        {featuredMovie.releaseDate}
-                      </Text>
-                      <Text style={{ color: '#fff' }}>
-                        <ClockCircleOutlined style={{ marginRight: '4px' }} />
-                        {featuredMovie.duration}
-                      </Text>
-                    </Space>
-                  </div>
-                  
-                  <Paragraph style={{ 
-                    color: '#fff', 
-                    fontSize: '16px',
-                    lineHeight: '1.6',
-                    marginBottom: '32px'
-                  }}>
-                    {featuredMovie.description}
-                  </Paragraph>
-                  
-                  <Button 
-                    type="primary" 
-                    size="large"
-                    className="primary-button"
-                    style={{ fontSize: '16px', height: '48px', padding: '0 32px' }}
-                  >
-                    <Link to="/movies" style={{ color: 'white', textDecoration: 'none' }}>
-                      Explore Movies →
-                    </Link>
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </div>
-        </div>
-        )}
-
-        {/* Fallback Hero Section if no featured movie */}
-        {!featuredMovie && !loading && (
-          <div 
-            className="hero-section"
-            style={{
-              background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
-              minHeight: '100vh',
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0 24px'
-            }}
-          >
-            <div style={{ maxWidth: '1200px', width: '100%', margin: '0 auto', textAlign: 'center' }}>
-              <Title level={1} style={{ color: '#fff', fontSize: '48px', marginBottom: '24px' }}>
-                Welcome to QuickShow
-              </Title>
-              <Paragraph style={{ color: '#fff', fontSize: '18px', marginBottom: '32px' }}>
-                Your ultimate destination for movie tickets and entertainment
-              </Paragraph>
-              <Button 
-                type="primary" 
-                size="large"
-                className="primary-button"
-                style={{ fontSize: '16px', height: '48px', padding: '0 32px' }}
+        {/* 🎬 HERO CAROUSEL - Featured Movies Slider với ảnh ngang */}
+        <div className="hero-carousel-container" style={{ position: 'relative', overflow: 'hidden' }}>
+          {featuredMoviesSlider.map((movie, index) => (
+            <div
+              key={movie.id}
+              className="hero-slide"
+              style={{
+                position: index === currentSlide ? 'relative' : 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                opacity: index === currentSlide ? 1 : 0,
+                transition: 'opacity 1s ease-in-out',
+                pointerEvents: index === currentSlide ? 'auto' : 'none',
+                zIndex: index === currentSlide ? 1 : 0
+              }}
+            >
+              <div 
+                className="hero-section-modern"
+                style={{
+                  backgroundImage: `url(${movie.backdropImage})`, // 🔴 ẢNH NGANG ĐƯỢC SỬ DỤNG TẠI ĐÂY
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  minHeight: '100vh',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '0 24px'
+                }}
               >
-                <Link to="/movies" style={{ color: 'white', textDecoration: 'none' }}>
-                  Explore Movies →
-                </Link>
-              </Button>
+                {/* Gradient Overlay */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(to right, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 40%, rgba(10,10,10,0.3) 70%, transparent 100%), linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.6) 40%, transparent 100%)',
+                  zIndex: 1
+                }} />
+                
+                {/* Content */}
+                <div style={{ 
+                  maxWidth: '1400px', 
+                  width: '100%', 
+                  margin: '0 auto',
+                  position: 'relative',
+                  zIndex: 2,
+                  marginTop: '10vh'
+                }}>
+                  <div style={{ maxWidth: '700px' }}>
+                    {/* Featured Badge */}
+                    <div style={{
+                      display: 'inline-block',
+                      background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                      padding: '8px 20px',
+                      borderRadius: '8px',
+                      marginBottom: '24px',
+                      animation: 'fadeInUp 0.6s ease-out'
+                    }}>
+                      <Text style={{ 
+                        color: '#fff', 
+                        fontSize: '13px', 
+                        fontWeight: '700',
+                        textTransform: 'uppercase',
+                        letterSpacing: '2px'
+                      }}>
+                        ⭐ FEATURED MOVIE {index + 1}/{featuredMoviesSlider.length}
+                      </Text>
+                    </div>
+                    
+                    {/* Title with Gradient */}
+                    <Title level={1} style={{ 
+                      background: 'linear-gradient(135deg, #ffffff 0%, #ef4444 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      fontSize: 'clamp(36px, 6vw, 76px)',
+                      fontWeight: '800',
+                      margin: '0 0 28px 0',
+                      lineHeight: '1.1',
+                      animation: 'fadeInUp 0.6s ease-out 0.1s both'
+                    }}>
+                      {movie.title}
+                    </Title>
+                    
+                    {/* Info Row */}
+                    <div style={{ 
+                      marginBottom: '28px',
+                      animation: 'fadeInUp 0.6s ease-out 0.2s both'
+                    }}>
+                      <Space size="large" wrap>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <StarFilled style={{ color: '#fadb14', fontSize: '20px' }} />
+                          <Text style={{ color: '#fff', fontSize: '18px', fontWeight: '700' }}>
+                            {movie.rating}/10
+                          </Text>
+                        </div>
+                        <Text style={{ color: '#d1d5db', fontSize: '16px' }}>
+                          <ClockCircleOutlined style={{ marginRight: '6px' }} />
+                          {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
+                        </Text>
+                        <Text style={{ color: '#d1d5db', fontSize: '16px' }}>
+                          {movie.genre.join(' • ')}
+                        </Text>
+                      </Space>
+                    </div>
+                    
+                    {/* Description */}
+                    <Paragraph style={{ 
+                      color: '#d1d5db', 
+                      fontSize: '17px',
+                      lineHeight: '1.8',
+                      marginBottom: '40px',
+                      maxWidth: '600px',
+                      animation: 'fadeInUp 0.6s ease-out 0.3s both'
+                    }}>
+                      {movie.description}
+                    </Paragraph>
+                    
+                    {/* Action Buttons */}
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '16px', 
+                      flexWrap: 'wrap',
+                      animation: 'fadeInUp 0.6s ease-out 0.4s both'
+                    }}>
+                      <Link to="/movies">
+                        <Button 
+                          type="primary" 
+                          size="large"
+                          className="hero-button-primary"
+                          style={{ 
+                            fontSize: '16px', 
+                            height: '56px', 
+                            padding: '0 40px',
+                            fontWeight: '700',
+                            borderRadius: '28px',
+                            border: 'none'
+                          }}
+                        >
+                          <span style={{ marginRight: '8px' }}>🎟️</span>
+                          Book Now
+                        </Button>
+                      </Link>
+                      
+                      <Button 
+                        size="large"
+                        className="hero-button-secondary"
+                        style={{ 
+                          fontSize: '16px', 
+                          height: '56px', 
+                          padding: '0 40px',
+                          fontWeight: '600',
+                          borderRadius: '28px',
+                          background: 'rgba(255,255,255,0.1)',
+                          backdropFilter: 'blur(10px)',
+                          border: '2px solid rgba(255,255,255,0.3)',
+                          color: '#fff'
+                        }}
+                      >
+                        <PlayCircleOutlined style={{ fontSize: '20px', marginRight: '8px' }} />
+                        Watch Trailer
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          ))}
+          
+          {/* Slide Indicators (Dots) */}
+          <div style={{
+            position: 'absolute',
+            bottom: '40px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: '12px',
+            zIndex: 10
+          }}>
+            {featuredMoviesSlider.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                style={{
+                  width: index === currentSlide ? '40px' : '12px',
+                  height: '12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: index === currentSlide 
+                    ? 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
+                    : 'rgba(255,255,255,0.3)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: index === currentSlide ? '0 4px 12px rgba(239, 68, 68, 0.5)' : 'none'
+                }}
+              />
+            ))}
           </div>
-        )}
+          
+          {/* Navigation Arrows */}
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + featuredMoviesSlider.length) % featuredMoviesSlider.length)}
+            style={{
+              position: 'absolute',
+              left: '24px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.3)',
+              background: 'rgba(10,10,10,0.5)',
+              backdropFilter: 'blur(10px)',
+              color: '#fff',
+              fontSize: '24px',
+              cursor: 'pointer',
+              zIndex: 10,
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            className="carousel-arrow-btn"
+          >
+            ‹
+          </button>
+          
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % featuredMoviesSlider.length)}
+            style={{
+              position: 'absolute',
+              right: '24px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.3)',
+              background: 'rgba(10,10,10,0.5)',
+              backdropFilter: 'blur(10px)',
+              color: '#fff',
+              fontSize: '24px',
+              cursor: 'pointer',
+              zIndex: 10,
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            className="carousel-arrow-btn"
+          >
+            ›
+          </button>
+        </div>
 
-        {/* Now Showing Section */}
-        <div style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ 
+        {/* Now Showing Section - 12 Movies Grid */}
+        <div className="section-container" style={{ padding: '100px 24px', maxWidth: '1400px', margin: '0 auto' }}>
+          <div className="section-header" style={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            marginBottom: '48px'
+            marginBottom: '56px'
           }}>
-            <Title level={2} style={{ color: '#fff', margin: 0 }}>
+            <div>
+              <Title level={2} style={{ 
+                color: '#fff', 
+                margin: 0,
+                fontSize: 'clamp(28px, 4vw, 42px)',
+                fontWeight: '800',
+                letterSpacing: '-0.5px'
+              }}>
               Now Showing
             </Title>
-            <Link to="/movies" style={{ color: '#ff4d4f', textDecoration: 'none' }}>
+              <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
+                Catch the latest blockbusters in theaters
+              </Text>
+            </div>
+            <Link to="/movies?status=now-showing">
+              <Button 
+                type="text"
+                className="view-all-button"
+                style={{ 
+                  color: '#ef4444',
+                  fontSize: '16px',
+                  fontWeight: '600'
+                }}
+              >
               View All →
+              </Button>
             </Link>
           </div>
           
           <Row gutter={[24, 24]}>
-            {nowShowingMovies.map(movie => (
-              <Col xs={12} sm={8} md={6} key={movie._id}>
+            {nowShowingMovies.map((movie, index) => (
+              <Col xs={12} sm={12} md={8} lg={6} key={movie._id}>
+                <div 
+                  className="movie-card-wrapper"
+                  style={{
+                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                  }}
+                >
                 <MovieCard movie={movie} />
+                </div>
               </Col>
             ))}
           </Row>
           
-          <div style={{ textAlign: 'center', marginTop: '32px' }}>
-            <Button 
-              type="primary" 
-              size="large"
-              className="primary-button"
-            >
-              Show more
-            </Button>
-          </div>
+          {nowShowingMovies.length === 0 && !loading && (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <Text style={{ color: '#666', fontSize: '18px' }}>
+                No movies currently showing
+              </Text>
+            </div>
+          )}
         </div>
 
-        {/* Trailers Section */}
-        <div style={{ padding: '80px 24px', background: '#1a1a1a' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <Title level={2} style={{ color: '#fff', marginBottom: '48px' }}>
-              Trailers
-            </Title>
-            
-            <Row gutter={[24, 24]}>
-              <Col xs={24} lg={16}>
-                <Card
-                  style={{ 
-                    background: '#333',
-                    border: '1px solid #555',
-                    borderRadius: '8px',
-                    overflow: 'hidden'
-                  }}
-                  cover={
-                    <div style={{ 
-                      position: 'relative', 
-                      height: '400px',
-                      backgroundImage: `url(${trailers[0]?.poster || 'https://via.placeholder.com/600x400/333/fff?text=Trailer'})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <PlayCircleOutlined 
-                        style={{ 
-                          fontSize: '64px', 
-                          color: '#fff',
-                          cursor: 'pointer'
-                        }} 
-                      />
-                    </div>
-                  }
-                />
-              </Col>
-              
-              <Col xs={24} lg={8}>
-                <Row gutter={[16, 16]}>
-                  {trailers.slice(1).map(trailer => (
-                    <Col span={12} key={trailer._id}>
-                      <Card
-                        style={{ 
-                          background: '#333',
-                          border: '1px solid #555',
-                          borderRadius: '8px',
-                          overflow: 'hidden'
-                        }}
-                        cover={
-                          <div style={{ 
-                            position: 'relative', 
-                            height: '120px',
-                            backgroundImage: `url(${trailer.poster || 'https://via.placeholder.com/300x200/333/fff?text=Trailer'})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <PlayCircleOutlined 
-                              style={{ 
-                                fontSize: '32px', 
-                                color: '#fff',
-                                cursor: 'pointer'
-                              }} 
-                            />
-                          </div>
-                        }
-                      />
-                    </Col>
-                  ))}
-                </Row>
-              </Col>
-            </Row>
-          </div>
-        </div>
-
-        {/* Combos & Concessions Section */}
-        <div style={{ padding: '80px 24px' }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Trending Now Section - 6 Hot Movies with Fire Badge */}
+        {trendingMovies.length > 0 && (
             <div style={{ 
+            padding: '100px 24px', 
+            background: 'linear-gradient(180deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%)',
+            position: 'relative'
+          }}>
+            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+              <div className="section-header" style={{ 
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center',
-              marginBottom: '48px'
-            }}>
-              <Title level={2} style={{ color: '#fff', margin: 0 }}>
-                Combos & Concessions
+                marginBottom: '56px'
+              }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <FireFilled style={{ color: '#ef4444', fontSize: '36px' }} />
+                    <Title level={2} style={{ 
+                      color: '#fff', 
+                      margin: 0,
+                      fontSize: 'clamp(28px, 4vw, 42px)',
+                      fontWeight: '800',
+                      letterSpacing: '-0.5px'
+                    }}>
+                      Trending Now
               </Title>
-              <Link to="/combos" style={{ color: '#ff4d4f', textDecoration: 'none' }}>
+                  </div>
+                  <Text style={{ color: '#9ca3af', fontSize: '16px' }}>
+                    The hottest movies everyone's watching
+                  </Text>
+                </div>
+                <Link to="/movies?sortBy=hotness">
+                  <Button 
+                    type="text"
+                    className="view-all-button"
+                    style={{ 
+                      color: '#ef4444',
+                      fontSize: '16px',
+                      fontWeight: '600'
+                    }}
+                  >
                 View All →
+                  </Button>
               </Link>
             </div>
             
-            <Row gutter={[24, 24]}>
-              {combos.map(combo => (
-                <Col xs={12} sm={8} md={6} key={combo._id}>
-                  <Card
-                    style={{ 
-                      background: '#1a1a1a',
-                      border: '1px solid #333',
-                      borderRadius: '8px',
-                      overflow: 'hidden'
+              <Row gutter={[32, 32]}>
+                {trendingMovies.slice(0, 6).map((movie, index) => (
+                  <Col xs={12} sm={12} md={8} lg={8} key={movie._id}>
+                    <div 
+                      className="trending-card-wrapper"
+                      style={{
+                        animation: `fadeInUp 0.6s ease-out ${index * 0.15}s both`
+                      }}
+                    >
+                      <MovieCard movie={movie} trending />
+                    </div>
+              </Col>
+            ))}
+          </Row>
+            </div>
+          </div>
+        )}
+
+        {/* Coming Soon Section - 8 Movies with Yellow Badge */}
+        {comingSoonMovies.length > 0 && (
+          <div style={{ padding: '100px 24px', maxWidth: '1400px', margin: '0 auto' }}>
+            <div className="section-header" style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              marginBottom: '56px'
+            }}>
+              <div>
+                <Title level={2} style={{ 
+                  color: '#fff', 
+                  margin: 0,
+                  fontSize: 'clamp(28px, 4vw, 42px)',
+                  fontWeight: '800',
+                  letterSpacing: '-0.5px'
+                }}>
+                🎬 Coming Soon
+              </Title>
+                <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
+                  Get ready for these upcoming releases
+                </Text>
+              </div>
+              <Link to="/movies?status=coming-soon">
+                <Button 
+                  type="text"
+                  className="view-all-button"
+                  style={{ 
+                    color: '#ef4444',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}
+                >
+                View All →
+                </Button>
+              </Link>
+            </div>
+            
+          <Row gutter={[24, 24]}>
+              {comingSoonMovies.slice(0, 8).map((movie, index) => (
+                <Col xs={12} sm={12} md={8} lg={6} key={movie._id}>
+                  <div 
+                    className="coming-soon-card-wrapper"
+                    style={{
+                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
                     }}
-                    cover={
-                      <img
-                        alt={combo.name}
-                        src={combo.image ? `http://localhost:5000/${combo.image}` : 'https://via.placeholder.com/300x200/333/fff?text=Combo'}
-                        style={{
+                  >
+                    <MovieCard movie={movie} comingSoon />
+                  </div>
+              </Col>
+            ))}
+          </Row>
+          </div>
+        )}
+
+        {/* Latest Trailers Section - Grid 3 Columns */}
+        <div style={{ 
+          padding: '100px 24px', 
+          background: 'linear-gradient(180deg, #0a0a0a 0%, #111111 100%)'
+        }}>
+          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+            <div className="section-header" style={{ marginBottom: '56px' }}>
+              <Title level={2} style={{ 
+                color: '#fff', 
+                margin: 0,
+                fontSize: 'clamp(28px, 4vw, 42px)',
+                fontWeight: '800',
+                letterSpacing: '-0.5px'
+              }}>
+                Latest Trailers
+            </Title>
+              <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
+                Watch the newest trailers and teasers
+              </Text>
+            </div>
+            
+            <Row gutter={[32, 32]}>
+              {trailers.slice(0, 6).map((trailer, index) => (
+                <Col xs={24} sm={12} md={12} lg={8} key={trailer._id}>
+                  <div 
+                    className="trailer-card"
+                  style={{ 
+                      position: 'relative',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      background: '#1a1a1a',
+                      cursor: 'pointer',
+                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                    }}
+                  >
+                    {/* Thumbnail */}
+                    <div style={{ 
+                      position: 'relative', 
+                      paddingBottom: '56.25%',
+                      background: '#000',
+                      overflow: 'hidden'
+                    }}>
+                      <img 
+                        src={trailer.poster ? `http://localhost:5000/${trailer.poster}` : 'https://via.placeholder.com/640x360/111/fff?text=Trailer'}
+                        alt={trailer.title}
+                        style={{ 
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
                           width: '100%',
-                          height: '200px',
-                          objectFit: 'cover'
+                          height: '100%',
+                          objectFit: 'cover',
+                          transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
                         }}
                       />
-                    }
-                  >
-                    <Card.Meta
-                      title={
-                        <Title level={5} style={{ color: '#fff', margin: 0 }}>
-                          {combo.name}
-                        </Title>
-                      }
-                      description={
-                        <div>
-                          <Text style={{ color: '#999', fontSize: '12px' }}>
-                            {combo.description}
-                          </Text>
-                          <div style={{ marginTop: '8px' }}>
-                            <Text style={{ color: '#ff4d4f', fontSize: '16px', fontWeight: 'bold' }}>
-                              ${combo.price}
-                            </Text>
-                          </div>
+                      {/* Dark Overlay */}
+                      <div className="trailer-overlay" style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'background 0.3s ease'
+                      }}>
+                        {/* Play Button */}
+                        <div className="play-button" style={{
+                          width: '80px',
+                          height: '80px',
+                          borderRadius: '50%',
+                          background: 'rgba(239, 68, 68, 0.9)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.4)'
+                        }}>
+                          <PlayCircleOutlined style={{ 
+                            fontSize: '48px', 
+                            color: '#fff'
+                          }} />
                         </div>
-                      }
-                    />
-                  </Card>
-                </Col>
-              ))}
+                      </div>
+                    </div>
+                    
+                    {/* Info */}
+                    <div style={{ padding: '20px' }}>
+                      <Title level={5} style={{ 
+                        color: '#fff', 
+                        margin: '0 0 8px 0',
+                        fontSize: '18px',
+                        fontWeight: '600'
+                      }}>
+                        {trailer.title}
+                      </Title>
+                      <Text style={{ color: '#9ca3af', fontSize: '14px' }}>
+                        {trailer.duration ? `${Math.floor(trailer.duration / 60)}h ${trailer.duration % 60}m` : '2m 30s'} Trailer
+                      </Text>
+                    </div>
+                          </div>
+                    </Col>
+                  ))}
             </Row>
           </div>
+        </div>
+
+        {/* Combos & Snacks Section - Grid 4 Columns with Shimmer */}
+        <div style={{ padding: '100px 24px', maxWidth: '1400px', margin: '0 auto' }}>
+          <div className="section-header" style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '56px'
+          }}>
+            <div>
+              <Title level={2} style={{ 
+                color: '#fff', 
+                margin: 0,
+                fontSize: 'clamp(28px, 4vw, 42px)',
+                fontWeight: '800',
+                letterSpacing: '-0.5px'
+              }}>
+                🍿 Combos & Snacks
+              </Title>
+              <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
+                Complete your movie experience
+              </Text>
+            </div>
+            <Link to="/combos">
+              <Button 
+                type="text"
+                className="view-all-button"
+                style={{ 
+                  color: '#ef4444',
+                  fontSize: '16px',
+                  fontWeight: '600'
+                }}
+              >
+                View All →
+              </Button>
+            </Link>
+          </div>
+          
+          <Row gutter={[24, 24]}>
+            {combos.map((combo, index) => (
+              <Col xs={12} sm={12} md={8} lg={6} key={combo._id}>
+                <div 
+                  className="combo-card"
+                  style={{
+                    position: 'relative',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    background: '#1a1a1a',
+                    border: '2px solid transparent',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                  }}
+                >
+                  {/* Image Container */}
+                  <div style={{ 
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: '#111'
+                  }}>
+                    <img
+                      alt={combo.name}
+                      src={combo.image ? `http://localhost:5000/${combo.image}` : 'https://via.placeholder.com/400x300/111/fff?text=Combo'}
+                      style={{
+                        width: '100%',
+                        height: '240px',
+                        objectFit: 'cover',
+                        transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}
+                    />
+                    {/* Shimmer Effect Overlay */}
+                    <div className="shimmer-overlay" style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                      transition: 'left 0.5s ease'
+                    }} />
+                  </div>
+                  
+                  {/* Content */}
+                  <div style={{ padding: '20px' }}>
+                    <Title level={5} style={{ 
+                      color: '#fff', 
+                      margin: '0 0 8px 0',
+                      fontSize: '18px',
+                      fontWeight: '700'
+                    }}>
+                      {combo.name}
+                    </Title>
+                    <Text style={{ 
+                      color: '#9ca3af', 
+                      fontSize: '13px',
+                      display: 'block',
+                      marginBottom: '16px',
+                      lineHeight: '1.5'
+                    }}>
+                      {combo.description?.slice(0, 60) || 'Delicious combo for your movie experience'}
+                    </Text>
+                    
+                    {/* Price and Button */}
+                    <div style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      marginTop: '16px'
+                    }}>
+                      <div>
+                        <Text style={{ 
+                          color: '#ef4444', 
+                          fontSize: '22px', 
+                          fontWeight: '800',
+                          display: 'block',
+                          lineHeight: '1'
+                        }}>
+                          {(combo.price * 24000).toLocaleString('vi-VN')}₫
+                        </Text>
+                      </div>
+                      <Button 
+                        type="primary"
+                        className="combo-add-button"
+                        style={{
+                          background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                          border: 'none',
+                          borderRadius: '20px',
+                          fontWeight: '600',
+                          height: '40px',
+                          padding: '0 20px'
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            ))}
+          </Row>
+          
+          {combos.length === 0 && !loading && (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <Text style={{ color: '#666', fontSize: '18px' }}>
+                No combos available at the moment
+              </Text>
+            </div>
+          )}
         </div>
       </Content>
       

@@ -186,7 +186,7 @@ const BookingDetailsPage = () => {
                           <Text style={{ color: '#999' }}>Quantity: {combo.quantity}</Text>
                         </div>
                         <Text style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
-                          ${combo.price * combo.quantity}
+                          {(combo.price * combo.quantity * 24000).toLocaleString('vi-VN')} VND
                         </Text>
                       </div>
                     ))}
@@ -210,7 +210,7 @@ const BookingDetailsPage = () => {
                   <Col xs={24} sm={12}>
                     <Text strong style={{ color: '#fff' }}>Total Amount:</Text><br/>
                     <Text style={{ color: '#ff4d4f', fontSize: '20px', fontWeight: 'bold' }}>
-                      ${booking.totalAmount}
+                      {(booking.totalAmount * 24000).toLocaleString('vi-VN')} VND
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
@@ -232,7 +232,7 @@ const BookingDetailsPage = () => {
                     <Col xs={24} sm={12}>
                       <Text strong style={{ color: '#fff' }}>Discount Applied:</Text><br/>
                       <Text style={{ color: '#52c41a', fontWeight: 'bold' }}>
-                        -${booking.discountAmount}
+                        -{(booking.discountAmount * 24000).toLocaleString('vi-VN')} VND
                       </Text>
                     </Col>
                   )}

@@ -126,14 +126,14 @@ const VoucherPage = () => {
                       <Text style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
                         {searchedVoucher.discountType === 'percentage' 
                           ? `${searchedVoucher.discountValue}%` 
-                          : `$${searchedVoucher.discountValue}`}
+                          : `${(searchedVoucher.discountValue * 24000).toLocaleString('vi-VN')} VND`}
                       </Text>
                     </div>
                     
                     {searchedVoucher.minPurchase > 0 && (
                       <div style={{ marginBottom: '8px' }}>
                         <Text style={{ color: '#fff', marginRight: '8px' }}>Min Purchase:</Text>
-                        <Text style={{ color: '#999' }}>${searchedVoucher.minPurchase}</Text>
+                        <Text style={{ color: '#999' }}>{(searchedVoucher.minPurchase * 24000).toLocaleString('vi-VN')} VND</Text>
                       </div>
                     )}
                     

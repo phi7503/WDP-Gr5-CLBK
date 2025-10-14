@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Typography, Row, Col, Card, Select, DatePicker, Spin, Empty, Tag } from 'antd';
+import { Layout, Typography, Row, Col, Card, Select, DatePicker, Spin, Empty, Tag, Pagination, Input, Button } from 'antd';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -16,6 +16,8 @@ const ShowtimesPage = () => {
   const [branches, setBranches] = useState([]);
   const [showtimes, setShowtimes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
 
   const [selectedMovie, setSelectedMovie] = useState(searchParams.get('movie') || '');
   const [selectedBranch, setSelectedBranch] = useState(searchParams.get('branch') || '');
@@ -24,13 +26,17 @@ const ShowtimesPage = () => {
   useEffect(() => {
     const loadFilters = async () => {
       try {
+        console.log('Loading filters...');
         const [moviesRes, branchesRes] = await Promise.all([
           movieAPI.getMovies({ limit: 100 }),
           branchAPI.getBranches(),
         ]);
+        console.log('Movies response:', moviesRes);
+        console.log('Branches response:', branchesRes);
         setMovies(moviesRes?.movies || []);
         setBranches(branchesRes || []);
       } catch (e) {
+        console.error('Error loading filters:', e);
         setMovies([]);
         setBranches([]);
       }
@@ -50,11 +56,25 @@ const ShowtimesPage = () => {
     const loadShowtimes = async () => {
       try {
         setLoading(true);
+        console.log('Loading showtimes...');
         const res = await showtimeAPI.getShowtimes();
+        console.log('Showtimes API response:', res);
         let list = res?.showtimes || [];
-        if (selectedMovie) list = list.filter(s => s.movie?._id === selectedMovie);
-        if (selectedBranch) list = list.filter(s => s.branch?._id === selectedBranch);
+        console.log('Raw showtimes list:', list.length, 'items');
+        
+        if (selectedMovie) {
+          console.log('Filtering by movie:', selectedMovie);
+          console.log('Available movies in showtimes:', list.map(s => ({ id: s.movie?._id, title: s.movie?.title })));
+          list = list.filter(s => s.movie?._id === selectedMovie);
+          console.log('After movie filter:', list.length, 'items');
+        }
+        if (selectedBranch) {
+          console.log('Filtering by branch:', selectedBranch);
+          list = list.filter(s => s.branch?._id === selectedBranch);
+          console.log('After branch filter:', list.length, 'items');
+        }
         if (selectedDate) {
+          console.log('Filtering by date:', selectedDate);
           const d0 = new Date(selectedDate);
           d0.setHours(0,0,0,0);
           const d1 = new Date(selectedDate);
@@ -63,9 +83,15 @@ const ShowtimesPage = () => {
             const st = new Date(s.startTime);
             return st >= d0 && st <= d1;
           });
+          console.log('After date filter:', list.length, 'items');
         }
+        
+        console.log('Final showtimes list:', list.length, 'items');
+        console.log('Selected filters:', { selectedMovie, selectedBranch, selectedDate });
+        console.log('First few showtimes:', list.slice(0, 3));
         setShowtimes(list);
       } catch (e) {
+        console.error('Error loading showtimes:', e);
         setShowtimes([]);
       } finally {
         setLoading(false);
@@ -79,7 +105,65 @@ const ShowtimesPage = () => {
       <Header />
       <Content style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <Title level={2} style={{ color: '#fff', marginBottom: '24px' }}>Showtimes</Title>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <Title level={2} style={{ color: '#fff', margin: 0 }}>Showtimes</Title>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button 
+                type="primary" 
+                onClick={async () => {
+                  try {
+                    console.log('Testing API...');
+                    const res = await showtimeAPI.getShowtimes();
+                    console.log('Direct API test result:', res);
+                    alert(`API returned ${res?.showtimes?.length || 0} showtimes`);
+                  } catch (e) {
+                    console.error('API test failed:', e);
+                    alert('API test failed: ' + e.message);
+                  }
+                }}
+              >
+                Test API
+              </Button>
+              <Button 
+                onClick={() => {
+                  console.log('Clearing all filters...');
+                  setSelectedMovie('');
+                  setSelectedBranch('');
+                  setSelectedDate('');
+                }}
+              >
+                Clear Filters
+              </Button>
+              <Button 
+                onClick={async () => {
+                  try {
+                    console.log('Loading all showtimes without filters...');
+                    const res = await showtimeAPI.getShowtimes();
+                    console.log('All showtimes:', res?.showtimes?.map(s => ({ 
+                      id: s._id, 
+                      movie: s.movie?.title, 
+                      branch: s.branch?.name,
+                      startTime: s.startTime 
+                    })));
+                    alert(`Found ${res?.showtimes?.length || 0} showtimes total`);
+                  } catch (e) {
+                    console.error('Error:', e);
+                  }
+                }}
+              >
+                Show All
+              </Button>
+            </div>
+          </div>
+
+          {/* Debug Info */}
+          <Card style={{ background: '#2a2a2a', border: '1px solid #555', marginBottom: 16 }} bodyStyle={{ padding: 12 }}>
+            <Text style={{ color: '#fff', fontSize: '12px' }}>
+              Debug: Movies: {movies.length} | Branches: {branches.length} | Showtimes: {showtimes.length} | 
+              Selected: Movie={selectedMovie || 'none'} ({movies.find(m => m._id === selectedMovie)?.title || 'unknown'}) | 
+              Branch={selectedBranch || 'none'} | Date={selectedDate || 'none'}
+            </Text>
+          </Card>
 
           {/* Filters */}
           <Card style={{ background: '#1a1a1a', border: '1px solid #333', marginBottom: 24 }} bodyStyle={{ padding: 16 }}>
@@ -110,25 +194,44 @@ const ShowtimesPage = () => {
           ) : showtimes.length === 0 ? (
             <Empty description={<Text style={{ color: '#999' }}>No showtimes</Text>} style={{ marginTop: 48 }} />
           ) : (
-            <Row gutter={[16,16]}>
-              {showtimes.map(st => (
-                <Col xs={24} key={st._id}>
-                  <Card style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                    <Row justify="space-between" align="middle">
-                      <Col>
-                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>{st.movie?.title}</Text>
-                        <div style={{ color: '#999', marginTop: 4 }}>{new Date(st.startTime).toLocaleString()} • {st.branch?.name} • {st.theater?.name}</div>
-                      </Col>
-                      <Col>
-                        {st.isFirstShow && <Tag color="green">First show</Tag>}
-                        {st.isLastShow && <Tag color="red">Last show</Tag>}
-                        <Link to={`/booking/${st._id}`} style={{ marginLeft: 12, color: '#ff4d4f' }}>Book</Link>
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
+            <>
+              <Row gutter={[16,16]}>
+                {showtimes.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(st => (
+                  <Col xs={24} key={st._id}>
+                    <Card style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                      <Row justify="space-between" align="middle">
+                        <Col>
+                          <Text style={{ color: '#fff', fontSize: 16, fontWeight: 600 }}>{st.movie?.title}</Text>
+                          <div style={{ color: '#999', marginTop: 4 }}>{new Date(st.startTime).toLocaleString()} • {st.branch?.name} • {st.theater?.name}</div>
+                        </Col>
+                        <Col>
+                          {st.isFirstShow && <Tag color="green">First show</Tag>}
+                          {st.isLastShow && <Tag color="red">Last show</Tag>}
+                          <Link to={`/realtime-booking/${st._id}`} style={{ marginLeft: 12, color: '#ff4d4f' }}>Book</Link>
+                        </Col>
+                      </Row>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+              
+              {/* Pagination */}
+              {showtimes.length > pageSize && (
+                <div style={{ textAlign: 'center', marginTop: '48px' }}>
+                  <Pagination
+                    current={currentPage}
+                    total={showtimes.length}
+                    pageSize={pageSize}
+                    onChange={(page) => setCurrentPage(page)}
+                    showQuickJumper
+                    showTotal={(total, range) => 
+                      `${range[0]}-${range[1]} của ${total} suất chiếu`
+                    }
+                    style={{ color: '#fff' }}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </Content>

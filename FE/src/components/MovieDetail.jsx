@@ -242,18 +242,16 @@ const MovieDetail = () => {
                     Watch Trailer
                   </Button>
                   
-                  {showtimes && showtimes.length > 0 && (
-                    <Button 
-                      type="primary" 
-                      size="large"
-                      className="primary-button"
-                      style={{ height: '48px', padding: '0 24px' }}
-                    >
-                      <Link to={`/booking/${showtimes[0]._id}`} style={{ color: 'white', textDecoration: 'none' }}>
-                        Buy Tickets
-                      </Link>
-                    </Button>
-                  )}
+                  <Button 
+                    type="primary" 
+                    size="large"
+                    className="primary-button"
+                    style={{ height: '48px', padding: '0 24px' }}
+                  >
+                    <Link to={`/showtimes`} style={{ color: 'white', textDecoration: 'none' }}>
+                      Đặt Vé
+                    </Link>
+                  </Button>
                   
                   <Button 
                     size="large"
@@ -338,18 +336,16 @@ const MovieDetail = () => {
                 ))}
               </div>
               
-              {showtimes && showtimes.length > 0 && (
-                <Button 
-                  type="primary" 
-                  size="large"
-                  className="primary-button"
-                  style={{ height: '48px', padding: '0 32px' }}
-                >
-                  <Link to={`/booking/${showtimes[0]._id}`} style={{ color: 'white', textDecoration: 'none' }}>
-                    Book Now
-                  </Link>
-                </Button>
-              )}
+              <Button 
+                type="primary" 
+                size="large"
+                className="primary-button"
+                style={{ height: '48px', padding: '0 32px' }}
+              >
+                <Link to={`/showtimes`} style={{ color: 'white', textDecoration: 'none' }}>
+                  Đặt Vé Ngay
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

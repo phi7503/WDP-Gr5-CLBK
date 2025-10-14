@@ -115,7 +115,7 @@ const ComboPage = () => {
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}>
-                              ${combo.price}
+                              {(combo.price * 24000).toLocaleString('vi-VN')} VND
                             </Text>
                             <Text style={{ color: '#999', fontSize: '12px' }}>
                               {combo.category}

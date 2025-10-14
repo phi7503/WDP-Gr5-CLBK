@@ -673,7 +673,7 @@ const BookingPage = () => {
                     <span>🎯</span>
                     <span>{seat?.row}{seat?.number}</span>
                     <span>-</span>
-                    <span>${seat?.availability?.price || 0}</span>
+                    <span>{((seat?.availability?.price || 0) * 24000).toLocaleString('vi-VN')} VND</span>
                   </div>
                 );
               })}
@@ -713,7 +713,7 @@ const BookingPage = () => {
                       {combo.description}
                     </Text>
                     <Text style={{ color: '#ff4d4f', fontSize: '16px', fontWeight: 'bold' }}>
-                      ${combo.price}
+                      {(combo.price * 24000).toLocaleString('vi-VN')} VND
                     </Text>
                   </div>
                   <Select
@@ -791,7 +791,7 @@ const BookingPage = () => {
                 <Text style={{ color: '#fff', fontSize: '14px' }}>
                   Discount: {appliedVoucher.discountType === 'percentage' 
                     ? `${appliedVoucher.discountValue}%` 
-                    : `$${appliedVoucher.discountValue}`}
+                    : `${(appliedVoucher.discountValue * 24000).toLocaleString('vi-VN')} VND`}
                 </Text>
               </div>
             )}
@@ -855,7 +855,7 @@ const BookingPage = () => {
                 color: '#ff4d4f',
                 textShadow: '0 2px 4px rgba(255, 77, 79, 0.3)'
               }}>
-                ${calculateTotal().toFixed(2)}
+                {(calculateTotal() * 24000).toLocaleString('vi-VN')} VND
               </Text>
             </div>
           </Card>
