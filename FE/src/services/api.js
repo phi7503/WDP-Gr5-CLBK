@@ -1,6 +1,21 @@
 // API Base URL (use Vite proxy to avoid CORS)
 const API_BASE_URL = '/api';
 
+// Backend server URL for static files (images)
+export const BACKEND_URL = 'http://localhost:5000';
+
+// Helper to get full image URL
+export const getImageUrl = (path) => {
+  if (!path) return null;
+  // If already full URL, return as is
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  // If path starts with /, remove it
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${BACKEND_URL}/${cleanPath}`;
+};
+
 // Generic API call function
 const apiCall = async (endpoint, options = {}) => {
   try {

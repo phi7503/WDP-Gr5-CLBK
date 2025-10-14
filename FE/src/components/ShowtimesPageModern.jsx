@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Layout, Typography, Button, DatePicker, Select, Tag, Empty, Collapse, Tooltip, Badge, message } from 'antd';
 import { 
   PlayCircleOutlined, 
@@ -12,14 +12,31 @@ import {
   DownOutlined,
   RightOutlined
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import Header from './Header';
 import Footer from './Footer';
-import CinemaLoadingSpinner from './CinemaLoadingSpinner';
-import CinemaSkeleton from './CinemaSkeleton';
-import { movieAPI, showtimeAPI, branchAPI } from '../services/api';
+import { movieAPI, showtimeAPI, branchAPI, getImageUrl } from '../services/api';
 import '../showtimes-colors.css';
+
+// Lazy load heavy components
+const CinemaLoadingSpinner = lazy(() => import('./CinemaLoadingSpinner'));
+const CinemaSkeleton = lazy(() => import('./CinemaSkeleton'));
+
+// Inline fallback for lazy components
+const LazyLoadFallback = () => (
+  <div style={{ textAlign: 'center', padding: '20px' }}>
+    <div className="spinner" style={{
+      width: '40px',
+      height: '40px',
+      margin: '0 auto',
+      border: '3px solid rgba(255,255,255,0.1)',
+      borderTop: '3px solid #dc2626',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }} />
+  </div>
+);
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -28,6 +45,7 @@ const { Panel } = Collapse;
 
 const ShowtimesPageModern = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
   // View Mode State
   const [viewMode, setViewMode] = useState('by-movie'); // 'by-movie', 'by-cinema', 'by-date'
@@ -58,18 +76,28 @@ const ShowtimesPageModern = () => {
     { key: 'CGV', label: 'CGV Cinemas', color: '#E71A0F', icon: '🎬' },
     { key: 'Lotte', label: 'Lotte Cinema', color: '#ED1C24', icon: '🎭' },
     { key: 'BHD', label: 'BHD Star Cineplex', color: '#FFD700', icon: '⭐' },
-    { key: 'Other', label: 'Other Cinemas', color: '#FF6B00', icon: '🎪' }
+    { key: 'Galaxy', label: 'Galaxy Cinema', color: '#9333EA', icon: '🌌' },
+    { key: 'Beta', label: 'Beta Cinemas', color: '#06B6D4', icon: '🎪' },
+    { key: 'MegaGS', label: 'Mega GS Cinemas', color: '#F59E0B', icon: '🎯' },
+    { key: 'Platinum', label: 'Platinum Cineplex', color: '#6B7280', icon: '💎' },
+    { key: 'Diamond', label: 'Diamond Cinema', color: '#3B82F6', icon: '💍' },
+    { key: 'CineStar', label: 'CineStar', color: '#8B5CF6', icon: '⭐' },
+    { key: 'Other', label: 'Rạp khác', color: '#6B7280', icon: '🎥' }
   ];
 
-  // Cities configuration
+  // Cities configuration (match with database values)
   const cities = [
     { key: 'all', label: 'Tất cả thành phố', icon: '🌏' },
-    { key: 'Ho Chi Minh', label: 'TP. Hồ Chí Minh', icon: '🏙️' },
-    { key: 'Ha Noi', label: 'Hà Nội', icon: '🏛️' },
-    { key: 'Hai Phong', label: 'Hải Phòng', icon: '⚓' },
-    { key: 'Da Nang', label: 'Đà Nẵng', icon: '🌊' },
-    { key: 'Can Tho', label: 'Cần Thơ', icon: '🌾' }
+    { key: 'TP.HCM', label: 'TP. Hồ Chí Minh', icon: '🏙️', aliases: ['Ho Chi Minh', 'Saigon', 'HCMC'] },
+    { key: 'Hà Nội', label: 'Hà Nội', icon: '🏛️', aliases: ['Ha Noi', 'Hanoi', 'HN'] },
+    { key: 'Hải Phòng', label: 'Hải Phòng', icon: '⚓', aliases: ['Hai Phong', 'Haiphong', 'HP'] },
+    { key: 'Đà Nẵng', label: 'Đà Nẵng', icon: '🌊', aliases: ['Da Nang', 'Danang', 'DN'] },
+    { key: 'Cần Thơ', label: 'Cần Thơ', icon: '🌾', aliases: ['Can Tho', 'Cantho', 'CT'] },
+    { key: 'other', label: 'Tỉnh thành khác', icon: '📍', isOther: true }
   ];
+  
+  // Main cities for "other" filter
+  const mainCities = ['TP.HCM', 'Hà Nội', 'Hải Phòng', 'Đà Nẵng', 'Cần Thơ'];
 
   // Generate next 7 days
   const getNext7Days = () => {
@@ -103,17 +131,30 @@ const ShowtimesPageModern = () => {
     }
   }, [selectedDate, selectedCity, selectedCinemaChain, selectedBranch, selectedMovie, selectedTimeRange]);
 
-  // Scroll reveal effect
+  // Scroll reveal effect + Lazy load images
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
+            
+            // Lazy load images khi scroll vào view
+            const images = entry.target.querySelectorAll('img[data-src]');
+            images.forEach(img => {
+              if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+                img.classList.add('loaded');
+              }
+            });
           }
         });
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '100px' // Preload khi còn cách 100px
+      }
     );
 
     sectionsRef.current.forEach((section) => {
@@ -136,6 +177,19 @@ const ShowtimesPageModern = () => {
 
       const moviesList = moviesRes?.movies || [];
       setMovies(moviesList);
+
+      // ✅ Check URL params for movie ID
+      const movieIdFromUrl = searchParams.get('movie');
+      if (movieIdFromUrl) {
+        // Verify movie exists in list
+        const movieExists = moviesList.some(m => m._id === movieIdFromUrl);
+        if (movieExists) {
+          console.log('🎬 Auto-selecting movie from URL:', movieIdFromUrl);
+          setSelectedMovie(movieIdFromUrl);
+        } else {
+          console.warn('⚠️ Movie ID from URL not found:', movieIdFromUrl);
+        }
+      }
 
       if (branchesRes && branchesRes.groupedByChain) {
         setBranchesByChain(branchesRes.groupedByChain);
@@ -173,16 +227,77 @@ const ShowtimesPageModern = () => {
 
       const response = await showtimeAPI.getShowtimes(params);
       let showtimesList = Array.isArray(response) ? response : (response?.showtimes || []);
+      
 
       // Filter by city if selected
       if (selectedCity !== 'all') {
-        showtimesList = showtimesList.filter(st => {
-          const branchCity = st.branch?.location?.city || st.branch?.location?.province || '';
-          // Normalize city names for comparison
-          const normalizedCity = selectedCity.toLowerCase().replace(/\s+/g, '');
-          const normalizedBranchCity = branchCity.toLowerCase().replace(/\s+/g, '');
-          return normalizedBranchCity.includes(normalizedCity) || normalizedCity.includes(normalizedBranchCity);
-        });
+        // Special case: "other" means NOT in main cities
+        if (selectedCity === 'other') {
+          showtimesList = showtimesList.filter(st => {
+            const branchCity = st.branch?.location?.city || st.branch?.location?.province || '';
+            if (!branchCity) return false;
+            
+            const normalizeText = (text) => {
+              return text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[.\s]+/g, '');
+            };
+            
+            const normalizedBranchCity = normalizeText(branchCity);
+            
+            // Check if NOT in any main city
+            return !mainCities.some(mainCity => {
+              const normalizedMainCity = normalizeText(mainCity);
+              return normalizedBranchCity === normalizedMainCity || 
+                     normalizedBranchCity.includes(normalizedMainCity) ||
+                     normalizedMainCity.includes(normalizedBranchCity);
+            });
+          });
+        } else {
+          // Normal city filter
+          showtimesList = showtimesList.filter(st => {
+            const branchCity = st.branch?.location?.city || st.branch?.location?.province || '';
+            
+            if (!branchCity) return false;
+            
+            // Normalize for comparison (remove spaces, accents, lowercase, dots)
+            const normalizeText = (text) => {
+              return text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") // Remove Vietnamese accents
+                .replace(/[.\s]+/g, ''); // Remove dots and spaces
+            };
+            
+            const normalizedSelectedCity = normalizeText(selectedCity);
+            const normalizedBranchCity = normalizeText(branchCity);
+            
+            // Direct match (exact after normalize)
+            if (normalizedBranchCity === normalizedSelectedCity) {
+              return true;
+            }
+            
+            // Check if contains (for partial matches)
+            if (normalizedBranchCity.includes(normalizedSelectedCity) || 
+                normalizedSelectedCity.includes(normalizedBranchCity)) {
+              return true;
+            }
+            
+            // Check aliases
+            const cityConfig = cities.find(c => c.key === selectedCity);
+            if (cityConfig && cityConfig.aliases) {
+              return cityConfig.aliases.some(alias => {
+                const normalizedAlias = normalizeText(alias);
+                return normalizedBranchCity.includes(normalizedAlias) || 
+                       normalizedAlias.includes(normalizedBranchCity);
+              });
+            }
+            
+            return false;
+          });
+        }
       }
 
       // Filter by cinema chain if selected
@@ -511,17 +626,68 @@ const ShowtimesPageModern = () => {
                 border: '1px solid rgba(255,255,255,0.05)'
               }}
             >
+              {/* Movie Backdrop Banner - NEW */}
+              {movie.backdropImage && (
+                <div style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '300px',
+                  marginBottom: '24px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  background: 'linear-gradient(135deg, #1a1a1a, #262626)'
+                }}>
+                  <img
+                    data-src={getImageUrl(movie.backdropImage)}
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 800'%3E%3Crect fill='%231a1a1a' width='1920' height='800'/%3E%3C/svg%3E"
+                    alt={`${movie.title} backdrop`}
+                    loading="lazy"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'opacity 0.5s ease-out'
+                    }}
+                  />
+                  {/* Gradient overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '50%',
+                    background: 'linear-gradient(to top, rgba(10,10,10,1) 0%, transparent 100%)'
+                  }} />
+                  {/* Movie title overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    left: '20px',
+                    color: '#fff',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.8)'
+                  }}>
+                    <Title level={1} style={{ color: '#fff', margin: 0 }}>
+                      {movie.title}
+                    </Title>
+                  </div>
+                </div>
+              )}
+
               {/* Movie Header */}
               <div style={{ display: 'flex', gap: '24px', marginBottom: '32px' }}>
                 <img
-                  src={movie.poster || movie.posterUrl || '/placeholder-movie.jpg'}
+                  data-src={getImageUrl(movie.poster || movie.posterUrl) || '/placeholder-movie.jpg'}
+                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 225'%3E%3Crect fill='%231a1a1a' width='150' height='225'/%3E%3Ctext x='50%25' y='50%25' fill='%23666' font-size='30' text-anchor='middle' dy='.3em'%3E🎬%3C/text%3E%3C/svg%3E"
                   alt={movie.title}
+                  loading="lazy"
                   style={{
                     width: '150px',
                     height: '225px',
                     borderRadius: '12px',
                     objectFit: 'cover',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.3)'
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+                    transition: 'opacity 0.3s ease-out',
+                    background: 'linear-gradient(135deg, #1a1a1a, #262626)'
                   }}
                 />
                 <div style={{ flex: 1 }}>
@@ -729,8 +895,10 @@ const ShowtimesPageModern = () => {
                               }}
                             >
                               <img
-                                src={movie.poster || movie.posterUrl || '/placeholder.jpg'}
+                                data-src={getImageUrl(movie.poster || movie.posterUrl) || '/placeholder.jpg'}
+                                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 90'%3E%3Crect fill='%231a1a1a' width='60' height='90'/%3E%3C/svg%3E"
                                 alt={movie.title}
+                                loading="lazy"
                                 style={{
                                   width: '60px',
                                   height: '90px',
@@ -871,8 +1039,10 @@ const ShowtimesPageModern = () => {
                       </div>
 
                       <img
-                        src={movie.poster || movie.posterUrl || '/placeholder.jpg'}
+                        data-src={getImageUrl(movie.poster || movie.posterUrl) || '/placeholder.jpg'}
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 90'%3E%3Crect fill='%231a1a1a' width='60' height='90'/%3E%3C/svg%3E"
                         alt={movie.title}
+                        loading="lazy"
                         style={{
                           width: '60px',
                           height: '90px',
@@ -1139,20 +1309,24 @@ const ShowtimesPageModern = () => {
 
           {/* Content Area */}
           {initialLoading ? (
-            <div style={{ textAlign: 'center', padding: '60px 0' }}>
-              <CinemaLoadingSpinner 
-                type="film-reel" 
-                message="Preparing your cinema experience..."
-                size="large"
-              />
-            </div>
+            <Suspense fallback={<LazyLoadFallback />}>
+              <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                <CinemaLoadingSpinner 
+                  type="film-reel" 
+                  message="Preparing your cinema experience..."
+                  size="large"
+                />
+              </div>
+            </Suspense>
           ) : loading ? (
-            <div>
-              <CinemaSkeleton 
-                type={viewMode === 'by-movie' ? 'movie-card' : viewMode === 'by-cinema' ? 'chain-header' : 'timeline'} 
-                count={viewMode === 'by-date' ? 8 : 3}
-              />
-            </div>
+            <Suspense fallback={<LazyLoadFallback />}>
+              <div>
+                <CinemaSkeleton 
+                  type={viewMode === 'by-movie' ? 'movie-card' : viewMode === 'by-cinema' ? 'chain-header' : 'timeline'} 
+                  count={viewMode === 'by-date' ? 8 : 3}
+                />
+              </div>
+            </Suspense>
           ) : (
             <>
               {viewMode === 'by-movie' && renderByMovieView()}
