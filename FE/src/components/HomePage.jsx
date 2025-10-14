@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
-import { movieAPI, showtimeAPI, comboAPI } from '../services/api';
+import { movieAPI, showtimeAPI, comboAPI, branchAPI } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -19,6 +19,7 @@ const HomePage = () => {
   const [combos, setCombos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [branchesByChain, setBranchesByChain] = useState({});
   
   // ⭐ FEATURED MOVIES SLIDER - Danh sách phim nổi bật với ảnh ngang
   // 🎬 THAY ĐỔI ẢNH NGANG TẠI ĐÂY - Thay thế 'backdropImage' bằng URL ảnh ngang của bạn
@@ -126,6 +127,16 @@ const HomePage = () => {
       const combosResponse = await comboAPI.getCombos();
       if (combosResponse) {
         setCombos(combosResponse.slice(0, 4)); // Limit to 4 combos
+      }
+      
+      // Load branches grouped by cinema chain
+      try {
+        const branchesResponse = await branchAPI.getBranchesGrouped();
+        if (branchesResponse && branchesResponse.groupedByChain) {
+          setBranchesByChain(branchesResponse.groupedByChain);
+        }
+      } catch (branchError) {
+        console.error('Error loading branches:', branchError);
       }
     } catch (error) {
       console.error('Error loading movies:', error);

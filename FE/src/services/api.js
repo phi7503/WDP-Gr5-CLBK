@@ -80,8 +80,17 @@ export const movieAPI = {
 
 // Showtime API calls
 export const showtimeAPI = {
-  // Get all showtimes
-  getShowtimes: () => apiCall('/showtimes'),
+  // Get all showtimes with filters
+  getShowtimes: (params) => apiCall(`/showtimes${buildQuery(params)}`),
+  
+  // Get showtimes by movie
+  getShowtimesByMovie: (movieId, params) => apiCall(`/showtimes?movie=${movieId}${buildQuery(params) ? '&' + buildQuery(params).slice(1) : ''}`),
+  
+  // Get showtimes by branch
+  getShowtimesByBranch: (branchId, params) => apiCall(`/showtimes?branch=${branchId}${buildQuery(params) ? '&' + buildQuery(params).slice(1) : ''}`),
+  
+  // Get showtimes by date
+  getShowtimesByDate: (date, params) => apiCall(`/showtimes?date=${date}${buildQuery(params) ? '&' + buildQuery(params).slice(1) : ''}`),
   
   // Get showtime by ID
   getShowtimeById: (id) => apiCall(`/showtimes/${id}`),
@@ -146,7 +155,10 @@ export const seatStatusAPI = {
 // Branch API calls
 export const branchAPI = {
   // Get all branches
-  getBranches: () => apiCall('/branches'),
+  getBranches: (params) => apiCall(`/branches${buildQuery(params)}`),
+  
+  // Get branches grouped by cinema chain
+  getBranchesGrouped: () => apiCall('/branches?groupByChain=true'),
   
   // Get branch by ID
   getBranchById: (id) => apiCall(`/branches/${id}`),

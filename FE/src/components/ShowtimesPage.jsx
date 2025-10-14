@@ -56,39 +56,31 @@ const ShowtimesPage = () => {
     const loadShowtimes = async () => {
       try {
         setLoading(true);
-        console.log('Loading showtimes...');
-        const res = await showtimeAPI.getShowtimes();
+        console.log('Loading showtimes with filters:', { selectedMovie, selectedBranch, selectedDate });
+        
+        // Build query params for API
+        const params = {
+          limit: 1000 // Get more results (backend default is only 10!)
+        };
+        if (selectedMovie) params.movie = selectedMovie;
+        if (selectedBranch) params.branch = selectedBranch;
+        if (selectedDate) params.date = selectedDate;
+        
+        // Call API with params - backend will handle filtering
+        const res = await showtimeAPI.getShowtimes(params);
         console.log('Showtimes API response:', res);
-        let list = res?.showtimes || [];
-        console.log('Raw showtimes list:', list.length, 'items');
         
-        if (selectedMovie) {
-          console.log('Filtering by movie:', selectedMovie);
-          console.log('Available movies in showtimes:', list.map(s => ({ id: s.movie?._id, title: s.movie?.title })));
-          list = list.filter(s => s.movie?._id === selectedMovie);
-          console.log('After movie filter:', list.length, 'items');
-        }
-        if (selectedBranch) {
-          console.log('Filtering by branch:', selectedBranch);
-          list = list.filter(s => s.branch?._id === selectedBranch);
-          console.log('After branch filter:', list.length, 'items');
-        }
-        if (selectedDate) {
-          console.log('Filtering by date:', selectedDate);
-          const d0 = new Date(selectedDate);
-          d0.setHours(0,0,0,0);
-          const d1 = new Date(selectedDate);
-          d1.setHours(23,59,59,999);
-          list = list.filter(s => {
-            const st = new Date(s.startTime);
-            return st >= d0 && st <= d1;
-          });
-          console.log('After date filter:', list.length, 'items');
-        }
-        
+        const list = Array.isArray(res) ? res : (res?.showtimes || []);
         console.log('Final showtimes list:', list.length, 'items');
-        console.log('Selected filters:', { selectedMovie, selectedBranch, selectedDate });
-        console.log('First few showtimes:', list.slice(0, 3));
+        
+        if (list.length > 0) {
+          console.log('First showtime sample:', {
+            movie: list[0].movie?.title,
+            branch: list[0].branch?.name,
+            startTime: list[0].startTime
+          });
+        }
+        
         setShowtimes(list);
       } catch (e) {
         console.error('Error loading showtimes:', e);
