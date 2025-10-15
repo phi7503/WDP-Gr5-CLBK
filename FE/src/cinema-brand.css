@@ -1,0 +1,335 @@
+/* Professional Cinema Brand Design */
+/* ================================= */
+
+/* 1. ROOT VARIABLES - Professional Color Palette */
+:root {
+  /* Primary Colors */
+  --primary-red: #ff4d4f;
+  --primary-red-light: #ff7875;
+  --primary-red-dark: #d9363e;
+  
+  /* Secondary Colors */
+  --secondary-purple: #667eea;
+  --secondary-purple-light: #764ba2;
+  --accent-orange: #ffa940;
+  --accent-gold: #fadb14;
+  
+  /* Background Colors */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a0a1a;
+  --bg-tertiary: #0a0a1a;
+  --bg-card: rgba(26, 26, 26, 0.6);
+  --bg-card-hover: rgba(26, 26, 26, 0.8);
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #d4d4d4;
+  --text-muted: #a0a0a0;
+  --text-accent: #ff7875;
+  
+  /* Border Colors */
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-secondary: rgba(255, 255, 255, 0.05);
+  --border-accent: rgba(255, 77, 79, 0.3);
+  
+  /* Shadow Colors */
+  --shadow-primary: rgba(0, 0, 0, 0.4);
+  --shadow-accent: rgba(255, 77, 79, 0.3);
+  --shadow-glow: rgba(255, 77, 79, 0.2);
+}
+
+/* 2. GLOBAL LAYOUT IMPROVEMENTS */
+body {
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+  min-height: 100vh;
+}
+
+/* 3. PROFESSIONAL BRAND HEADER */
+.cinema-brand-header {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: 0 4px 20px var(--shadow-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.cinema-brand-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 0%, rgba(255, 77, 79, 0.05) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+/* 4. LOGO DESIGN */
+.cinema-logo {
+  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  font-size: 28px;
+  text-shadow: 0 4px 12px var(--shadow-accent);
+  position: relative;
+}
+
+.cinema-logo::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: blur(1px);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/* 5. NAVIGATION MENU */
+.cinema-nav-menu {
+  background: transparent;
+  border: none;
+}
+
+.cinema-nav-menu .ant-menu-item {
+  color: var(--text-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border-radius: 8px;
+  margin: 0 4px;
+}
+
+.cinema-nav-menu .ant-menu-item:hover {
+  color: var(--text-primary);
+  background: rgba(255, 77, 79, 0.1);
+  transform: translateY(-1px);
+}
+
+.cinema-nav-menu .ant-menu-item-selected {
+  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-light) 100%);
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px var(--shadow-accent);
+}
+
+/* 6. SEARCH BAR DESIGN */
+.cinema-search-bar {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.cinema-search-bar:hover {
+  border-color: var(--border-accent);
+  box-shadow: 0 4px 16px var(--shadow-glow);
+}
+
+.cinema-search-bar:focus-within {
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+/* 7. BUTTON DESIGNS */
+.cinema-primary-button {
+  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-light) 100%);
+  border: none;
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px var(--shadow-accent);
+}
+
+.cinema-primary-button:hover {
+  background: linear-gradient(135deg, var(--primary-red-dark) 0%, var(--primary-red) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow-accent);
+  filter: brightness(1.1);
+}
+
+.cinema-secondary-button {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.cinema-secondary-button:hover {
+  background: rgba(255, 77, 79, 0.1);
+  border-color: var(--border-accent);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* 8. CARD DESIGNS */
+.cinema-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px var(--shadow-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.cinema-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 77, 79, 0.02) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cinema-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px var(--shadow-primary);
+  border-color: var(--border-accent);
+}
+
+.cinema-card:hover::before {
+  opacity: 1;
+}
+
+/* 9. TYPOGRAPHY IMPROVEMENTS */
+.cinema-title {
+  color: var(--text-primary);
+  text-shadow: 0 2px 8px var(--shadow-primary);
+  font-weight: 700;
+}
+
+.cinema-subtitle {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.cinema-text {
+  color: var(--text-muted);
+}
+
+.cinema-accent-text {
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+/* 10. SPECIAL EFFECTS */
+.cinema-glow {
+  box-shadow: 0 0 20px var(--shadow-glow);
+}
+
+.cinema-glow-hover:hover {
+  box-shadow: 0 0 30px var(--shadow-glow);
+}
+
+.cinema-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 77, 79, 0.1), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 11. BADGE DESIGNS */
+.cinema-badge {
+  background: linear-gradient(135deg, var(--secondary-purple) 0%, var(--secondary-purple-light) 100%);
+  color: var(--text-primary);
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.cinema-badge-hot {
+  background: linear-gradient(135deg, var(--accent-orange) 0%, #ff7a45 100%);
+  box-shadow: 0 2px 8px rgba(255, 169, 64, 0.3);
+}
+
+.cinema-badge-premium {
+  background: linear-gradient(135deg, var(--accent-gold) 0%, #ffd666 100%);
+  color: var(--bg-primary);
+  box-shadow: 0 2px 8px rgba(250, 219, 20, 0.3);
+}
+
+/* 12. LOADING STATES */
+.cinema-loading {
+  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-light) 100%);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+/* 13. RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .cinema-logo {
+    font-size: 24px;
+  }
+  
+  .cinema-card {
+    margin: 8px 0;
+  }
+  
+  .cinema-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* 14. DARK MODE ENHANCEMENTS */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shadow-primary: rgba(0, 0, 0, 0.6);
+    --shadow-accent: rgba(255, 77, 79, 0.4);
+  }
+}
+
+/* 15. ACCESSIBILITY IMPROVEMENTS */
+.cinema-focus:focus {
+  outline: 2px solid var(--primary-red);
+  outline-offset: 2px;
+}
+
+.cinema-focus:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* 16. ANIMATION UTILITIES */
+.cinema-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cinema-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

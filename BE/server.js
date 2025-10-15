@@ -56,6 +56,39 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+// Import routes
+import movieRoutes from "./routes/movieRoutes.js";
+import showtimeRoutes from "./routes/showtimeRoutes.js";
+import branchRoutes from "./routes/branchRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import comboRoutes from "./routes/comboRoutes.js";
+import voucherRoutes from "./routes/voucherRoutes.js";
+import theaterRoutes from "./routes/theaterRoutes.js";
+import seatRoutes from "./routes/seatRoutes.js";
+import seatStatusRoutes from "./routes/seatStatusRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+
+// Static files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// API Routes
+app.use("/api/movies", movieRoutes);
+app.use("/api/showtimes", showtimeRoutes);
+app.use("/api/branches", branchRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/combos", comboRoutes);
+app.use("/api/vouchers", voucherRoutes);
+app.use("/api/theaters", theaterRoutes);
+app.use("/api/seats", seatRoutes);
+app.use("/api/seat-status", seatStatusRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/admin", adminDashboardRoutes);
+
 // Make io available globally
 global.io = io;
 
