@@ -1,33 +1,46 @@
 import React from 'react';
 import { Card, Button, Rate, Typography } from 'antd';
-import { Link } from 'react-router-dom';
-import { FireFilled } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { FireFilled, PlayCircleOutlined, HeartOutlined } from '@ant-design/icons';
+import '../movie-card-animations.css';
+import '../cinema-brand.css';
 
 const { Text, Title } = Typography;
 
 const MovieCard = ({ movie, trending = false, comingSoon = false }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/movie/${movie._id}`);
+  };
+
   return (
     <Card
-      className="movie-card"
+      className="movie-card cinema-card cinema-fade-in"
       hoverable
+      onClick={handleCardClick}
       style={{ 
-        background: '#1a1a1a',
-        border: '1px solid #333',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-primary)',
         borderRadius: '12px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 8px 32px var(--shadow-primary)'
       }}
       cover={
         <div style={{ position: 'relative', height: '340px', overflow: 'hidden' }}>
           {/* Badge for Trending */}
           {trending && (
-            <div className="trending-badge">
+            <div className="trending-badge cinema-badge-hot">
               <FireFilled /> TRENDING
             </div>
           )}
           
           {/* Badge for Coming Soon */}
           {comingSoon && (
-            <div className="coming-soon-badge">
+            <div className="coming-soon-badge cinema-badge-premium">
               ⭐ COMING SOON
             </div>
           )}
@@ -38,9 +51,31 @@ const MovieCard = ({ movie, trending = false, comingSoon = false }) => {
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover'
+              objectFit: 'cover',
+              transition: 'transform 0.3s ease'
             }}
           />
+          
+          {/* Hover Overlay */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: 'none'
+          }} className="movie-overlay">
+            <div style={{ textAlign: 'center', color: 'var(--text-primary)' }}>
+              <PlayCircleOutlined style={{ fontSize: '48px', marginBottom: '8px', color: 'var(--primary-red)' }} />
+              <div style={{ fontSize: '16px', fontWeight: 'bold' }}>Xem chi tiết</div>
+            </div>
+          </div>
           
           {/* Gradient Overlay on Hover */}
           <div style={{
@@ -60,15 +95,13 @@ const MovieCard = ({ movie, trending = false, comingSoon = false }) => {
       <div style={{ padding: '20px' }}>
         {/* Movie Title */}
         <Link to={`/movie/${movie._id}`} style={{ textDecoration: 'none' }}>
-          <Title level={5} style={{ 
-            color: '#fff', 
+          <Title level={5} className="cinema-title movie-title-link" style={{ 
             margin: '0 0 12px 0',
             fontSize: '17px',
             fontWeight: '700',
             lineHeight: '1.3',
             transition: 'color 0.3s ease'
-          }}
-          className="movie-title-link">
+          }}>
             {movie.title}
           </Title>
         </Link>
@@ -83,16 +116,15 @@ const MovieCard = ({ movie, trending = false, comingSoon = false }) => {
           <Rate 
             disabled 
             value={movie.rating || 4.5} 
-            style={{ fontSize: '14px', color: '#fadb14' }}
+            style={{ fontSize: '14px', color: 'var(--accent-gold)' }}
           />
-          <Text style={{ color: '#fadb14', fontSize: '14px', fontWeight: '600' }}>
+          <Text className="cinema-accent-text" style={{ fontSize: '14px', fontWeight: '600' }}>
             {movie.rating || 4.5}
           </Text>
         </div>
         
         {/* Genre and Duration */}
-        <Text style={{ 
-          color: '#9ca3af', 
+        <Text className="cinema-text" style={{ 
           fontSize: '13px',
           display: 'block',
           marginBottom: '16px'
@@ -105,15 +137,12 @@ const MovieCard = ({ movie, trending = false, comingSoon = false }) => {
           <Button 
             type="primary" 
             block
-            className="movie-book-button"
+            className="cinema-primary-button movie-book-button"
             style={{ 
-              background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-              border: 'none',
               borderRadius: '8px',
               height: '42px',
               fontWeight: '600',
-              fontSize: '15px',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              fontSize: '15px'
             }}
           >
             {comingSoon ? '🔔 Notify Me' : '🎟️ Book Now'}

@@ -1,0 +1,103 @@
+/* Movie Card Hover Effects */
+.movie-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: #dc2626;
+}
+
+.movie-card:hover .movie-overlay {
+  opacity: 1 !important;
+}
+
+.movie-card:hover .card-gradient-overlay {
+  opacity: 1 !important;
+}
+
+.movie-card:hover img {
+  transform: scale(1.1);
+}
+
+.movie-card:hover .movie-title-link {
+  color: #dc2626 !important;
+}
+
+.movie-card:hover .movie-book-button {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+}
+
+/* Badge Styles */
+.trending-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.coming-soon-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Movie Card Actions */
+.movie-card .ant-card-actions {
+  background: #1a1a1a;
+  border-top: 1px solid #333;
+}
+
+.movie-card .ant-card-actions > li {
+  margin: 8px 0;
+}
+
+.movie-card .ant-card-actions > li > span {
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.movie-card .ant-card-actions > li:hover > span {
+  color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .movie-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  .movie-card:hover img {
+    transform: scale(1.05);
+  }
+}

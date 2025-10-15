@@ -6,6 +6,7 @@ import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
 import { movieAPI, showtimeAPI, getImageUrl } from '../services/api';
+import '../cinema-brand.css';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -152,7 +153,7 @@ const MovieDetail = () => {
   // Show loading state
   if (loading) {
     return (
-      <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+      <Layout style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
           <div style={{ color: '#fff', fontSize: '18px' }}>
@@ -167,7 +168,7 @@ const MovieDetail = () => {
   // Show error state if no movie data
   if (!movie) {
     return (
-      <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+      <Layout style={{ background: 'var(--bg-primary)', minHeight: '100vh' }}>
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
           <div style={{ color: '#fff', fontSize: '18px' }}>
@@ -314,7 +315,7 @@ const MovieDetail = () => {
         </div>
 
         {/* Cast Section */}
-        <div style={{ padding: '80px 0', background: '#1a1a1a' }}>
+        <div style={{ padding: '80px 0', background: 'var(--bg-card)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Title level={2} style={{ color: '#fff', marginBottom: '48px' }}>
               Your Favorite Cast
@@ -347,7 +348,7 @@ const MovieDetail = () => {
         {/* Showtimes Section - NEW */}
         <div style={{ padding: '80px 0', background: '#0a0a0a' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <Title level={2} style={{ color: '#fff', marginBottom: '32px' }}>
+            <Title level={2} className="cinema-title" style={{ marginBottom: '32px' }}>
               Lịch Chiếu & Đặt Vé
             </Title>
 
@@ -539,7 +540,7 @@ const MovieDetail = () => {
         </div>
 
         {/* Recommended Movies */}
-        <div style={{ padding: '80px 0', background: '#1a1a1a' }}>
+        <div style={{ padding: '80px 0', background: 'var(--bg-card)' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ 
               display: 'flex', 

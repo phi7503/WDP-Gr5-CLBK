@@ -7,6 +7,8 @@ import Footer from './Footer';
 import MovieCard from './MovieCard';
 import { movieAPI, showtimeAPI } from '../services/api';
 import dayjs from 'dayjs';
+import useDebounce from '../hooks/useDebounce';
+import '../search-animations.css';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -14,40 +16,21 @@ const { Search } = Input;
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // Use custom hook
   const [movies, setMovies] = useState([]);
   const [showtimes, setShowtimes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('movies');
 
-  const handleSearch = async (value) => {
-    if (!value.trim()) {
+  // Trigger search when debounced term changes
+  useEffect(() => {
+    if (debouncedSearchTerm.trim()) {
+      handleSearch(debouncedSearchTerm);
+    } else {
       setMovies([]);
       setShowtimes([]);
-      return;
     }
-
-    setSearchTerm(value);
-    setLoading(true);
-
-    try {
-      // Search movies
-      const moviesResponse = await movieAPI.getMovies({ search: value, limit: 20 });
-      setMovies(moviesResponse?.movies || []);
-
-      // Search showtimes (if needed)
-      const showtimesResponse = await showtimeAPI.getShowtimes({ 
-        search: value, 
-        limit: 20 
-      });
-      setShowtimes(showtimesResponse?.showtimes || []);
-    } catch (error) {
-      console.error('Search error:', error);
-      setMovies([]);
-      setShowtimes([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [debouncedSearchTerm]);
 
   const tabItems = [
     {
@@ -192,13 +175,19 @@ const SearchPage = () => {
             </Title>
             
             <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-              <Search
-                placeholder="Tìm kiếm phim, diễn viên, thể loại..."
-                size="large"
-                onSearch={handleSearch}
-                prefix={<SearchOutlined style={{ color: '#666' }} />}
-                style={{ width: '100%' }}
-              />
+              <div className={`search-container ${searchTerm ? 'focused' : ''}`}>
+                <Search
+                  placeholder="Tìm kiếm phim, diễn viên, thể loại..."
+                  size="large"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  onSearch={handleSearchSubmit}
+                  prefix={<SearchOutlined style={{ color: '#666' }} />}
+                  style={{ width: '100%' }}
+                  loading={searchTerm !== debouncedSearchTerm} // Show loading while debouncing
+                  className="search-input"
+                />
+              </div>
             </div>
           </div>
 

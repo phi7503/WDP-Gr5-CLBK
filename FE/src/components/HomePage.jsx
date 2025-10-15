@@ -166,7 +166,7 @@ const HomePage = () => {
   }
 
   return (
-    <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+    <Layout style={{ background: '#0a0a0a', minHeight: '100vh', paddingTop: '64px' }}>
       <Header />
       
       <Content>

@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Button, Input } from 'antd';
 import { SearchOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import '../cinema-brand.css';
 
 const { Header: AntHeader } = Layout;
 const { Search } = Input;
 
 const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setIsScrolled(scrollTop > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   const menuItems = [
     {
       key: 'home',
@@ -35,23 +47,23 @@ const Header = () => {
   ];
 
   return (
-    <AntHeader style={{ 
+    <AntHeader className="cinema-brand-header" style={{ 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'space-between',
       padding: '0 24px',
-      background: '#0a0a0a',
-      borderBottom: '1px solid #333'
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1000,
+      transition: 'all 0.3s ease',
     }}>
       {/* Logo */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Link to="/" style={{ textDecoration: 'none' }}>
-          <span style={{ 
-            fontSize: '24px', 
-            fontWeight: 'bold',
-            color: '#ffffff'
-          }}>
-            <span style={{ color: '#ff4d4f' }}>Quick</span>Show
+          <span className="cinema-logo">
+            <span style={{ color: 'var(--primary-red)' }}>Quick</span>Show
           </span>
         </Link>
       </div>
@@ -61,6 +73,7 @@ const Header = () => {
         theme="dark"
         mode="horizontal"
         items={menuItems}
+        className="cinema-nav-menu"
         style={{ 
           background: 'transparent',
           border: 'none',
@@ -73,12 +86,13 @@ const Header = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <Search
           placeholder="Search movies..."
+          className="cinema-search-bar"
           style={{ width: 200 }}
-          prefix={<SearchOutlined style={{ color: '#666' }} />}
+          prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
         />
         <Button 
           type="primary" 
-          className="primary-button"
+          className="cinema-primary-button"
           icon={<UserOutlined />}
         >
           Log In
