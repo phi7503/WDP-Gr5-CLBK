@@ -14,12 +14,24 @@ const seatStatusSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "reserved", "booked", "blocked", "maintenance"],
+      enum: [
+        "available",
+        "selecting",
+        "reserved",
+        "booked",
+        "blocked",
+        "maintenance",
+      ],
       default: "available",
     },
     booking: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
+    },
+    reservedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     reservedAt: {
       type: Date,
@@ -39,6 +51,8 @@ const seatStatusSchema = mongoose.Schema(
 
 // Compound index to ensure unique seat status for each showtime
 seatStatusSchema.index({ showtime: 1, seat: 1 }, { unique: true });
+seatStatusSchema.index({ reservationExpires: 1 });
+seatStatusSchema.index({ showtime: 1, status: 1 });
 
 const SeatStatus = mongoose.model("SeatStatus", seatStatusSchema);
 

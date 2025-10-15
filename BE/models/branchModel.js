@@ -3,6 +3,12 @@ import mongoose from "mongoose";
 
 const branchSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  cinemaChain: {
+    type: String,
+    enum: ['CGV', 'BHD', 'Lotte', 'Galaxy', 'Beta', 'MegaGS', 'CineStar', 'Platinum', 'Diamond', 'Other'],
+    required: true,
+    default: 'Other'
+  },
   location: {
     address: { type: String, required: true },
     city: { type: String, required: true },
@@ -19,7 +25,7 @@ const branchSchema = new mongoose.Schema({
   theaters: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Theater",           // <-- phải khớp EXACT với tên model Theater
+      ref: "Theater",
       required: true,
     },
   ],

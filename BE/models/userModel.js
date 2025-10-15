@@ -21,6 +21,23 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    province: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      required: true,
+    },
+    dob: {
+      type: Date,
+      required: true,
+    },
     role: {
       type: String,
       enum: ["guest", "customer", "employee", "admin"],

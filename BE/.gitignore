@@ -80,3 +80,4 @@ uploads/*
 # Package lock files (keep package.json but ignore lock files for faster installs)
 package-lock.json
 yarn.lock
+
