@@ -1,0 +1,45 @@
+[
+    {
+      "bookingNumber": "CGV001",
+      "customer": "user_004",
+      "employee": "user_001",
+      "showtime": "showtime_001",
+      "seats": [
+        "seat_001",
+        "seat_002"
+      ],
+      "totalAmount": 240000,
+      "paymentStatus": "completed",
+      "paymentMethod": "cash",
+      "createdAt": "2025-10-20T10:30:00.000Z",
+      "updatedAt": "2025-10-20T10:30:00.000Z"
+    },
+    {
+      "bookingNumber": "CGV002",
+      "customer": "user_004",
+      "employee": "user_001",
+      "showtime": "showtime_002",
+      "seats": [
+        "seat_003"
+      ],
+      "totalAmount": 150000,
+      "paymentStatus": "pending",
+      "paymentMethod": "bank_transfer",
+      "createdAt": "2025-10-20T11:15:00.000Z",
+      "updatedAt": "2025-10-20T11:15:00.000Z"
+    },
+    {
+      "bookingNumber": "CGV003",
+      "customer": "user_004",
+      "employee": "user_002",
+      "showtime": "showtime_003",
+      "seats": [
+        "seat_001"
+      ],
+      "totalAmount": 120000,
+      "paymentStatus": "completed",
+      "paymentMethod": "cash",
+      "createdAt": "2025-10-20T13:00:00.000Z",
+      "updatedAt": "2025-10-20T13:00:00.000Z"
+    }
+  ]

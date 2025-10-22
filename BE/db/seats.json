@@ -1,0 +1,26 @@
+[
+      {
+        "theater": "theater_001",
+        "row": "A",
+        "number": 1,
+        "type": "standard",
+        "price": 120000,
+        "createdAt": "2025-10-19T08:00:00.000Z"
+      },
+      {
+        "theater": "theater_001",
+        "row": "A",
+        "number": 2,
+        "type": "standard",
+        "price": 120000,
+        "createdAt": "2025-10-19T08:00:00.000Z"
+      },
+      {
+        "theater": "theater_001",
+        "row": "B",
+        "number": 1,
+        "type": "vip",
+        "price": 150000,
+        "createdAt": "2025-10-19T08:00:00.000Z"
+      }
+    ]

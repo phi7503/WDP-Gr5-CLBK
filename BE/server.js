@@ -8,6 +8,10 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
+import bookingRoutes from "./routes/booking.route.js";
+import userRoutes from "./routes/user.route.js";
+import movieRoutes from "./routes/movie.route.js";
+import showtimeRoutes from "./routes/showtime.route.js";
 
 // Load env
 dotenv.config();
@@ -58,6 +62,12 @@ app.use(morgan("dev"));
 
 // Make io available globally
 global.io = io;
+
+// Routes
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/movies", movieRoutes);
+app.use("/api/showtimes", showtimeRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

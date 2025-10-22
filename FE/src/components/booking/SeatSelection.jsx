@@ -1,280 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material';
-import { EventSeat } from '@mui/icons-material';
-import { showtimeService } from '@/services/showtimeService';
+import React, { useEffect, useMemo, useState } from 'react';
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 const SeatSelection = ({ showtimeId, onSeatSelectionChange, maxSeats = 8 }) => {
-  const [showtime, setShowtime] = useState(null);
-  const [seats, setSeats] = useState([]);
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState([]);
+
+  // Fake layout: 8 rows x 12 columns
+  const layout = useMemo(() => {
+    const rows = 8;
+    const cols = 12;
+    const seats = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 1; c <= cols; c++) {
+        const id = `${letters[r]}${c}`;
+        seats.push({
+          _id: id,
+          row: letters[r],
+          number: c,
+          type: c % 6 === 0 ? 'vip' : 'standard',
+          price: c % 6 === 0 ? 150000 : 120000,
+          status: 'available',
+        });
+      }
+    }
+    return seats;
+  }, []);
 
   useEffect(() => {
-    if (showtimeId) {
-      fetchShowtimeDetails();
-    }
-  }, [showtimeId]);
+    onSeatSelectionChange?.(selected);
+  }, [selected, onSeatSelectionChange]);
 
-  const fetchShowtimeDetails = async () => {
-    try {
-      setLoading(true);
-      const detail = await showtimeService.getShowtimeById(showtimeId);
-      setShowtime(detail);
-      
-      // Tạo layout ghế mặc định nếu không có dữ liệu
-      if (detail.seats && detail.seats.length > 0) {
-        setSeats(detail.seats);
-      } else {
-        // Tạo layout ghế mặc định 8x10 với VIP ở giữa
-        const defaultSeats = [];
-        const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-        const columns = Array.from({ length: 10 }, (_, i) => i + 1);
-        
-        rows.forEach(row => {
-          columns.forEach(col => {
-            const isVIP = (row === 'E' || row === 'F' || row === 'G' || row === 'H') && 
-                         (col >= 5 && col <= 6);
-            const isBooked = Math.random() < 0.2; // 20% ghế đã đặt
-            
-            defaultSeats.push({
-              _id: `${row}${col}`,
-              row,
-              number: col,
-              type: isVIP ? 'VIP' : 'normal',
-              price: isVIP ? 120000 : 80000,
-              status: isBooked ? 'booked' : 'available'
-            });
-          });
-        });
-        
-        setSeats(defaultSeats);
-      }
-    } catch (error) {
-      console.error('Error fetching showtime details:', error);
-    } finally {
-      setLoading(false);
+  const toggleSeat = (seat) => {
+    const exists = selected.find((s) => s._id === seat._id);
+    if (exists) {
+      setSelected(selected.filter((s) => s._id !== seat._id));
+    } else {
+      if (selected.length >= maxSeats) return; // limit
+      setSelected([...selected, seat]);
     }
   };
-
-  const handleSeatClick = (seat) => {
-    if (seat.status === 'booked') return;
-
-    setSelectedSeats(prev => {
-      const isSelected = prev.some(s => s._id === seat._id);
-      let newSelection;
-      
-      if (isSelected) {
-        newSelection = prev.filter(s => s._id !== seat._id);
-      } else {
-        if (prev.length >= maxSeats) return prev;
-        newSelection = [...prev, { ...seat, price: seat.price || (seat.type === 'VIP' ? 120000 : 80000) }];
-      }
-      
-      onSeatSelectionChange(newSelection);
-      return newSelection;
-    });
-  };
-
-  const getSeatColor = (seat) => {
-    const isSelected = selectedSeats.some(s => s._id === seat._id);
-    
-    if (seat.status === 'booked') return '#374151';
-    if (isSelected) return '#dc2626';
-    if (seat.type === 'VIP') return '#eab308';
-    return '#6b7280';
-  };
-
-  const getSeatBorderColor = (seat) => {
-    const isSelected = selectedSeats.some(s => s._id === seat._id);
-    return isSelected ? '#ef4444' : '#9ca3af';
-  };
-
-  const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-  const columns = Array.from({ length: 10 }, (_, i) => i + 1);
-
-  if (loading) {
-    return (
-      <Box sx={{ textAlign: 'center', py: 4 }}>
-        <Typography sx={{ color: 'white' }}>Đang tải thông tin ghế...</Typography>
-      </Box>
-    );
-  }
 
   return (
-    <Box 
-      sx={{ 
-        bgcolor: '#1a1a1a', 
-        border: '1px solid #dc2626', 
-        borderRadius: 2, 
-        p: 3,
-        minHeight: '600px'
-      }}
-    >
-      {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <EventSeat sx={{ color: '#dc2626', mr: 1, fontSize: 28 }} />
-        <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold' }}>
+    <div className="bg-gray-900 border border-red-600 rounded-lg p-6 min-h-[500px]">
+      <div className="flex items-center mb-6">
+        <div className="w-7 h-7 bg-red-600 rounded mr-3 flex items-center justify-center">
+          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-white">
           Chọn ghế
-        </Typography>
-      </Box>
-      
-      <Typography variant="body2" sx={{ color: '#9ca3af', mb: 3 }}>
-        Chọn vị trí ngồi yêu thích
-      </Typography>
+        </h2>
+      </div>
 
-      {/* Screen */}
-      <Box sx={{ textAlign: 'center', mb: 3 }}>
-        <Typography variant="body2" sx={{ color: '#9ca3af', mb: 1 }}>
-          Màn hình
-        </Typography>
-        <Box 
-          sx={{ 
-            height: 4, 
-            bgcolor: '#9ca3af', 
-            borderRadius: 2,
-            maxWidth: 400,
-            mx: 'auto'
-          }} 
-        />
-      </Box>
+      <div className="mb-4 flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-gray-700 border border-gray-600" /> Trống</div>
+        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-red-600" /> Đang chọn</div>
+        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-yellow-700" /> VIP</div>
+      </div>
 
-      {/* Seat Map */}
-      <Box sx={{ mb: 4 }}>
-        {/* Column Headers */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-          <Box sx={{ width: 40 }} />
-          {columns.map(col => (
-            <Box 
-              key={col} 
-              sx={{ 
-                width: 40, 
-                textAlign: 'center',
-                color: '#9ca3af',
-                fontSize: '0.875rem'
-              }}
-            >
-              {col}
-            </Box>
-          ))}
-        </Box>
-
-        {/* Seat Grid */}
-        {rows.map(row => (
-          <Box key={row} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            {/* Row Label */}
-            <Typography 
-              sx={{ 
-                width: 40, 
-                textAlign: 'center',
-                color: '#9ca3af',
-                fontSize: '0.875rem'
-              }}
-            >
-              {row}
-            </Typography>
-            
-            {/* Seats */}
-            {columns.map(col => {
-              const seat = seats.find(s => s.row === row && s.number === col);
-              if (!seat) return <Box key={`${row}${col}`} sx={{ width: 40 }} />;
-              
-              return (
-                <Box 
-                  key={seat._id}
-                  sx={{ 
-                    width: 32, 
-                    height: 32, 
-                    mx: 0.5,
-                    cursor: seat.status === 'booked' ? 'not-allowed' : 'pointer',
-                    bgcolor: getSeatColor(seat),
-                    border: `1px solid ${getSeatBorderColor(seat)}`,
-                    borderRadius: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s ease',
-                    '&:hover': seat.status !== 'booked' ? {
-                      transform: 'scale(1.1)',
-                      boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)'
-                    } : {},
-                  }}
-                  onClick={() => handleSeatClick(seat)}
-                >
-                  {seat.status !== 'booked' && (
-                    <Typography 
-                      sx={{ 
-                        color: 'white', 
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {seat.number}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })}
-          </Box>
-        ))}
-      </Box>
-
-      {/* Seat Legend */}
-      <Box sx={{ display: 'flex', gap: 3, mb: 3, justifyContent: 'center' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box sx={{ width: 20, height: 20, bgcolor: '#6b7280', borderRadius: 0.5 }} />
-          <Typography variant="body2" sx={{ color: '#9ca3af' }}>Ghế thường</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box sx={{ width: 20, height: 20, bgcolor: '#eab308', borderRadius: 0.5 }} />
-          <Typography variant="body2" sx={{ color: '#9ca3af' }}>Ghế VIP</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box sx={{ width: 20, height: 20, bgcolor: '#dc2626', borderRadius: 0.5 }} />
-          <Typography variant="body2" sx={{ color: '#9ca3af' }}>Đã chọn</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box sx={{ width: 20, height: 20, bgcolor: '#374151', borderRadius: 0.5 }} />
-          <Typography variant="body2" sx={{ color: '#9ca3af' }}>Đã đặt</Typography>
-        </Box>
-      </Box>
-
-      {/* Selection Summary */}
-      {selectedSeats.length > 0 && (
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="body2" sx={{ color: 'white', mb: 2 }}>
-            Đã chọn {selectedSeats.length}/{maxSeats} ghế
-          </Typography>
-          
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {selectedSeats.map(seat => (
-              <Box 
-                key={seat._id} 
-                sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  bgcolor: '#2a2a2a',
-                  p: 2,
-                  borderRadius: 1,
-                  border: '1px solid #dc2626'
-                }}
+      <div className="overflow-x-auto">
+        <div className="inline-grid" style={{ gridTemplateColumns: `repeat(12, minmax(36px, 1fr))`, gap: 8 }}>
+          {layout.map((seat) => {
+            const isSelected = selected.some((s) => s._id === seat._id);
+            const isVip = seat.type === 'vip';
+            return (
+              <button
+                key={seat._id}
+                onClick={() => toggleSeat(seat)}
+                className={`h-9 rounded text-xs font-semibold transition-colors border ${
+                  isSelected ? 'bg-red-600 border-red-600 text-white' : isVip ? 'bg-yellow-700/50 border-yellow-700 text-white' : 'bg-gray-700 border-gray-600 text-gray-200'
+                }`}
+                title={`${seat.row}${seat.number} • ${seat.price.toLocaleString()} VNĐ`}
               >
-                <Typography sx={{ color: 'white', display: 'flex', alignItems: 'center' }}>
-                  <Box sx={{ width: 16, height: 16, bgcolor: '#dc2626', borderRadius: 0.5, mr: 1 }} />
-                  Ghế {seat.row}{seat.number}
-                </Typography>
-                <Typography sx={{ color: 'white', fontWeight: 'bold' }}>
-                  {new Intl.NumberFormat("vi-VN", { 
-                    style: "currency", 
-                    currency: "VND" 
-                  }).format(seat.price)}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      )}
-    </Box>
+                {seat.row}{seat.number}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-6 text-sm text-gray-300">
+        <div className="mb-2">Đã chọn ({selected.length}/{maxSeats}): {selected.map(s => `${s.row}${s.number}`).join(', ') || '—'}</div>
+        <div>Tạm tính: {selected.reduce((sum, s) => sum + (s.price || 0), 0).toLocaleString()} VNĐ</div>
+      </div>
+    </div>
   );
 };
 

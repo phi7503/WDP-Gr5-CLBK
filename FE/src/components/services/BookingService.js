@@ -25,6 +25,28 @@ export const bookingService = {
     }
   },
 
+  // Get all bookings (for admin/employee)
+  async getBookings(params = {}) {
+    try {
+      const response = await api.get("/bookings", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      throw new Error("Failed to fetch bookings");
+    }
+  },
+
+  // Get bookings by employee
+  async getBookingsByEmployee(employeeId, params = {}) {
+    try {
+      const response = await api.get(`/bookings/employee/${employeeId}`, { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching employee bookings:", error);
+      throw new Error("Failed to fetch employee bookings");
+    }
+  },
+
   // Get booking by ID
   async getBookingById(bookingId) {
     try {

@@ -11,8 +11,8 @@ const initialAppContext = {
     ? JSON.parse(localStorage.getItem("user"))
     : null,
   setUser: () => {},
-  isSeller: false,
-  setIsSeller: () => {},
+  isEmployee: false,
+  setIsEmployee: () => {},
   reset: () => {},
 };
 
@@ -31,11 +31,11 @@ export const AppProvider = ({ children }) => {
     return userInfo ? JSON.parse(userInfo) : null;
   });
 
-  const [isSeller, setIsSeller] = useState(() => {
+  const [isEmployee, setIsEmployee] = useState(() => {
     const userInfo = localStorage.getItem("user");
     if (!userInfo) return false;
     const parsed = JSON.parse(userInfo);
-    return parsed.role === "seller";
+    return parsed.role === "employee" || parsed.role === "admin";
   });
 
   useEffect(() => {
@@ -44,18 +44,18 @@ export const AppProvider = ({ children }) => {
       const parsed = JSON.parse(userInfo);
       setUser(parsed);
       setIsAuthenticated(true);
-      setIsSeller(parsed.role === "seller");
+      setIsEmployee(parsed.role === "employee" || parsed.role === "admin");
     }
   }, []);
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
       setIsAuthenticated(true);
-      setIsSeller(user.role === "seller");
+      setIsEmployee(user.role === "employee" || user.role === "admin");
     } else {
       localStorage.removeItem("user");
       setIsAuthenticated(false);
-      setIsSeller(false);
+      setIsEmployee(false);
     }
   }, [user]);
 
@@ -71,8 +71,8 @@ export const AppProvider = ({ children }) => {
         setIsAuthenticated,
         user,
         setUser,
-        isSeller,
-        setIsSeller,
+        isEmployee,
+        setIsEmployee,
         reset,
       }}
     >

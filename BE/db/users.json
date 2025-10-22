@@ -1,0 +1,40 @@
+[
+    {
+      "name": "Nguyễn Văn A",
+      "email": "employee1@cinema.com",
+      "password": "$2b$10$example_hash_1",
+      "role": "employee",
+      "branch": "branch_001",
+      "shift": "morning",
+      "createdAt": "2025-10-15T08:00:00.000Z",
+      "updatedAt": "2025-10-15T08:00:00.000Z"
+    },
+    {
+      "name": "Trần Thị B",
+      "email": "employee2@cinema.com",
+      "password": "$2b$10$example_hash_2",
+      "role": "employee",
+      "branch": "branch_001",
+      "shift": "afternoon",
+      "createdAt": "2025-10-16T08:00:00.000Z",
+      "updatedAt": "2025-10-16T08:00:00.000Z"
+    },
+    {
+      "name": "Lê Văn C",
+      "email": "employee3@cinema.com",
+      "password": "$2b$10$example_hash_3",
+      "role": "employee",
+      "branch": "branch_002",
+      "shift": "evening",
+      "createdAt": "2025-10-17T08:00:00.000Z",
+      "updatedAt": "2025-10-17T08:00:00.000Z"
+    },
+    {
+      "name": "Phạm Thị D",
+      "email": "customer1@gmail.com",
+      "password": "$2b$10$example_hash_4",
+      "role": "customer",
+      "createdAt": "2025-10-18T08:00:00.000Z",
+      "updatedAt": "2025-10-18T08:00:00.000Z"
+    }
+  ]

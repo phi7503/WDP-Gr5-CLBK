@@ -14,49 +14,28 @@ const movieSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
-    genre: {
-      type: [String],
-      required: true,
-    },
-    releaseDate: {
-      type: Date,
-      required: true,
-    },
-    endDate: {
-      type: Date,
-      required: true,
-    },
-    language: {
-      type: String,
-      required: true,
-    },
+    genre: [String],
     director: {
       type: String,
       required: true,
     },
-    cast: {
-      type: [String],
+    cast: [String],
+    releaseDate: {
+      type: Date,
       required: true,
     },
     poster: {
       type: String,
       required: true,
     },
-    trailer: {
-      type: String,
-    },
-    status: {
-      type: String,
-      enum: ["now-showing", "coming-soon", "ended"],
-      default: "coming-soon",
-    },
-    hotness: {
-      type: Number,
-      default: 0,
-    },
+    trailer: String,
     rating: {
       type: Number,
       default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {

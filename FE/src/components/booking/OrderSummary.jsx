@@ -1,6 +1,4 @@
 import React from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
-import { FiberManualRecord } from '@mui/icons-material';
 
 const OrderSummary = ({ 
   selectedMovie, 
@@ -13,182 +11,100 @@ const OrderSummary = ({
   discountAmount, 
   finalTotal 
 }) => {
-  const formatShowtime = (startTime) => {
-    if (!startTime) return '';
-    return new Date(startTime).toLocaleString("vi-VN", { 
-      day: "2-digit", 
-      month: "2-digit", 
-      hour: "2-digit", 
-      minute: "2-digit" 
-    });
-  };
-
   return (
-    <Card 
-      sx={{ 
-        bgcolor: '#1a1a1a', 
-        border: '1px solid #dc2626', 
-        borderRadius: 2, 
-        p: 3,
-        height: 'fit-content',
-        position: 'sticky',
-        top: 20
-      }}
-    >
-      {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <FiberManualRecord sx={{ color: '#dc2626', mr: 1, fontSize: 20 }} />
-        <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-          Tóm tắt đơn hàng
-        </Typography>
-      </Box>
-
-      {/* Movie Info */}
+    <div className="bg-gray-900 border border-red-600 rounded-lg p-6 sticky top-4">
+      <h3 className="text-lg font-bold text-white mb-4">Tóm tắt đơn hàng</h3>
+      
       {selectedMovie && (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" sx={{ color: '#9ca3af', mb: 1 }}>
-            PHIM
-          </Typography>
-          <Box 
-            sx={{ 
-              p: 2, 
-              bgcolor: '#2a2a2a', 
-              borderRadius: 1,
-              border: '1px solid #374151'
-            }}
-          >
-            <Typography sx={{ color: 'white', fontWeight: 'bold' }}>
-              {selectedMovie.title}
-            </Typography>
-          </Box>
-        </Box>
+        <div className="mb-4">
+          <h4 className="text-white font-semibold mb-2">Phim</h4>
+          <div className="flex items-center">
+            <div
+              className="w-12 h-16 bg-cover bg-center rounded mr-3"
+              style={{
+                backgroundImage: `url(${selectedMovie.poster?.startsWith('http') ? selectedMovie.poster : `http://localhost:5000/${selectedMovie.poster?.replace(/^\/+/, '')}`})`
+              }}
+            />
+            <div>
+              <p className="text-white text-sm font-medium">{selectedMovie.title}</p>
+              <p className="text-gray-400 text-xs">Phim đã chọn</p>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* Showtime Info */}
       {selectedShowtime && (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" sx={{ color: '#9ca3af', mb: 1 }}>
-            SUẤT CHIẾU
-          </Typography>
-          <Box 
-            sx={{ 
-              p: 2, 
-              bgcolor: '#2a2a2a', 
-              borderRadius: 1,
-              border: '1px solid #374151'
-            }}
-          >
-            <Typography sx={{ color: '#dc2626', fontWeight: 'bold' }}>
-              {formatShowtime(selectedShowtime.startTime)}
-            </Typography>
-          </Box>
-        </Box>
+        <div className="mb-4">
+          <h4 className="text-white font-semibold mb-2">Suất chiếu</h4>
+          <p className="text-gray-300 text-sm">
+            {new Date(selectedShowtime.startTime).toLocaleString('vi-VN')}
+          </p>
+          <p className="text-gray-400 text-xs">
+            {selectedShowtime.branch?.name} - {selectedShowtime.theater?.name}
+          </p>
+        </div>
       )}
 
-      {/* Selected Seats */}
       {selectedSeats.length > 0 && (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" sx={{ color: '#9ca3af', mb: 1 }}>
-            GHẾ ĐÃ CHỌN
-          </Typography>
-          <Box 
-            sx={{ 
-              p: 2, 
-              bgcolor: '#2a2a2a', 
-              borderRadius: 1,
-              border: '1px solid #374151'
-            }}
-          >
-            <Typography sx={{ color: 'white', fontWeight: 'bold' }}>
-              {selectedSeats.map(s => s.row + s.number).join(', ')}
-            </Typography>
-          </Box>
-        </Box>
+        <div className="mb-4">
+          <h4 className="text-white font-semibold mb-2">Ghế ngồi</h4>
+          <div className="space-y-1">
+            {selectedSeats.map((seat, index) => (
+              <div key={index} className="flex justify-between text-sm">
+                <span className="text-gray-300">{seat.name || `Ghế ${index + 1}`}</span>
+                <span className="text-white">{(seat.price || 0).toLocaleString()} VNĐ</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
-      {/* Price Breakdown */}
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="body2" sx={{ color: '#9ca3af', mb: 1 }}>
-          CHI TIẾT GIÁ
-        </Typography>
-        
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-              Tiền ghế:
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'white' }}>
-              {new Intl.NumberFormat("vi-VN", { 
-                style: "currency", 
-                currency: "VND" 
-              }).format(seatTotal)}
-            </Typography>
-          </Box>
-          
-          {comboTotal > 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-                Tiền combo:
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'white' }}>
-                {new Intl.NumberFormat("vi-VN", { 
-                  style: "currency", 
-                  currency: "VND" 
-                }).format(comboTotal)}
-              </Typography>
-            </Box>
-          )}
-          
-          {voucher && discountAmount > 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-                Giảm giá:
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#10b981' }}>
-                -{new Intl.NumberFormat("vi-VN", { 
-                  style: "currency", 
-                  currency: "VND" 
-                }).format(discountAmount)}
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      </Box>
+      {selectedCombos.length > 0 && (
+        <div className="mb-4">
+          <h4 className="text-white font-semibold mb-2">Combo</h4>
+          <div className="space-y-1">
+            {selectedCombos.map((combo, index) => (
+              <div key={index} className="flex justify-between text-sm">
+                <span className="text-gray-300">{combo.name} x {combo.quantity}</span>
+                <span className="text-white">{(combo.price * combo.quantity).toLocaleString()} VNĐ</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* Total */}
-      <Box 
-        sx={{ 
-          p: 3, 
-          bgcolor: '#dc2626', 
-          borderRadius: 2,
-          textAlign: 'center',
-          boxShadow: '0 0 20px rgba(220, 38, 38, 0.3)'
-        }}
-      >
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            color: 'white', 
-            fontWeight: 'bold', 
-            mb: 1 
-          }}
-        >
-          Tổng cộng
-        </Typography>
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            color: 'white', 
-            fontWeight: 'bold' 
-          }}
-        >
-          {new Intl.NumberFormat("vi-VN", { 
-            style: "currency", 
-            currency: "VND" 
-          }).format(finalTotal)}
-        </Typography>
-      </Box>
-    </Card>
+      {voucher && (
+        <div className="mb-4">
+          <h4 className="text-white font-semibold mb-2">Voucher</h4>
+          <p className="text-gray-300 text-sm">{voucher.name}</p>
+        </div>
+      )}
+
+      <div className="border-t border-gray-700 pt-4">
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Ghế ngồi:</span>
+            <span className="text-white">{seatTotal.toLocaleString()} VNĐ</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Combo:</span>
+            <span className="text-white">{comboTotal.toLocaleString()} VNĐ</span>
+          </div>
+          {discountAmount > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-green-400">Giảm giá:</span>
+              <span className="text-green-400">-{discountAmount.toLocaleString()} VNĐ</span>
+            </div>
+          )}
+          <div className="border-t border-gray-600 pt-2">
+            <div className="flex justify-between">
+              <span className="text-white font-bold">Tổng cộng:</span>
+              <span className="text-white font-bold text-lg">{finalTotal.toLocaleString()} VNĐ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

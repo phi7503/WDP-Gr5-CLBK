@@ -1,0 +1,23 @@
+[
+      {
+        "name": "Phòng chiếu 1",
+        "branch": "branch_001",
+        "capacity": 150,
+        "type": "standard",
+        "createdAt": "2024-01-01T08:00:00.000Z"
+      },
+      {
+        "name": "Phòng chiếu 2", 
+        "branch": "branch_001",
+        "capacity": 200,
+        "type": "imax",
+        "createdAt": "2024-01-01T08:00:00.000Z"
+      },
+      {
+        "name": "Phòng chiếu 3",
+        "branch": "branch_002", 
+        "capacity": 120,
+        "type": "standard",
+        "createdAt": "2024-01-01T08:00:00.000Z"
+      }
+    ]

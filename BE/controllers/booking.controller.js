@@ -476,10 +476,51 @@ const getAllBookingsForEmployee = asyncHandler(async (req, res) => {
   const bookings = await Booking.find({})
     .populate({
       path: 'showtime',
-      populate: { path: 'movie', select: 'title' }
+      populate: [
+        { path: 'movie', select: 'title poster' },
+        { path: 'theater', select: 'name' },
+        { path: 'branch', select: 'name location' }
+      ]
     })
     .populate('user', 'name email')
+    .populate('employeeId', 'name email')
     .sort({ createdAt: -1 });
+  res.json({ success: true, bookings });
+});
+
+// Get bookings by employee ID
+const getBookingsByEmployeeId = asyncHandler(async (req, res) => {
+  const { employeeId } = req.params;
+  
+  if (!employeeId) {
+    res.status(400);
+    throw new Error("Missing employeeId parameter");
+  }
+
+  // Check if user is authorized (employee can only see their own bookings, admin can see all)
+  if (req.user.role !== 'admin' && req.user._id.toString() !== employeeId) {
+    res.status(403);
+    throw new Error("Not authorized to view these bookings");
+  }
+
+  const bookings = await Booking.find({
+    $or: [
+      { employeeId: employeeId },
+      { user: employeeId }
+    ]
+  })
+    .populate({
+      path: "showtime",
+      populate: [
+        { path: "movie", select: "title poster" },
+        { path: "theater", select: "name" },
+        { path: "branch", select: "name location" }
+      ]
+    })
+    .populate('user', 'name email')
+    .populate('employeeId', 'name email')
+    .sort({ createdAt: -1 });
+
   res.json({ success: true, bookings });
 });
 
@@ -516,9 +557,9 @@ export {
   getMyBookings,
   getBookingById,
   updatePaymentStatus,
-  cancelBooking,
   verifyTicket,
   checkInTicket,
   getAllBookingsForEmployee,
+  getBookingsByEmployeeId,
   getBookingsByUserId,
 };

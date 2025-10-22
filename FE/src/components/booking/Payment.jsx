@@ -1,6 +1,4 @@
 import React from 'react';
-import { Box, Typography, Button, Card, CardContent } from '@mui/material';
-import { Payment } from '@mui/icons-material';
 
 const Payment = ({ 
   paymentMethod, 
@@ -14,221 +12,76 @@ const Payment = ({
   finalTotal 
 }) => {
   return (
-    <Box 
-      sx={{ 
-        bgcolor: '#1a1a1a', 
-        border: '1px solid #dc2626', 
-        borderRadius: 2, 
-        p: 3,
-        minHeight: '500px'
-      }}
-    >
-      {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Payment sx={{ color: '#dc2626', mr: 1, fontSize: 28 }} />
-        <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold' }}>
+    <div className="bg-gray-900 border border-red-600 rounded-lg p-6 min-h-[500px]">
+      <div className="flex items-center mb-6">
+        <div className="w-7 h-7 bg-red-600 rounded mr-3 flex items-center justify-center">
+          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-white">
           Thanh toán
-        </Typography>
-      </Box>
+        </h2>
+      </div>
       
-      <Typography variant="body2" sx={{ color: '#9ca3af', mb: 3 }}>
+      <p className="text-gray-400 mb-6">
         Chọn phương thức thanh toán
-      </Typography>
+      </p>
 
-      {/* Price Details */}
-      <Box 
-        sx={{ 
-          mb: 3, 
-          p: 2, 
-          bgcolor: '#2a2a2a', 
-          borderRadius: 2, 
-          border: '1px solid #dc2626' 
-        }}
-      >
-        <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
-          Chi tiết giá
-        </Typography>
+      <div className="space-y-4">
+        <div className="flex items-center space-x-4">
+          <input
+            type="radio"
+            id="cash"
+            name="payment"
+            value="cash"
+            checked={paymentMethod === 'cash'}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="text-red-600"
+          />
+          <label htmlFor="cash" className="text-white">Tiền mặt</label>
+        </div>
         
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#9ca3af' }}>
-              Ghế đã chọn: {selectedSeats.map(s => s.row + s.number).join(", ") || "-"}
-            </Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#9ca3af' }}>Tiền ghế:</Typography>
-            <Typography sx={{ color: 'white' }}>
-              {new Intl.NumberFormat("vi-VN", { 
-                style: "currency", 
-                currency: "VND" 
-              }).format(seatTotal)}
-            </Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography sx={{ color: '#9ca3af' }}>Tiền combo:</Typography>
-            <Typography sx={{ color: 'white' }}>
-              {new Intl.NumberFormat("vi-VN", { 
-                style: "currency", 
-                currency: "VND" 
-              }).format(comboTotal)}
-            </Typography>
-          </Box>
-          
-          {voucher && (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography sx={{ color: '#9ca3af' }}>
-                Giảm giá voucher ({voucher.code}):
-              </Typography>
-              <Typography sx={{ color: '#10b981' }}>
-                -{new Intl.NumberFormat("vi-VN", { 
-                  style: "currency", 
-                  currency: "VND" 
-                }).format(discountAmount)}
-              </Typography>
-            </Box>
+        <div className="flex items-center space-x-4">
+          <input
+            type="radio"
+            id="qr"
+            name="payment"
+            value="qr"
+            checked={paymentMethod === 'qr'}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+            className="text-red-600"
+          />
+          <label htmlFor="qr" className="text-white">Chuyển khoản QR</label>
+        </div>
+      </div>
+
+      <div className="mt-8 p-4 bg-gray-800 rounded-lg">
+        <h3 className="text-lg font-bold text-white mb-4">Tổng thanh toán</h3>
+        <div className="space-y-2">
+          <div className="flex justify-between text-gray-300">
+            <span>Ghế ngồi:</span>
+            <span>{seatTotal.toLocaleString()} VNĐ</span>
+          </div>
+          <div className="flex justify-between text-gray-300">
+            <span>Combo:</span>
+            <span>{comboTotal.toLocaleString()} VNĐ</span>
+          </div>
+          {discountAmount > 0 && (
+            <div className="flex justify-between text-green-400">
+              <span>Giảm giá:</span>
+              <span>-{discountAmount.toLocaleString()} VNĐ</span>
+            </div>
           )}
-          
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between',
-              pt: 2,
-              mt: 2,
-              borderTop: '1px solid #dc2626'
-            }}
-          >
-            <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.2rem' }}>
-              Tổng cộng:
-            </Typography>
-            <Typography 
-              sx={{ 
-                color: '#dc2626', 
-                fontWeight: 'bold', 
-                fontSize: '1.2rem' 
-              }}
-            >
-              {new Intl.NumberFormat("vi-VN", { 
-                style: "currency", 
-                currency: "VND" 
-              }).format(finalTotal)}
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* Payment Methods */}
-      <Box>
-        <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
-          Phương thức thanh toán
-        </Typography>
-        
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {/* Cash Payment */}
-          <Card
-            onClick={() => setPaymentMethod('cash')}
-            sx={{
-              bgcolor: paymentMethod === 'cash' ? '#2a2a2a' : '#1a1a1a',
-              border: paymentMethod === 'cash' ? '2px solid #dc2626' : '1px solid #dc2626',
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                borderColor: '#ef4444',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 20px rgba(220, 38, 38, 0.3)'
-              }
-            }}
-          >
-            <CardContent sx={{ p: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box 
-                  sx={{ 
-                    width: 40, 
-                    height: 40, 
-                    bgcolor: paymentMethod === 'cash' ? '#dc2626' : '#2a2a2a',
-                    borderRadius: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mr: 2
-                  }}
-                >
-                  <Payment sx={{ color: 'white', fontSize: 20 }} />
-                </Box>
-                <Box>
-                  <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-                    Tiền mặt
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-                    Thanh toán trực tiếp
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-
-          {/* QR Payment */}
-          <Card
-            onClick={() => setPaymentMethod('qr')}
-            sx={{
-              bgcolor: paymentMethod === 'qr' ? '#2a2a2a' : '#1a1a1a',
-              border: paymentMethod === 'qr' ? '2px solid #dc2626' : '1px solid #dc2626',
-              borderRadius: 2,
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                borderColor: '#ef4444',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 20px rgba(220, 38, 38, 0.3)'
-              }
-            }}
-          >
-            <CardContent sx={{ p: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box 
-                  sx={{ 
-                    width: 40, 
-                    height: 40, 
-                    bgcolor: paymentMethod === 'qr' ? '#dc2626' : '#2a2a2a',
-                    borderRadius: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mr: 2,
-                    position: 'relative'
-                  }}
-                >
-                  {/* QR Code Icon */}
-                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0.5 }}>
-                    {Array.from({ length: 9 }).map((_, i) => (
-                      <Box 
-                        key={i}
-                        sx={{ 
-                          width: 3, 
-                          height: 3, 
-                          bgcolor: 'white',
-                          borderRadius: 0.5
-                        }} 
-                      />
-                    ))}
-                  </Box>
-                </Box>
-                <Box>
-                  <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-                    Quét mã QR
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#9ca3af' }}>
-                    Chuyển khoản ngân hàng
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
-      </Box>
-    </Box>
+          <div className="border-t border-gray-600 pt-2">
+            <div className="flex justify-between text-white font-bold text-lg">
+              <span>Tổng cộng:</span>
+              <span>{finalTotal.toLocaleString()} VNĐ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

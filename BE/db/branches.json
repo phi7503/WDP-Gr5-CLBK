@@ -1,0 +1,16 @@
+[
+    {
+      "name": "Rạp CGV Vincom Center Bà Triệu",
+      "address": "191 P. Bà Triệu, Lê Đại Hành, Hai Bà Trưng, Hà Nội",
+      "phone": "024 6257 5555",
+      "manager": "user_001",
+      "createdAt": "2025-01-01T08:00:00.000Z"
+    },
+    {
+      "name": "Rạp CGV Vincom Nguyễn Chí Thanh",
+      "address": "54A P. Nguyễn Chí Thanh, Láng Thượng, Đống Đa, Hà Nội",
+      "phone": "024 3835 3333",
+      "manager": "user_002",
+      "createdAt": "2025-01-01T08:00:00.000Z"
+    }
+  ]

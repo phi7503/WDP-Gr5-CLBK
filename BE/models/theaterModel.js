@@ -1,24 +1,29 @@
 import mongoose from "mongoose";
 
-const theaterSchema = new mongoose.Schema({
+const theaterSchema = mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
-        trim: true,
+      type: String,
+      required: true,
+    },
+    capacity: {
+      type: Number,
+      required: true,
     },
     branch: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Branch',
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
+      required: true,
     },
-    seatLayout: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "SeatLayout",
-        default: null,
+    isActive: {
+      type: Boolean,
+      default: true,
     },
-}, {
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
 const Theater = mongoose.model("Theater", theaterSchema);
 

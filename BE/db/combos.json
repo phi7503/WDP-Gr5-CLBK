@@ -1,0 +1,56 @@
+[
+    {
+      "name": "Combo CGV Single",
+      "description": "1 bắp ngô lớn + 1 nước ngọt",
+      "price": 80000,
+      "image": "/uploads/combos/combo1.jpg",
+      "status": "active",
+      "branchId": "branch_001",
+      "createdAt": "2025-10-20T10:00:00.000Z"
+    },
+    {
+      "name": "Combo CGV Family",
+      "description": "2 bắp ngô + 2 nước ngọt + 1 snack",
+      "price": 150000,
+      "image": "/uploads/combos/combo2.jpg",
+      "status": "active",
+      "branchId": "branch_001",
+      "createdAt": "2025-10-20T10:00:00.000Z"
+    },
+    {
+      "name": "Combo CGV Sweet",
+      "description": "1 bắp ngô (vị caramel) + 1 nước ngọt + 1 bánh",
+      "price": 120000,
+      "image": "/uploads/combos/combo3.jpg",
+      "status": "active",
+      "branchId": "branch_001",
+      "createdAt": "2025-10-20T10:00:00.000Z"
+    },
+    {
+      "name": "Combo Rạp 2 Single",
+      "description": "1 bắp ngô + 1 nước (size L)",
+      "price": 85000,
+      "image": "/uploads/combos/combo4.jpg",
+      "status": "active",
+      "branchId": "branch_002",
+      "createdAt": "2025-10-20T10:00:00.000Z"
+    },
+    {
+      "name": "Combo Rạp 2 Double",
+      "description": "2 bắp ngô + 2 nước ngọt (size L)",
+      "price": 160000,
+      "image": "/uploads/combos/combo5.jpg",
+      "status": "active",
+      "branchId": "branch_002",
+      "createdAt": "2025-10-20T10:00:00.000Z"
+    },
+    {
+      "name": "Combo Rạp 2 Snack",
+      "description": "1 khoai tây chiên + 1 nước ngọt",
+      "price": 75000,
+      "image": "/uploads/combos/combo6.jpg",
+      "status": "active",
+      "branchId": "branch_002",
+      "createdAt": "2025-10-20T10:00:00.000Z"
+    }
+  ]

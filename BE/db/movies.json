@@ -1,0 +1,24 @@
+[
+      {
+        "title": "Avatar: The Way of Water",
+        "description": "Jake Sully và gia đình của anh ấy khám phá những vùng biển của Pandora.",
+        "duration": 192,
+        "genre": ["Action", "Adventure", "Sci-Fi"],
+        "rating": "PG-13",
+        "poster": "/uploads/posters/avatar2.jpg",
+        "trailer": "https://youtube.com/watch?v=example1",
+        "status": "showing",
+        "createdAt": "2024-01-10T08:00:00.000Z"
+      },
+      {
+        "title": "Black Panther: Wakanda Forever",
+        "description": "Sau cái chết của Vua T'Challa, Wakanda phải đối mặt với những thách thức mới.",
+        "duration": 161,
+        "genre": ["Action", "Adventure", "Drama"],
+        "rating": "PG-13", 
+        "poster": "/uploads/posters/blackpanther2.jpg",
+        "trailer": "https://youtube.com/watch?v=example2",
+        "status": "showing",
+        "createdAt": "2024-01-11T08:00:00.000Z"
+      }
+    ]

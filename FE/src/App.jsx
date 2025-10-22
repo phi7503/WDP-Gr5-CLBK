@@ -4,6 +4,9 @@ import AuthLayout from "./components/AuthLayout";
 import { Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import EmployeeBookTicket from "./components/pages/EmployeeBookTicket";
+import EmployeeDashboardPage from "./components/pages/EmployeeDashoboardPage";
+import EmployeeBookingsPage from "./components/pages/EmployeeBookingsPage";
 
 export default function App() {
   return (
@@ -15,10 +18,12 @@ export default function App() {
       <AuthLayout><Register></Register></AuthLayout></div>}> </Route>
         <Route path="/" element={<div className="">
       <Header/></div>}> </Route>
-      
-       
-       
-      Hello world
+        <Route path="/employee/dashboard" element={<div className="">
+      <Header/><EmployeeDashboardPage/></div>}> </Route>
+        <Route path="/employee/book-ticket" element={<div className="">
+      <Header/><EmployeeBookTicket/></div>}> </Route>
+        <Route path="/employee/bookings" element={<div className="">
+      <Header/><EmployeeBookingsPage/></div>}> </Route>
       </Routes>
     </div>
   );

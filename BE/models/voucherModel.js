@@ -7,6 +7,10 @@ const voucherSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -36,10 +40,6 @@ const voucherSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
     applicableMovies: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -52,6 +52,10 @@ const voucherSchema = mongoose.Schema(
         ref: "Branch",
       },
     ],
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

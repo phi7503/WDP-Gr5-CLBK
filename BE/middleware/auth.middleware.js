@@ -1,51 +1,78 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/userModel.js");
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
 
-const protectRoute = async (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
-    const accessToken = req.cookies?.accessToken;
-
-    if (!accessToken) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized - No access token provided" });
+    // Tạm thời tắt auth để test - tạo user mặc định
+    if (process.env.NODE_ENV === 'development') {
+      // Tạo user mặc định cho testing
+      req.user = {
+        _id: '507f1f77bcf86cd799439011', // ObjectId mặc định
+        name: 'Test Employee',
+        email: 'employee@cinema.com',
+        role: 'employee'
+      };
+      return next();
     }
-    let decoded;
-    try {
-      decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-      const user = await User.findById(decoded.userId).select("-password");
 
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
-      }
+    let token;
 
-      req.user = user;
-      next();
-    } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        return res
-          .status(401)
-          .json({ message: "Unauthorized - Access token expired" });
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      try {
+        token = req.headers.authorization.split(" ")[1];
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        req.user = await User.findById(decoded.id).select("-password");
+
+        next();
+      } catch (error) {
+        console.error(error);
+        res.status(401);
+        throw new Error("Not authorized, token failed");
       }
-      throw error;
+    }
+
+    if (!token) {
+      res.status(401);
+      throw new Error("Not authorized, no token");
     }
   } catch (error) {
-    console.log("Error in protectRoute middleware", error.message);
-    return res
-      .status(401)
-      .json({ message: "Unauthorized - Invalid access token" });
+    console.error(error);
+    res.status(401);
+    throw new Error("Not authorized, token failed");
   }
 };
 
-const sellerRoute = (req, res, next) => {
-  if (req.user && req.user.role === "seller") {
+const admin = (req, res, next) => {
+  // Tạm thời tắt admin check để test
+  if (process.env.NODE_ENV === 'development') {
+    return next();
+  }
+  
+  if (req.user && req.user.role === "admin") {
     next();
   } else {
-    return res.status(403).json({ message: "Access denied - Seller only" });
+    res.status(401);
+    throw new Error("Not authorized as an admin");
   }
 };
 
-module.exports = {
-  protectRoute,
-  sellerRoute,
+const employee = (req, res, next) => {
+  // Tạm thời tắt employee check để test
+  if (process.env.NODE_ENV === 'development') {
+    return next();
+  }
+  
+  if (req.user && (req.user.role === "admin" || req.user.role === "employee")) {
+    next();
+  } else {
+    res.status(401);
+    throw new Error("Not authorized as an employee");
+  }
 };
+
+export { protect, admin, employee };

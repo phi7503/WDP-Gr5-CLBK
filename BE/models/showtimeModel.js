@@ -7,14 +7,14 @@ const showtimeSchema = mongoose.Schema(
       ref: "Movie",
       required: true,
     },
-    branch: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Branch",
-      required: true,
-    },
     theater: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Theater",
+      required: true,
+    },
+    branch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
       required: true,
     },
     startTime: {
@@ -26,31 +26,12 @@ const showtimeSchema = mongoose.Schema(
       required: true,
     },
     price: {
-      standard: {
-        type: Number,
-        required: true,
-      },
-      vip: {
-        type: Number,
-        default: 0,
-      },
-      couple: {
-        type: Number,
-        default: 0,
-      },
+      type: Number,
+      required: true,
     },
-    status: {
-      type: String,
-      enum: ["active", "completed", "cancelled"],
-      default: "active",
-    },
-    isLastShow: {
+    isActive: {
       type: Boolean,
-      default: false,
-    },
-    isFirstShow: {
-      type: Boolean,
-      default: false,
+      default: true,
     },
   },
   {
