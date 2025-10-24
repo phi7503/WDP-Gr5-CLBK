@@ -165,6 +165,9 @@ export const seatStatusAPI = {
     method: 'POST',
     body: JSON.stringify(seatData),
   }),
+  
+  // Get seat statuses by showtime
+  getSeatStatusByShowtime: (showtimeId) => apiCall(`/seat-status/${showtimeId}`),
 };
 
 // Branch API calls

@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
-const User = require('../models/userModel');
-const bcrypt = require('bcryptjs');
-
-mongoose.connect('mongodb://localhost:27017/cinema_booking');
+import mongoose from 'mongoose';
+import User from '../models/userModel.js';
+import bcrypt from 'bcryptjs';
 
 async function createTestUsers() {
   try {
+    await mongoose.connect('mongodb://127.0.0.1:27017/OCBS');
+    console.log('✅ Connected to MongoDB');
     console.log('=== CREATING TEST USERS FOR SOCKET.IO TESTING ===\n');
     
     // Delete existing test users
@@ -20,7 +20,7 @@ async function createTestUsers() {
       email: 'test1@example.com',
       password: '123456',
       phone: '0123456789',
-      role: 'user'
+      role: 'customer'
     });
     
     // Create User 2  
@@ -29,7 +29,7 @@ async function createTestUsers() {
       email: 'test2@example.com', 
       password: '123456',
       phone: '0987654321',
-      role: 'user'
+      role: 'customer'
     });
     
     // Save users (password will be hashed by pre-save hook)

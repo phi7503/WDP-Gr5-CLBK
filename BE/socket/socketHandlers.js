@@ -9,31 +9,41 @@ export const initializeSocketHandlers = (io) => {
   // Authentication middleware for socket
   io.use(async (socket, next) => {
     try {
+      console.log('🔐 Socket authentication attempt:', socket.handshake.auth);
       const token = socket.handshake.auth.token;
       if (!token) {
+        console.log('❌ No token provided');
         return next(new Error("No token provided"));
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('🔑 Token received:', token.substring(0, 50) + '...');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key_here_123456');
+      console.log('✅ Token decoded:', decoded);
+      
       const user = await User.findById(decoded.id).select("-password");
+      console.log('👤 User found:', user?.name);
 
       if (!user) {
+        console.log('❌ User not found');
         return next(new Error("User not found"));
       }
 
       socket.userId = user._id.toString();
       socket.user = user;
+      console.log('✅ Socket authenticated for user:', user.name);
       next();
     } catch (error) {
+      console.log('❌ Socket authentication failed:', error.message);
       next(new Error("Authentication failed"));
     }
   });
 
   io.on("connection", (socket) => {
-    console.log(`🔌 User ${socket.user.name} connected: ${socket.id}`);
+    console.log(`🔌 User ${socket.user.name} (${socket.userId}) connected: ${socket.id}`);
 
     // Join showtime room
     socket.on("join-showtime", (showtimeId) => {
+      console.log(`🚪 User ${socket.user.name} joining showtime room: showtime-${showtimeId}`);
       socket.join(`showtime-${showtimeId}`);
       socket.currentShowtime = showtimeId;
 
@@ -76,8 +86,9 @@ export const initializeSocketHandlers = (io) => {
 
     // Handle seat selection (temporary hold)
     socket.on("select-seats", async (data) => {
+      console.log(`🎯 Received select-seats event from ${socket.userId}:`, data);
       const { showtimeId, seatIds } = data;
-      console.log(`📍 Người dùng ${socket.userId} đang chọn ghế:`, data);
+      console.log(`📍 User ${socket.userId} (${socket.user.name}) selecting seats:`, data);
       try {
         // Khóa từng ghế nguyên tử
         const updatedSeats = [];
@@ -93,7 +104,7 @@ export const initializeSocketHandlers = (io) => {
                 status: "selecting",
                 reservedBy: socket.userId,
                 reservedAt: new Date(),
-                reservationExpires: new Date(Date.now() + 30 * 1000),
+                reservationExpires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
               },
             },
             { new: true }
@@ -124,6 +135,7 @@ export const initializeSocketHandlers = (io) => {
         }
 
         // Thông báo việc chọn ghế
+        console.log(`📢 Broadcasting seat selection to showtime-${showtimeId}`);
         socket.to(`showtime-${showtimeId}`).emit("seats-being-selected", {
           seatIds,
           userId: socket.userId,
@@ -131,12 +143,13 @@ export const initializeSocketHandlers = (io) => {
           timestamp: new Date(),
         });
 
+        console.log(`✅ Sending success to user ${socket.userId}`);
         socket.emit("seat-selection-success", {
           seatIds,
-          expiresAt: new Date(Date.now() + 30 * 1000),
+          expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
         });
 
-        // Tự động giải phóng sau 30 giây
+        // Tự động giải phóng sau 15 phút
         setTimeout(async () => {
           try {
             const result = await SeatStatus.updateMany(
@@ -166,7 +179,7 @@ export const initializeSocketHandlers = (io) => {
           } catch (error) {
             console.error("Lỗi khi tự động giải phóng ghế:", error);
           }
-        }, 30000);
+        }, 15 * 60 * 1000); // 15 minutes
       } catch (error) {
         console.error("Lỗi khi chọn ghế:", error);
         socket.emit("seat-selection-failed", {

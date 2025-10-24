@@ -8,6 +8,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
+import { initializeSocketHandlers } from "./socket/socketHandlers.js";
 
 // Load env
 dotenv.config();
@@ -91,6 +92,9 @@ app.use("/api/admin", adminDashboardRoutes);
 
 // Make io available globally
 global.io = io;
+
+// Initialize socket handlers
+initializeSocketHandlers(io);
 
 // Start server
 const PORT = process.env.PORT || 5000;

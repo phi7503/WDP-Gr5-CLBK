@@ -21,7 +21,9 @@ const AuthPage = () => {
       const response = await authAPI.login(values);
       
       if (response.token) {
-        login(response.user, response.token);
+        // Extract user data from response (excluding token)
+        const { token, ...userData } = response;
+        login(userData, token);
         message.success('Đăng nhập thành công!');
         navigate('/');
       }

@@ -27,6 +27,10 @@ const seatStatusSchema = mongoose.Schema(
     reservationExpires: {
       type: Date,
     },
+    reservedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     price: {
       type: Number,
       required: true,

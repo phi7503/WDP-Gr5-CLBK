@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const User = require('../models/userModel');
+import mongoose from 'mongoose';
+import User from '../models/userModel.js';
 
 mongoose.connect('mongodb://localhost:27017/cinema_booking');
 

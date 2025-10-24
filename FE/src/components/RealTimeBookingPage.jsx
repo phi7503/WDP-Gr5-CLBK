@@ -8,6 +8,7 @@ import Footer from './Footer';
 import PaymentModal from './PaymentModal';
 import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import '../booking-animations.css';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -90,6 +91,7 @@ const RealTimeBookingPage = () => {
       setSocketConnected(true);
       
       // Join showtime room
+      console.log('🚪 Joining showtime room:', showtimeId);
       socketRef.current.emit('join-showtime', showtimeId);
     });
 
@@ -290,9 +292,32 @@ const RealTimeBookingPage = () => {
     
     // Toggle seat selection
     if (selectedSeats.includes(seatId)) {
-      setSelectedSeats(selectedSeats.filter(id => id !== seatId));
+      // Remove seat from selection
+      const newSelectedSeats = selectedSeats.filter(id => id !== seatId);
+      setSelectedSeats(newSelectedSeats);
+      
+      // Release seat via socket
+      if (socketRef.current && socketConnected) {
+        socketRef.current.emit('release-seats', {
+          showtimeId,
+          seatIds: [seatId]
+        });
+      }
     } else {
-      setSelectedSeats([...selectedSeats, seatId]);
+      // Add seat to selection
+      const newSelectedSeats = [...selectedSeats, seatId];
+      setSelectedSeats(newSelectedSeats);
+      
+      // Lock only the newly selected seat via socket
+      if (socketRef.current && socketConnected) {
+        console.log('🔒 Emitting select-seats for:', seatId);
+        socketRef.current.emit('select-seats', {
+          showtimeId,
+          seatIds: [seatId] // Only emit the newly selected seat
+        });
+      } else {
+        console.log('❌ Socket not connected or not available');
+      }
     }
   };
 
@@ -528,24 +553,51 @@ const RealTimeBookingPage = () => {
               <Col>
                 {paymentCountdown && isInPaymentMode && (
                   <Alert
-                    message={`Payment expires in ${Math.floor(paymentCountdown / 60)}:${(paymentCountdown % 60).toString().padStart(2, '0')}`}
+                    message={
+                      <div 
+                        className={`timer-${paymentCountdown <= 60 ? 'critical' : paymentCountdown <= 300 ? 'warning' : 'normal'}`}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold' }}
+                      >
+                        <ClockCircleOutlined style={{ fontSize: '18px', color: '#ff4d4f' }} />
+                        <span style={{ color: '#ff4d4f' }}>
+                          ⏰ Payment expires in: {Math.floor(paymentCountdown / 60)}:{(paymentCountdown % 60).toString().padStart(2, '0')}
+                        </span>
+                      </div>
+                    }
+                    description="Complete your payment to secure these seats"
                     type="error"
-                    showIcon
-                    icon={<ClockCircleOutlined />}
+                    showIcon={false}
                     style={{ 
-                      background: 'linear-gradient(135deg, #fff2f0 0%, #ffccc7 100%)', 
-                      border: '1px solid #ff4d4f',
-                      animation: 'paymentPulse 1s ease-in-out infinite alternate'
+                      background: '#2a1a1a', 
+                      border: '2px solid #ff4d4f',
+                      borderRadius: '12px',
+                      marginBottom: '16px',
+                      animation: paymentCountdown <= 60 ? 'paymentPulse 0.5s ease-in-out infinite alternate' : 'paymentPulse 1s ease-in-out infinite alternate'
                     }}
                   />
                 )}
                 {reservationTimer && !isInPaymentMode && (
                   <Alert
-                    message={`Seat selection expires in ${reservationTimer} seconds`}
+                    message={
+                      <div 
+                        className={`timer-${reservationTimer <= 30 ? 'critical' : reservationTimer <= 120 ? 'warning' : 'normal'}`}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold' }}
+                      >
+                        <ClockCircleOutlined style={{ fontSize: '18px', color: '#faad14' }} />
+                        <span style={{ color: '#faad14' }}>
+                          ⏰ Seat selection expires in: {Math.floor(reservationTimer / 60)}:{(reservationTimer % 60).toString().padStart(2, '0')}
+                        </span>
+                      </div>
+                    }
+                    description="Complete your booking to secure these seats"
                     type="warning"
-                    showIcon
-                    icon={<ClockCircleOutlined />}
-                    style={{ background: '#fff7e6', border: '1px solid #ffd591' }}
+                    showIcon={false}
+                    style={{ 
+                      background: '#2a1a1a', 
+                      border: '2px solid #faad14',
+                      borderRadius: '12px',
+                      marginBottom: '16px'
+                    }}
                   />
                 )}
               </Col>
