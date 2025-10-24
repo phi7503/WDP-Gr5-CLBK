@@ -12,6 +12,8 @@ import bookingRoutes from "./routes/booking.route.js";
 import userRoutes from "./routes/user.route.js";
 import movieRoutes from "./routes/movie.route.js";
 import showtimeRoutes from "./routes/showtime.route.js";
+import comboRoutes from "./routes/combo.route.js";
+import voucherRoutes from "./routes/voucher.route.js";
 
 // Load env
 dotenv.config();
@@ -68,6 +70,8 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/showtimes", showtimeRoutes);
+app.use("/api/combos", comboRoutes);
+app.use("/api/vouchers", voucherRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

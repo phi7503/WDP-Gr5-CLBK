@@ -1,12 +1,36 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import api from '../services/api';
 
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 const SeatSelection = ({ showtimeId, onSeatSelectionChange, maxSeats = 8 }) => {
   const [selected, setSelected] = useState([]);
+  const [seats, setSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fake layout: 8 rows x 12 columns
-  const layout = useMemo(() => {
+  // Load seats from API
+  useEffect(() => {
+    const loadSeats = async () => {
+      if (!showtimeId) return;
+      
+      try {
+        setLoading(true);
+        // Since /showtimes/:id/seats route was removed, use fake data
+        setSeats(generateFakeSeats());
+      } catch (error) {
+        console.error('Error loading seats:', error);
+        // Fallback to fake data
+        setSeats(generateFakeSeats());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSeats();
+  }, [showtimeId]);
+
+  // Generate fake seats as fallback
+  const generateFakeSeats = () => {
     const rows = 8;
     const cols = 12;
     const seats = [];
@@ -24,7 +48,9 @@ const SeatSelection = ({ showtimeId, onSeatSelectionChange, maxSeats = 8 }) => {
       }
     }
     return seats;
-  }, []);
+  };
+
+  const layout = useMemo(() => seats, [seats]);
 
   useEffect(() => {
     onSeatSelectionChange?.(selected);
@@ -40,6 +66,17 @@ const SeatSelection = ({ showtimeId, onSeatSelectionChange, maxSeats = 8 }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="bg-gray-900 border border-red-600 rounded-lg p-6 min-h-[500px] flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mb-4"></div>
+          <p className="text-gray-400">Đang tải ghế...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-900 border border-red-600 rounded-lg p-6 min-h-[500px]">
       <div className="flex items-center mb-6">
@@ -54,9 +91,9 @@ const SeatSelection = ({ showtimeId, onSeatSelectionChange, maxSeats = 8 }) => {
       </div>
 
       <div className="mb-4 flex items-center gap-4 text-sm">
-        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-gray-700 border border-gray-600" /> Trống</div>
-        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-red-600" /> Đang chọn</div>
-        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-yellow-700" /> VIP</div>
+        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-gray-700 border border-gray-600" /> <span className="text-white">Trống</span></div>
+        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-red-600" /> <span className="text-white">Đang chọn</span></div>
+        <div className="flex items-center gap-2"><span className="inline-block w-4 h-4 rounded bg-yellow-700" /> <span className="text-white">VIP</span></div>
       </div>
 
       <div className="overflow-x-auto">

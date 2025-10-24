@@ -7,6 +7,8 @@ import Register from "./components/Register";
 import EmployeeBookTicket from "./components/pages/EmployeeBookTicket";
 import EmployeeDashboardPage from "./components/pages/EmployeeDashoboardPage";
 import EmployeeBookingsPage from "./components/pages/EmployeeBookingsPage";
+import CustomerBookingHistory from "./components/pages/CustomerBookingHistory";
+import CustomerTicketDetails from "./components/pages/CustomerTicketDetails";
 
 export default function App() {
   return (
@@ -24,6 +26,10 @@ export default function App() {
       <Header/><EmployeeBookTicket/></div>}> </Route>
         <Route path="/employee/bookings" element={<div className="">
       <Header/><EmployeeBookingsPage/></div>}> </Route>
+        <Route path="/customer/booking-history" element={<div className="">
+      <Header/><CustomerBookingHistory/></div>}> </Route>
+        <Route path="/customer/ticket-details/:id" element={<div className="">
+      <Header/><CustomerTicketDetails/></div>}> </Route>
       </Routes>
     </div>
   );

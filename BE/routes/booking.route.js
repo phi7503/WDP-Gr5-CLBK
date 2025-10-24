@@ -4,30 +4,24 @@ import {
   getMyBookings,
   getBookingById,
   updatePaymentStatus,
+  cancelBooking,
   verifyTicket,
   checkInTicket,
   getAllBookingsForEmployee,
-  getBookingsByEmployeeId,
   getBookingsByUserId,
 } from "../controllers/booking.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// Public routes
+router.post("/", protect, createBooking);
+router.get("/my-bookings", protect, getMyBookings);
+router.get("/employee-all", protect, getAllBookingsForEmployee);
+router.get("/user/:userId", protect, getBookingsByUserId);
+router.get("/:id", protect, getBookingById);
+router.put("/:id/payment", protect, updatePaymentStatus);
+router.put("/:id/cancel", protect, cancelBooking);
 router.post("/verify-ticket", verifyTicket);
 router.post("/check-in", checkInTicket);
-
-// Protected routes
-router.use(protect); // Apply auth middleware to all routes below
-
-// Booking CRUD
-router.post("/", createBooking);
-router.get("/my-bookings", getMyBookings);
-router.get("/employee-all", getAllBookingsForEmployee);
-router.get("/employee/:employeeId", getBookingsByEmployeeId);
-router.get("/user/:userId", getBookingsByUserId);
-router.get("/:id", getBookingById);
-router.put("/:id/payment", updatePaymentStatus);
 
 export default router;

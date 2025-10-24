@@ -11,11 +11,6 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    // Tạm thời tắt token check để test
-    if (process.env.NODE_ENV === 'development') {
-      return config;
-    }
-    
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

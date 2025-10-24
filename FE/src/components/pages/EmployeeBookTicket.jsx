@@ -18,6 +18,7 @@ const steps = [
   "Chọn phim",
   "Chọn suất chiếu", 
   "Chọn ghế",
+  "Thông tin khách hàng",
   "Combo & Voucher",
   "Thanh toán",
   "Xác nhận"
@@ -56,6 +57,12 @@ const EmployeeBookTicket = () => {
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   // Ghế
   const [selectedSeats, setSelectedSeats] = useState([]);
+  // Thông tin khách hàng
+  const [customerInfo, setCustomerInfo] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
   // Combo
   const [selectedCombos, setSelectedCombos] = useState([]);
   // Voucher
@@ -199,7 +206,7 @@ const EmployeeBookTicket = () => {
 
   // Thêm vào useEffect để mở modal QR khi chọn phương thức 'qr'
   useEffect(() => {
-    if (paymentMethod === 'qr' && !bookingResult && activeStep === 4) {
+    if (paymentMethod === 'qr' && !bookingResult && activeStep === 5) {
       const randomText = generateRandomText(10);
       setPaymentCheckText(randomText);
       setQrCodeValue(generateQRCodeUrl(finalTotal, randomText));
@@ -221,6 +228,7 @@ const EmployeeBookTicket = () => {
         combos: selectedCombos.map(c => ({ combo: c._id, quantity: c.quantity })),
         voucherId: voucher?._id,
         employeeMode: true,
+        customerInfo: customerInfo,
       };
       const res = await bookingService.createBooking(bookingData);
       let booking = res.booking || res;
@@ -232,7 +240,7 @@ const EmployeeBookTicket = () => {
           setQrCodeValue(generateQRCodeUrl(finalTotal, randomText));
           setBookingResult(booking);
           setShowQRCode(true);
-          setActiveStep(4); // Giữ ở bước thanh toán
+          setActiveStep(5); // Giữ ở bước thanh toán
           setLoading(false);
           return;
         } else if (paymentMethod === 'cash') {
@@ -259,7 +267,7 @@ const EmployeeBookTicket = () => {
         } else {
           setBookingResult(booking);
         }
-        setActiveStep(5);
+        setActiveStep(6);
       } else {
         setError(res.message || "Đặt vé thất bại");
       }
@@ -276,7 +284,7 @@ const EmployeeBookTicket = () => {
           createdAt: new Date().toISOString(),
         };
         setBookingResult(localBooking);
-        setActiveStep(5);
+        setActiveStep(6);
       } else {
         setError(err.message || "Đặt vé thất bại");
       }
@@ -321,6 +329,7 @@ const EmployeeBookTicket = () => {
         combos: selectedCombos.map(c => ({ combo: c._id, quantity: c.quantity })),
         voucherId: voucher?._id,
         employeeMode: true,
+        customerInfo: customerInfo,
       };
       const res = await bookingService.createBooking(bookingData);
       let booking = res.booking || res;
@@ -335,7 +344,7 @@ const EmployeeBookTicket = () => {
       setBookingResult(updated.booking || updated);
       setShowQRCode(false);
       setPaymentMethod('cash'); // reset về mặc định để tránh lặp
-      setActiveStep(5);
+      setActiveStep(6);
     } catch (err) {
       setError("Đặt vé hoặc cập nhật trạng thái thanh toán thất bại.");
     } finally {
@@ -476,8 +485,75 @@ const EmployeeBookTicket = () => {
               </div>
             )}
             
-            {/* Bước 4: Combo & Voucher */}
+            {/* Bước 4: Thông tin khách hàng */}
             {activeStep === 3 && (
+              <div>
+                <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+                  <h3 className="text-xl font-bold text-white mb-6">Thông tin khách hàng</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-gray-300 text-sm font-medium mb-2">
+                        Họ và tên *
+                      </label>
+                      <input
+                        type="text"
+                        value={customerInfo.name}
+                        onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-600 focus:outline-none"
+                        placeholder="Nhập họ và tên khách hàng"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm font-medium mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={customerInfo.email}
+                        onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-600 focus:outline-none"
+                        placeholder="Nhập email khách hàng"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 text-sm font-medium mb-2">
+                        Số điện thoại
+                      </label>
+                      <input
+                        type="tel"
+                        value={customerInfo.phone}
+                        onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-red-600 focus:outline-none"
+                        placeholder="Nhập số điện thoại khách hàng"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-between">
+                  <button 
+                    onClick={() => setActiveStep(2)}
+                    className="px-6 py-2 border border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white transition-colors"
+                  >
+                    Quay lại
+                  </button>
+                  <button 
+                    disabled={!customerInfo.name.trim()}
+                    onClick={() => setActiveStep(4)}
+                    className={`px-6 py-2 rounded text-white transition-colors ${
+                      !customerInfo.name.trim() 
+                        ? 'bg-gray-600 cursor-not-allowed' 
+                        : 'bg-red-600 hover:bg-red-700'
+                    }`}
+                  >
+                    Tiếp tục
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Bước 5: Combo & Voucher */}
+            {activeStep === 4 && (
               <div>
                 <ComboVoucher 
                   selectedCombos={selectedCombos}
@@ -489,13 +565,13 @@ const EmployeeBookTicket = () => {
                 {voucherError && <p className="mt-4 text-red-500">{voucherError}</p>}
                 <div className="mt-6 flex justify-between">
                   <button 
-                    onClick={() => setActiveStep(2)}
+                    onClick={() => setActiveStep(3)}
                     className="px-6 py-2 border border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white transition-colors"
                   >
                     Quay lại
                   </button>
                   <button 
-                    onClick={() => setActiveStep(4)}
+                    onClick={() => setActiveStep(5)}
                     className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                   >
                     Tiếp tục
@@ -504,8 +580,8 @@ const EmployeeBookTicket = () => {
               </div>
             )}
             
-            {/* Bước 5: Thanh toán */}
-            {activeStep === 4 && (
+            {/* Bước 6: Thanh toán */}
+            {activeStep === 5 && (
               <div>
                 <Payment
                   paymentMethod={paymentMethod}
@@ -556,7 +632,7 @@ const EmployeeBookTicket = () => {
                 
                 <div className="mt-6 flex justify-between">
                   <button 
-                    onClick={() => setActiveStep(3)}
+                    onClick={() => setActiveStep(4)}
                     className="px-6 py-2 border border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white transition-colors"
                   >
                     Quay lại
@@ -577,8 +653,8 @@ const EmployeeBookTicket = () => {
               </div>
             )}
             
-            {/* Bước 6: Xác nhận */}
-            {activeStep === 5 && (
+            {/* Bước 7: Xác nhận */}
+            {activeStep === 6 && (
               bookingResult ? (
                 <Confirmation
                   bookingResult={bookingResult}
