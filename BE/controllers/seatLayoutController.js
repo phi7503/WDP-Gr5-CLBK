@@ -336,11 +336,46 @@ const getSeatAvailability = asyncHandler(async (req, res) => {
 
   console.log("💺 Found seats:", seats.length);
   
-  // Nếu không có seats nhưng theater có seat layout, tự động generate seats
-  if (seats.length === 0 && theater.seatLayout) {
-    console.log("🔄 No seats found but theater has layout. Auto-generating seats...");
+  // Nếu không có seats, tự động tạo seat layout và seats
+  if (seats.length === 0) {
+    console.log("🔄 No seats found. Auto-creating seat layout and seats...");
     
-    const seatLayout = await SeatLayout.findById(theater.seatLayout);
+    let seatLayout = null;
+    
+    // Nếu theater có seatLayout, sử dụng nó
+    if (theater.seatLayout) {
+      seatLayout = await SeatLayout.findById(theater.seatLayout);
+    }
+    
+    // Nếu không có seatLayout, tạo một cái mặc định
+    if (!seatLayout) {
+      console.log("📐 Creating default seat layout...");
+      
+      const defaultSeatLayout = new SeatLayout({
+        name: `Default Layout - ${theater.name}`,
+        description: 'Auto-generated default seat layout',
+        rows: 8,
+        seatsPerRow: 12,
+        rowLabels: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        vipRows: [],
+        coupleSeats: [],
+        aisleAfterColumns: [6],
+        disabledSeats: [],
+        screenPosition: { x: 0, y: 0, width: 100 },
+        theater: theater._id,
+        branch: showtime.branch
+      });
+      
+      await defaultSeatLayout.save();
+      
+      // Assign seatLayout to theater
+      theater.seatLayout = defaultSeatLayout._id;
+      await theater.save();
+      
+      seatLayout = defaultSeatLayout;
+      console.log("✅ Created default seat layout:", seatLayout._id);
+    }
+    
     if (seatLayout) {
       const seatsToCreate = [];
       const seatSpacing = 40;
@@ -434,11 +469,19 @@ const getSeatAvailability = asyncHandler(async (req, res) => {
   // Nếu chưa có seat statuses và có seats, tự động tạo
   if (seatStatuses.length === 0 && seats.length > 0) {
     console.log("🔄 Creating seat statuses for", seats.length, "seats");
+    
+    // Set giá mặc định nếu showtime không có price
+    const defaultPrices = {
+      standard: 50000, // 50k VND
+      vip: 75000,      // 75k VND  
+      couple: 100000   // 100k VND
+    };
+    
     const statusesToCreate = seats.map((seat) => ({
       showtime: showtimeId,
       seat: seat._id,
       status: "available",
-      price: getPriceForSeatType(seat.type, showtime.price),
+      price: getPriceForSeatType(seat.type, showtime.price || defaultPrices),
     }));
 
     await SeatStatus.insertMany(statusesToCreate);
@@ -465,7 +508,11 @@ const getSeatAvailability = asyncHandler(async (req, res) => {
   const seatsWithAvailability = seats.map((seat) => {
     const availability = seatAvailabilityMap[seat._id.toString()] || {
       status: "available",
-      price: getPriceForSeatType(seat.type, showtime.price),
+      price: getPriceForSeatType(seat.type, showtime.price || {
+        standard: 50000,
+        vip: 75000,
+        couple: 100000
+      }),
     };
 
     return {
@@ -475,7 +522,7 @@ const getSeatAvailability = asyncHandler(async (req, res) => {
   });
 
   console.log("🎯 Returning", seatsWithAvailability.length, "seats with availability");
-  res.json(seatsWithAvailability);
+  res.json({ seats: seatsWithAvailability });
 });
 
 const initializeSeatStatusesForShowtime = asyncHandler(async (req, res) => {

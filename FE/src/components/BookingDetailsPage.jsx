@@ -113,8 +113,10 @@ const BookingDetailsPage = () => {
                   <Col xs={24} sm={12}>
                     <Text strong style={{ color: '#fff' }}>Date & Time:</Text><br/>
                     <Text style={{ color: '#999' }}>
-                      {new Date(booking.showtime?.startTime).toLocaleDateString()} at{' '}
-                      {new Date(booking.showtime?.startTime).toLocaleTimeString()}
+                      {booking.showtime?.startTime ? 
+                        `${new Date(booking.showtime.startTime).toLocaleDateString()} at ${new Date(booking.showtime.startTime).toLocaleTimeString()}` :
+                        'N/A'
+                      }
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
@@ -186,7 +188,7 @@ const BookingDetailsPage = () => {
                           <Text style={{ color: '#999' }}>Quantity: {combo.quantity}</Text>
                         </div>
                         <Text style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
-                          {(combo.price * combo.quantity * 24000).toLocaleString('vi-VN')} VND
+                          {(combo.price * combo.quantity).toLocaleString('vi-VN')} VND
                         </Text>
                       </div>
                     ))}
@@ -210,7 +212,7 @@ const BookingDetailsPage = () => {
                   <Col xs={24} sm={12}>
                     <Text strong style={{ color: '#fff' }}>Total Amount:</Text><br/>
                     <Text style={{ color: '#ff4d4f', fontSize: '20px', fontWeight: 'bold' }}>
-                      {(booking.totalAmount * 24000).toLocaleString('vi-VN')} VND
+                      {booking.totalAmount?.toLocaleString('vi-VN')} VND
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
@@ -222,7 +224,7 @@ const BookingDetailsPage = () => {
                   <Col xs={24} sm={12}>
                     <Text strong style={{ color: '#fff' }}>Payment Status:</Text><br/>
                     <Text style={{ 
-                      color: booking.paymentStatus === 'paid' ? '#52c41a' : '#ff4d4f',
+                      color: booking.paymentStatus === 'completed' ? '#52c41a' : '#ff4d4f',
                       fontWeight: 'bold'
                     }}>
                       {booking.paymentStatus?.toUpperCase() || 'PENDING'}
@@ -232,7 +234,7 @@ const BookingDetailsPage = () => {
                     <Col xs={24} sm={12}>
                       <Text strong style={{ color: '#fff' }}>Discount Applied:</Text><br/>
                       <Text style={{ color: '#52c41a', fontWeight: 'bold' }}>
-                        -{(booking.discountAmount * 24000).toLocaleString('vi-VN')} VND
+                        -{booking.discountAmount?.toLocaleString('vi-VN')} VND
                       </Text>
                     </Col>
                   )}

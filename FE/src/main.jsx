@@ -23,6 +23,8 @@ const BranchListPage = lazy(() => import("./components/BranchListPage"));
 const ComboPage = lazy(() => import("./components/ComboPage"));
 const VoucherPage = lazy(() => import("./components/VoucherPage"));
 const BookingDetailsPage = lazy(() => import("./components/BookingDetailsPage"));
+const AuthPage = lazy(() => import("./components/AuthPage"));
+const BookingHistoryPage = lazy(() => import("./components/BookingHistoryPage"));
 
 // 🎬 Cinema Loading Component (Fallback khi lazy load)
 const CinemaPageLoader = () => (
@@ -205,10 +207,12 @@ ReactDOM.createRoot(document.getElementById("app")).render(
           <Route path="/combos" element={<ComboPage />} />
           <Route path="/vouchers" element={<VoucherPage />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
-            <Route path="/booking/:showtimeId" element={<BookingPageModern />} />
+          <Route path="/booking/:showtimeId" element={<RealTimeBookingPage />} />
           <Route path="/realtime-booking/:showtimeId" element={<RealTimeBookingPage />} />
           <Route path="/socket-test" element={<SocketTestPage />} />
           <Route path="/booking-details/:bookingId" element={<BookingDetailsPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/bookings" element={<BookingHistoryPage />} />
         </Routes>
         </Suspense>
       </Router>

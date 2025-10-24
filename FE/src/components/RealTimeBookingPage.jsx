@@ -138,6 +138,22 @@ const RealTimeBookingPage = () => {
       message.error(data.message);
     });
 
+    socketRef.current.on('seat-reservation-success', (data) => {
+      console.log('✅ Seat reservation successful:', data);
+      startReservationTimer(data.expiresAt, true);
+      message.success(`Seats reserved! You have ${Math.floor((new Date(data.expiresAt) - new Date()) / 60)} minutes to complete payment.`);
+    });
+
+    socketRef.current.on('seat-reservation-failed', (data) => {
+      console.log('❌ Seat reservation failed:', data);
+      message.error(data.message);
+    });
+
+    socketRef.current.on('seats-reserved', (data) => {
+      console.log('🔒 Seats reserved:', data);
+      updateSeatStatuses(data.seatIds, 'reserved', data.userId);
+    });
+
     socketRef.current.on('payment-initiated', (data) => {
       console.log('💳 Payment initiated:', data);
       startReservationTimer(data.expiresAt, true);
@@ -280,19 +296,6 @@ const RealTimeBookingPage = () => {
     }
   };
 
-  const handleSelectSeats = () => {
-    if (selectedSeats.length === 0) {
-      message.warning('Please select at least one seat');
-      return;
-    }
-    
-    if (socketRef.current && socketConnected) {
-      socketRef.current.emit('select-seats', {
-        showtimeId,
-        seatIds: selectedSeats
-      });
-    }
-  };
 
   const handleProceedToPayment = () => {
     if (selectedSeats.length === 0) {
@@ -301,12 +304,13 @@ const RealTimeBookingPage = () => {
     }
     
     if (socketRef.current && socketConnected) {
-      socketRef.current.emit('initiate-payment', {
+      socketRef.current.emit('reserve-seats', {
         showtimeId,
         seatIds: selectedSeats
       });
     }
     
+    setIsInPaymentMode(true);
     setBookingModalVisible(true);
   };
 
@@ -328,6 +332,12 @@ const RealTimeBookingPage = () => {
       const response = await bookingAPI.createBooking(bookingData);
       
       if (response.success) {
+        // Update seat statuses to "booked" immediately
+        updateSeatStatuses(selectedSeats, 'booked', user._id);
+        
+        // Clear selected seats
+        setSelectedSeats([]);
+        
         // Notify socket about payment completion
         if (socketRef.current && socketConnected) {
           socketRef.current.emit('complete-payment', {
@@ -338,6 +348,25 @@ const RealTimeBookingPage = () => {
             }
           });
         }
+        
+        // Auto redirect to booking details
+        message.success('Booking created successfully! Redirecting...');
+        
+        // Refresh seat data to show updated status
+        setTimeout(async () => {
+          try {
+            const seatResponse = await seatAPI.getSeatAvailability(showtimeId);
+            if (seatResponse && seatResponse.seats) {
+              setSeats(seatResponse.seats);
+            }
+          } catch (error) {
+            console.error('Error refreshing seat data:', error);
+          }
+        }, 1000);
+        
+        setTimeout(() => {
+          navigate(`/booking-details/${response.booking._id}`);
+        }, 2000);
       }
     } catch (error) {
       console.error('Error creating booking:', error);
@@ -409,12 +438,12 @@ const RealTimeBookingPage = () => {
     selectedSeats.forEach(seatId => {
       const seat = seats.find(s => s._id === seatId);
       if (seat) {
-        total += (seat.price || 0) * 24000; // Convert USD to VND
+        total += seat.price || 0; // Price already in VND
       }
     });
     
     selectedCombos.forEach(combo => {
-      total += combo.price * combo.quantity * 24000; // Convert USD to VND
+      total += combo.price * combo.quantity; // Price already in VND
     });
     
     if (appliedVoucher) {
@@ -737,40 +766,22 @@ const RealTimeBookingPage = () => {
                 {/* Action Buttons */}
                 <div style={{ textAlign: 'center' }}>
                   {!isInPaymentMode ? (
-                    <Space size="large" direction="vertical" style={{ width: '100%' }}>
-                      <Button 
-                        type="default"
-                        size="large"
-                        onClick={handleSelectSeats}
-                        disabled={selectedSeats.length === 0 || !socketConnected}
-                        style={{ 
-                          height: '48px', 
-                          padding: '0 32px',
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          width: '100%'
-                        }}
-                      >
-                        🔒 Hold Seats (30s)
-                      </Button>
-                      
-                      <Button 
-                        type="primary" 
-                        size="large"
-                        className="primary-button"
-                        onClick={handleProceedToPayment}
-                        disabled={selectedSeats.length === 0 || !socketConnected}
-                        style={{ 
-                          height: '48px', 
-                          padding: '0 32px',
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          width: '100%'
-                        }}
-                      >
-                        💳 Proceed to Payment (7 min)
-                      </Button>
-                    </Space>
+                    <Button 
+                      type="primary" 
+                      size="large"
+                      className="primary-button"
+                      onClick={handleProceedToPayment}
+                      disabled={selectedSeats.length === 0 || !socketConnected}
+                      style={{ 
+                        height: '48px', 
+                        padding: '0 32px',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        width: '100%'
+                      }}
+                    >
+                      💳 Proceed to Payment (15 min)
+                    </Button>
                   ) : (
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ 
@@ -811,48 +822,160 @@ const RealTimeBookingPage = () => {
 
             {/* Active Users & Summary */}
             <Col xs={24} lg={6}>
-              <Card
-                style={{ 
-                  background: '#1a1a1a',
-                  border: '1px solid #333',
-                  borderRadius: '12px',
-                  height: 'fit-content'
-                }}
-              >
-                <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
-                  👥 Active Users
-                </Title>
-                
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  {activeUsers.map(user => (
-                    <div key={user.userId} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '8px 12px',
-                      background: '#2a2a2a',
-                      borderRadius: '8px',
-                      border: '1px solid #444'
-                    }}>
-                      <UserOutlined style={{ color: '#1890ff' }} />
-                      <div>
-                        <div style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
-                          {user.userName}
-                        </div>
-                        <div style={{ color: '#999', fontSize: '12px' }}>
-                          {new Date(user.timestamp).toLocaleTimeString()}
+              <Space direction="vertical" style={{ width: '100%' }} size="large">
+                {/* Active Users */}
+                <Card
+                  style={{ 
+                    background: '#1a1a1a',
+                    border: '1px solid #333',
+                    borderRadius: '12px',
+                    height: 'fit-content'
+                  }}
+                >
+                  <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
+                    👥 Active Users
+                  </Title>
+                  
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    {activeUsers.map(user => (
+                      <div key={user.userId} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '8px 12px',
+                        background: '#2a2a2a',
+                        borderRadius: '8px',
+                        border: '1px solid #444'
+                      }}>
+                        <UserOutlined style={{ color: '#1890ff' }} />
+                        <div>
+                          <div style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                            {user.userName}
+                          </div>
+                          <div style={{ color: '#999', fontSize: '12px' }}>
+                            {new Date(user.timestamp).toLocaleTimeString()}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                  
-                  {activeUsers.length === 0 && (
-                    <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
-                      No other users currently viewing
-                    </div>
-                  )}
-                </Space>
-              </Card>
+                    ))}
+                    
+                    {activeUsers.length === 0 && (
+                      <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
+                        No other users currently viewing
+                      </div>
+                    )}
+                  </Space>
+                </Card>
+
+                {/* Pricing Summary */}
+                {(selectedSeats.length > 0 || selectedCombos.length > 0) && (
+                  <Card
+                    style={{ 
+                      background: '#1a1a1a',
+                      border: '1px solid #333',
+                      borderRadius: '12px',
+                      height: 'fit-content'
+                    }}
+                  >
+                    <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
+                      💰 Order Summary
+                    </Title>
+                    
+                    <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                      {/* Selected Seats */}
+                      {selectedSeats.length > 0 && (
+                        <div>
+                          <Text style={{ color: '#999', fontSize: '14px' }}>Selected Seats:</Text>
+                          {selectedSeats.map(seatId => {
+                            const seat = seats.find(s => s._id === seatId);
+                            return (
+                              <div key={seatId} style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between',
+                                marginTop: '4px'
+                              }}>
+                                <Text style={{ color: '#fff', fontSize: '14px' }}>
+                                  {seat?.row}{seat?.number} - {seat?.seatType || 'Standard'}
+                                </Text>
+                                <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                                  {seat?.price?.toLocaleString('vi-VN')} VND
+                                </Text>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Selected Combos */}
+                      {selectedCombos.length > 0 && (
+                        <div>
+                          <Text style={{ color: '#999', fontSize: '14px' }}>Selected Combos:</Text>
+                          {selectedCombos.map((combo, index) => (
+                            <div key={index} style={{ 
+                              display: 'flex', 
+                              justifyContent: 'space-between',
+                              marginTop: '4px'
+                            }}>
+                              <Text style={{ color: '#fff', fontSize: '14px' }}>
+                                {combo.name} x{combo.quantity}
+                              </Text>
+                              <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                                {(combo.price * combo.quantity).toLocaleString('vi-VN')} VND
+                              </Text>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Voucher Discount */}
+                      {appliedVoucher && (
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between',
+                          padding: '8px 12px',
+                          background: '#2a2a2a',
+                          borderRadius: '6px',
+                          border: '1px solid #52c41a'
+                        }}>
+                          <Text style={{ color: '#52c41a', fontSize: '14px' }}>
+                            Voucher: {appliedVoucher.code}
+                          </Text>
+                          <Text style={{ color: '#52c41a', fontSize: '14px', fontWeight: 'bold' }}>
+                            -{appliedVoucher.discountType === 'percentage' 
+                              ? `${appliedVoucher.discountValue}%`
+                              : `${appliedVoucher.discountValue.toLocaleString('vi-VN')} VND`
+                            }
+                          </Text>
+                        </div>
+                      )}
+
+                      {/* Total */}
+                      <div style={{ 
+                        borderTop: '1px solid #333',
+                        paddingTop: '12px',
+                        marginTop: '12px'
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}>
+                          <Text style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>
+                            Total:
+                          </Text>
+                          <Text style={{ 
+                            color: '#ff4d4f', 
+                            fontSize: '18px', 
+                            fontWeight: 'bold' 
+                          }}>
+                            {calculateTotal().toLocaleString('vi-VN')} VND
+                          </Text>
+                        </div>
+                      </div>
+                    </Space>
+                  </Card>
+                )}
+              </Space>
             </Col>
           </Row>
         </div>

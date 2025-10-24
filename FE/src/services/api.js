@@ -241,7 +241,7 @@ export const bookingAPI = {
   }),
   
   // Get user bookings
-  getUserBookings: () => apiCall('/bookings/user'),
+  getUserBookings: () => apiCall('/bookings/my-bookings'),
   
   // Get booking by ID
   getBookingById: (id) => apiCall(`/bookings/${id}`),

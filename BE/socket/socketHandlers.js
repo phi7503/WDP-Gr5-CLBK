@@ -175,6 +175,91 @@ export const initializeSocketHandlers = (io) => {
       }
     });
 
+    // Handle seat reservation (10-minute hold for payment)
+    socket.on("reserve-seats", async (data) => {
+      const { showtimeId, seatIds } = data;
+      console.log(`🔒 User ${socket.userId} reserving seats for payment:`, seatIds);
+
+      try {
+        // Update seats to reserved status with 10-minute timeout
+        const result = await SeatStatus.updateMany(
+          {
+            showtime: showtimeId,
+            seat: { $in: seatIds },
+            status: "selecting",
+            reservedBy: socket.userId,
+          },
+          {
+            $set: {
+              status: "reserved",
+              reservedAt: new Date(),
+              reservationExpires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+            },
+          }
+        );
+
+        if (result.modifiedCount === 0) {
+          socket.emit("seat-reservation-failed", {
+            message: "Seats are no longer available for reservation",
+          });
+          return;
+        }
+
+        // Broadcast reservation
+        socket.to(`showtime-${showtimeId}`).emit("seats-reserved", {
+          seatIds,
+          userId: socket.userId,
+          userName: socket.user.name,
+          expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+          timestamp: new Date(),
+        });
+
+        socket.emit("seat-reservation-success", {
+          seatIds,
+          expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+        });
+
+        // Auto-release after 15 minutes if payment not completed
+        setTimeout(async () => {
+          try {
+            const expiredResult = await SeatStatus.updateMany(
+              {
+                showtime: showtimeId,
+                seat: { $in: seatIds },
+                status: "reserved",
+                reservedBy: socket.userId,
+                reservationExpires: { $lte: new Date() },
+              },
+              {
+                $set: {
+                  status: "available",
+                  reservedBy: null,
+                  reservedAt: null,
+                  reservationExpires: null,
+                },
+              }
+            );
+
+            if (expiredResult.modifiedCount > 0) {
+              io.to(`showtime-${showtimeId}`).emit("seats-released", {
+                seatIds,
+                userId: socket.userId,
+                reason: "reservation-timeout",
+                timestamp: new Date(),
+              });
+            }
+          } catch (error) {
+            console.error("Error handling reservation expiry:", error);
+          }
+        }, 15 * 60 * 1000);
+      } catch (error) {
+        console.error("Error reserving seats:", error);
+        socket.emit("seat-reservation-failed", {
+          message: "Failed to reserve seats",
+        });
+      }
+    });
+
     // Handle payment initiation (7-minute reservation)
     socket.on("initiate-payment", async (data) => {
       const { showtimeId, seatIds } = data;

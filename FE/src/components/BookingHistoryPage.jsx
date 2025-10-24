@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Button, Card, Row, Col, Space, Tag, Empty, message } from 'antd';
-import { EyeOutlined, DownloadOutlined, CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Layout, Typography, Button, Card, Row, Col, Space, Tag, Empty, message, Modal } from 'antd';
+import { EyeOutlined, DownloadOutlined, CalendarOutlined, ClockCircleOutlined, QrcodeOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -13,6 +13,8 @@ const { Title, Text } = Typography;
 const BookingHistoryPage = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [qrModalVisible, setQrModalVisible] = useState(false);
+  const [selectedQRCode, setSelectedQRCode] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,8 +24,17 @@ const BookingHistoryPage = () => {
   const loadBookings = async () => {
     try {
       setLoading(true);
-      const bookings = await bookingAPI.getUserBookings();
-      setBookings(bookings);
+      const response = await bookingAPI.getUserBookings();
+      
+      // Handle different response formats
+      const bookingsData = Array.isArray(response) ? response : (response.bookings || []);
+      
+      if (Array.isArray(bookingsData)) {
+        setBookings(bookingsData);
+      } else {
+        console.error('Invalid bookings data format:', bookingsData);
+        setBookings([]);
+      }
     } catch (error) {
       console.error('Error loading bookings:', error);
       message.error('Không thể tải lịch sử đặt vé');
@@ -73,8 +84,35 @@ const BookingHistoryPage = () => {
     });
   };
 
+  const handleViewQRCode = (booking) => {
+    if (booking.qrCode) {
+      setSelectedQRCode(booking.qrCode);
+      setQrModalVisible(true);
+      
+      // Force refresh QR image to bypass browser caching
+      setTimeout(() => {
+        setQrModalVisible(false);
+        setTimeout(() => {
+          setQrModalVisible(true);
+        }, 100);
+      }, 100);
+    } else {
+      message.warning('QR code không có sẵn cho booking này');
+    }
+  };
+
   const handleDownloadTicket = (booking) => {
-    message.success('Vé đã được tải xuống!');
+    if (booking.qrCode) {
+      const link = document.createElement('a');
+      link.href = booking.qrCode;
+      link.download = `ticket-${booking._id}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      message.success('Vé đã được tải xuống!');
+    } else {
+      message.warning('QR code không có sẵn để tải xuống');
+    }
   };
 
   return (
@@ -114,14 +152,14 @@ const BookingHistoryPage = () => {
                       border: '1px solid #333',
                       borderRadius: '12px'
                     }}
-                    bodyStyle={{ padding: '24px' }}
+                    styles={{ body: { padding: '24px' } }}
                   >
                     <Row gutter={[24, 24]} align="middle">
                       {/* Movie Poster */}
                       <Col xs={24} sm={6} md={4}>
                         <img
-                          src={booking.movie.poster}
-                          alt={booking.movie.title}
+                          src={booking.showtime?.movie?.poster || booking.movie?.poster}
+                          alt={booking.showtime?.movie?.title || booking.movie?.title}
                           style={{
                             width: '100%',
                             borderRadius: '8px',
@@ -136,29 +174,32 @@ const BookingHistoryPage = () => {
                           <Col xs={24} md={12}>
                             <Space direction="vertical" size="small">
                               <Title level={4} style={{ color: '#fff', margin: 0 }}>
-                                {booking.movie.title}
+                                {booking.showtime?.movie?.title || booking.movie?.title}
                               </Title>
                               
                               <Text style={{ color: '#999' }}>
-                                {booking.movie.genre.join(', ')}
+                                {Array.isArray(booking.showtime?.movie?.genre) 
+                                  ? booking.showtime.movie.genre.join(', ')
+                                  : booking.showtime?.movie?.genre || booking.movie?.genre
+                                }
                               </Text>
                               
                               <Space size="small">
                                 <CalendarOutlined style={{ color: '#999' }} />
                                 <Text style={{ color: '#fff' }}>
-                                  {dayjs(booking.showtime.startTime).format('DD/MM/YYYY')}
+                                  {dayjs(booking.showtime?.startTime).format('DD/MM/YYYY')}
                                 </Text>
                               </Space>
                               
                               <Space size="small">
                                 <ClockCircleOutlined style={{ color: '#999' }} />
                                 <Text style={{ color: '#fff' }}>
-                                  {dayjs(booking.showtime.startTime).format('HH:mm')} - {dayjs(booking.showtime.endTime).format('HH:mm')}
+                                  {dayjs(booking.showtime?.startTime).format('HH:mm')} - {dayjs(booking.showtime?.endTime).format('HH:mm')}
                                 </Text>
                               </Space>
                               
                               <Text style={{ color: '#999' }}>
-                                {booking.showtime.branch} - {booking.showtime.theater}
+                                {booking.showtime?.branch?.name || booking.showtime?.branch} - {booking.showtime?.theater?.name || booking.showtime?.theater}
                               </Text>
                             </Space>
                           </Col>
@@ -222,6 +263,18 @@ const BookingHistoryPage = () => {
                           </Button>
                           
                           <Button
+                            icon={<QrcodeOutlined />}
+                            style={{
+                              background: '#1890ff',
+                              border: '1px solid #1890ff',
+                              color: '#fff'
+                            }}
+                            onClick={() => handleViewQRCode(booking)}
+                          >
+                            QR Code
+                          </Button>
+                          
+                          <Button
                             type="primary"
                             icon={<DownloadOutlined />}
                             className="primary-button"
@@ -239,6 +292,38 @@ const BookingHistoryPage = () => {
           )}
         </div>
       </Content>
+      
+      {/* QR Code Modal */}
+      <Modal
+        title="QR Code Vé"
+        open={qrModalVisible}
+        onCancel={() => setQrModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setQrModalVisible(false)}>
+            Đóng
+          </Button>
+        ]}
+        centered
+        width={400}
+      >
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+          {selectedQRCode && (
+            <img
+              src={selectedQRCode}
+              alt="QR Code"
+              style={{
+                maxWidth: '100%',
+                height: 'auto',
+                border: '1px solid #ddd',
+                borderRadius: '8px'
+              }}
+            />
+          )}
+          <div style={{ marginTop: '16px', color: '#666' }}>
+            Quét mã QR để xem thông tin vé
+          </div>
+        </div>
+      </Modal>
       
       <Footer />
     </Layout>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Button, Input } from 'antd';
-import { SearchOutlined, UserOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Layout, Menu, Button, Input, Dropdown } from 'antd';
+import { SearchOutlined, UserOutlined, LogoutOutlined, BookOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../cinema-brand.css';
 
 const { Header: AntHeader } = Layout;
@@ -9,6 +10,36 @@ const { Search } = Input;
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const userMenuItems = [
+    {
+      key: 'profile',
+      label: 'Profile',
+      icon: <UserOutlined />,
+    },
+    {
+      key: 'bookings',
+      label: 'My Bookings',
+      icon: <BookOutlined />,
+      onClick: () => navigate('/bookings'),
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      label: 'Logout',
+      icon: <LogoutOutlined />,
+      onClick: handleLogout,
+    },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,13 +121,37 @@ const Header = () => {
           style={{ width: 200 }}
           prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
         />
-        <Button 
-          type="primary" 
-          className="cinema-primary-button"
-          icon={<UserOutlined />}
-        >
-          Log In
-        </Button>
+        {user ? (
+          <Dropdown
+            menu={{ items: userMenuItems }}
+            placement="bottomRight"
+            trigger={['click']}
+          >
+            <Button 
+              type="primary" 
+              className="cinema-primary-button"
+              icon={<UserOutlined />}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                background: 'var(--primary-red)',
+                borderColor: 'var(--primary-red)'
+              }}
+            >
+              {user.name}
+            </Button>
+          </Dropdown>
+        ) : (
+          <Button 
+            type="primary" 
+            className="cinema-primary-button"
+            icon={<UserOutlined />}
+            onClick={() => navigate('/auth')}
+          >
+            Log In
+          </Button>
+        )}
       </div>
     </AntHeader>
   );
