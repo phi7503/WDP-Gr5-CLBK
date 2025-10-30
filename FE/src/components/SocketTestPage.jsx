@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Typography, Button, Card, Space, message, Input, List, Badge, Alert } from 'antd';
 import { UserOutlined, SendOutlined, DisconnectOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import io from 'socket.io-client';
-import Header from './Header';
-import Footer from './Footer';
 import { useAuth } from '../contexts/AuthContext';
+import { BACKEND_URL } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -32,7 +31,7 @@ const SocketTestPage = () => {
   }, [token]);
 
   const initializeSocket = () => {
-    socketRef.current = io('http://localhost:9999', {
+    socketRef.current = io(BACKEND_URL, {
       auth: {
         token: token
       }

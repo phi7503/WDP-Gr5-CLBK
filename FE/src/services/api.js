@@ -2,7 +2,7 @@
 const API_BASE_URL = '/api';
 
 // Backend server URL for static files (images)
-export const BACKEND_URL = 'http://localhost:9999';
+export const BACKEND_URL = 'http://localhost:5000';
 
 // Helper to get full image URL
 export const getImageUrl = (path) => {

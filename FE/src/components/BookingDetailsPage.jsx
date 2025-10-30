@@ -24,7 +24,10 @@ const BookingDetailsPage = () => {
     try {
       setLoading(true);
       const response = await bookingAPI.getBookingById(bookingId);
-      if (response) {
+      if (response && response.booking) {
+        setBooking(response.booking);
+      } else if (response) {
+        // Handle case where response is booking directly
         setBooking(response);
       }
     } catch (error) {
@@ -39,8 +42,31 @@ const BookingDetailsPage = () => {
     window.print();
   };
 
-  const handleSendEmail = () => {
-    message.success('Confirmation email sent!');
+  const handleSendEmail = async () => {
+    if (!booking.qrCode) {
+      message.warning('QR code chưa có sẵn. Vui lòng đợi thanh toán hoàn tất.');
+      return;
+    }
+
+    try {
+      // Gọi API để gửi lại email QR code
+      const response = await fetch(`${window.location.origin}/api/bookings/${bookingId}/resend-email`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        message.success('Email đã được gửi thành công!');
+      } else {
+        message.error('Không thể gửi email. Vui lòng thử lại sau.');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      message.error('Không thể gửi email. Vui lòng thử lại sau.');
+    }
   };
 
   if (loading) {
@@ -257,14 +283,50 @@ const BookingDetailsPage = () => {
                   Your Ticket
                 </Title>
                 
-                <div style={{ marginBottom: '24px' }}>
-                  <QRCode 
-                    value={booking.qrCode || booking._id}
-                    size={200}
-                    color="#fff"
-                    bgColor="#1a1a1a"
-                  />
-                </div>
+                {booking.paymentStatus === 'completed' ? (
+                  <>
+                    {/* Hiển thị QR code từ backend (base64 image) nếu có */}
+                    {booking.qrCode ? (
+                      <div style={{ marginBottom: '24px' }}>
+                        <img 
+                          src={booking.qrCode} 
+                          alt="QR Code" 
+                          style={{ 
+                            width: '200px', 
+                            height: '200px',
+                            display: 'block',
+                            margin: '0 auto',
+                            background: '#fff',
+                            padding: '8px',
+                            borderRadius: '8px'
+                          }} 
+                        />
+                      </div>
+                    ) : (
+                      <div style={{ marginBottom: '24px' }}>
+                        <QRCode 
+                          value={`${window.location.origin}/booking-details/${booking._id}`}
+                          size={200}
+                          color="#000"
+                          bgColor="#fff"
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div style={{ marginBottom: '24px', padding: '40px', textAlign: 'center' }}>
+                    <Text style={{ color: '#999', fontSize: '16px' }}>
+                      QR code sẽ được tạo sau khi thanh toán thành công
+                    </Text>
+                    {booking.paymentStatus === 'pending' && (
+                      <div style={{ marginTop: '16px' }}>
+                        <Text style={{ color: '#faad14' }}>
+                          ⏳ Đang chờ thanh toán...
+                        </Text>
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 <Text style={{ color: '#999', display: 'block', marginBottom: '24px' }}>
                   Show this QR code at the theater entrance

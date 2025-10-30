@@ -351,11 +351,13 @@ const PaymentModal = ({
       onCancel={onCancel}
       width={800}
       style={{ top: 20 }}
-      bodyStyle={{ 
-        background: '#1a1a1a', 
-        padding: '0',
-        maxHeight: '80vh',
-        overflowY: 'auto'
+      styles={{
+        body: {
+          background: '#1a1a1a', 
+          padding: '0',
+          maxHeight: '80vh',
+          overflowY: 'auto'
+        }
       }}
       footer={[
         <Button 

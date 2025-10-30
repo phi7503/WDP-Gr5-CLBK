@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import Header from './Header';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
-import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI, payOSAPI } from '../services/api';
+import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI, payOSAPI, BACKEND_URL } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import '../booking-animations.css';
 
@@ -80,7 +80,7 @@ const RealTimeBookingPage = () => {
   }, [showtimeId]);
 
   const initializeSocket = () => {
-    socketRef.current = io('http://localhost:9999', {
+    socketRef.current = io(BACKEND_URL, {
       auth: {
         token: token
       }
