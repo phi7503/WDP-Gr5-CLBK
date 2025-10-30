@@ -71,6 +71,7 @@ import seatRoutes from "./routes/seatRoutes.js";
 import seatStatusRoutes from "./routes/seatStatusRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+import payosRoutes from "./routes/payOSRoutes.js";
 
 // Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -89,6 +90,7 @@ app.use("/api/seats", seatRoutes);
 app.use("/api/seat-status", seatStatusRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/admin", adminDashboardRoutes);
+app.use("/api/payos", payosRoutes);
 
 // Make io available globally
 global.io = io;
@@ -98,6 +100,7 @@ initializeSocketHandlers(io);
 
 // Start server
 const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 server.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running in ${NODE_ENV} mode on port ${PORT}`);
 });

@@ -132,7 +132,7 @@ const createBooking = asyncHandler(async (req, res) => {
     // 4. Tính tổng tiền cuối cùng
     const totalAmount = Math.max(seatTotal + comboTotal - discountAmount, 0);
 
-    // 5. Tạo booking
+    // 5. Tạo booking với trạng thái pending (chờ thanh toán)
     const booking = await Booking.create({
       user: userId,
       employeeId,
@@ -149,8 +149,8 @@ const createBooking = asyncHandler(async (req, res) => {
       combos: comboDetails,
       voucher: appliedVoucher,
       discountAmount,
-      paymentStatus: "completed",
-      bookingStatus: "confirmed",
+      paymentStatus: "pending", // Chờ thanh toán qua PayOS
+      bookingStatus: "pending", // Chờ thanh toán
     });
 
     if (!booking) {
@@ -158,28 +158,13 @@ const createBooking = asyncHandler(async (req, res) => {
       throw new Error("Failed to create booking record");
     }
 
-    // Tạo mã QR cho booking (chứa URL đến booking details page)
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const qrData = `${baseUrl}/booking-details/${booking._id}`;
-    const qrCodeBase64 = await QRCode.toDataURL(qrData, {
-      width: 300,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
-    });
-    booking.qrCode = qrCodeBase64;
-    await booking.save();
-
-    // Link the seat statuses to this new confirmed booking
+    // Link the seat statuses to this booking (vẫn giữ status "reserved" cho đến khi thanh toán thành công)
     await SeatStatus.updateMany(
         { _id: { $in: seatStatuses.map(s => s._id) } },
         { 
           $set: { 
             booking: booking._id,
-            status: "booked",
-            bookedAt: new Date()
+            status: "reserved", // Giữ reserved cho đến khi thanh toán thành công
           } 
         }
     );

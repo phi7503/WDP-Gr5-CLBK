@@ -5,7 +5,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
-import { movieAPI, showtimeAPI, getImageUrl } from '../services/api';
+import { movieAPI, showtimeAPI, getImageUrl, BACKEND_URL } from '../services/api';
 import '../cinema-brand.css';
 
 const { Content } = Layout;
@@ -203,7 +203,7 @@ const MovieDetail = () => {
                 cover={
                   <img
                     alt={movie?.title || 'Movie Poster'}
-                    src={movie?.poster ? `http://localhost:5000/${movie.poster}` : 'https://via.placeholder.com/400x600/333/fff?text=Movie+Poster'}
+                    src={movie?.poster ? `${BACKEND_URL}/${movie.poster}` : 'https://via.placeholder.com/400x600/333/fff?text=Movie+Poster'}
                     style={{
                       width: '100%',
                       height: '600px',

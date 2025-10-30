@@ -32,7 +32,7 @@ const SocketTestPage = () => {
   }, [token]);
 
   const initializeSocket = () => {
-    socketRef.current = io('http://localhost:5000', {
+    socketRef.current = io('http://localhost:9999', {
       auth: {
         token: token
       }

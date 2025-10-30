@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
-import { movieAPI, showtimeAPI, comboAPI, branchAPI } from '../services/api';
+import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
@@ -27,7 +27,7 @@ const HomePage = () => {
     {
       id: 1,
       title: "Vân Cờ Vây - The Match",
-      backdropImage: "http://localhost:5000/uploads/backdrops/van.jpg", // 🔴 THAY TÊN FILE: van.jpg → tên ảnh của bạn (.jpg/.png/.webp)
+      backdropImage: `${BACKEND_URL}/uploads/backdrops/van.jpg`, // 🔴 THAY TÊN FILE: van.jpg → tên ảnh của bạn (.jpg/.png/.webp)
       description: "Phim hành động, tội phạm lấy bối cảnh thập niên 1980-1990, xoay quanh ký ức cờ vây huyền thoại Cho Hun Hyeon và học trò Lee Chang Ho.",
       rating: 8.5,
       duration: 130,
@@ -649,7 +649,7 @@ const HomePage = () => {
                       overflow: 'hidden'
                     }}>
                       <img 
-                        src={trailer.poster ? `http://localhost:5000/${trailer.poster}` : 'https://via.placeholder.com/640x360/111/fff?text=Trailer'}
+                        src={trailer.poster ? `${BACKEND_URL}/${trailer.poster}` : 'https://via.placeholder.com/640x360/111/fff?text=Trailer'}
                         alt={trailer.title}
                         style={{ 
                           position: 'absolute',
@@ -775,7 +775,7 @@ const HomePage = () => {
                   }}>
                     <img
                       alt={combo.name}
-                      src={combo.image ? `http://localhost:5000/${combo.image}` : 'https://via.placeholder.com/400x300/111/fff?text=Combo'}
+                      src={combo.image ? `${BACKEND_URL}/${combo.image}` : 'https://via.placeholder.com/400x300/111/fff?text=Combo'}
                       style={{
                         width: '100%',
                         height: '240px',

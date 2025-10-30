@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FireFilled, PlayCircleOutlined, HeartOutlined } from '@ant-design/icons';
 import '../movie-card-animations.css';
 import '../cinema-brand.css';
+import { BACKEND_URL } from '../services/api';
 
 const { Text, Title } = Typography;
 
@@ -47,7 +48,7 @@ const MovieCard = ({ movie, trending = false, comingSoon = false }) => {
           
           <img
             alt={movie.title}
-            src={movie.poster ? `http://localhost:5000/${movie.poster}` : 'https://via.placeholder.com/300x450/111/fff?text=Movie+Poster'}
+            src={movie.poster ? `${BACKEND_URL}/${movie.poster}` : 'https://via.placeholder.com/300x450/111/fff?text=Movie+Poster'}
             style={{
               width: '100%',
               height: '100%',

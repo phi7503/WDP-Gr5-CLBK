@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import Header from './Header';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
-import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI } from '../services/api';
+import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI, payOSAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import '../booking-animations.css';
 
@@ -80,7 +80,7 @@ const RealTimeBookingPage = () => {
   }, [showtimeId]);
 
   const initializeSocket = () => {
-    socketRef.current = io('http://localhost:5000', {
+    socketRef.current = io('http://localhost:9999', {
       auth: {
         token: token
       }
@@ -341,11 +341,12 @@ const RealTimeBookingPage = () => {
 
   const handleCompletePayment = async () => {
     if (!customerInfo.name || !customerInfo.email) {
-      message.error('Please fill in customer information');
+      message.error('Vui lòng điền đầy đủ thông tin khách hàng');
       return;
     }
     
     try {
+      setLoading(true);
       const bookingData = {
         showtimeId: showtimeId,
         seatIds: selectedSeats,
@@ -354,48 +355,35 @@ const RealTimeBookingPage = () => {
         customerInfo: customerInfo
       };
       
+      // Tạo booking với trạng thái pending
       const response = await bookingAPI.createBooking(bookingData);
       
-      if (response.success) {
-        // Update seat statuses to "booked" immediately
-        updateSeatStatuses(selectedSeats, 'booked', user._id);
+      if (response.success && response.booking) {
+        const bookingId = response.booking._id;
         
-        // Clear selected seats
-        setSelectedSeats([]);
-        
-        // Notify socket about payment completion
-        if (socketRef.current && socketConnected) {
-          socketRef.current.emit('complete-payment', {
-            showtimeId,
-            seatIds: selectedSeats,
-            paymentData: {
-              bookingId: response.booking._id
-            }
-          });
-        }
-        
-        // Auto redirect to booking details
-        message.success('Booking created successfully! Redirecting...');
-        
-        // Refresh seat data to show updated status
-        setTimeout(async () => {
-          try {
-            const seatResponse = await seatAPI.getSeatAvailability(showtimeId);
-            if (seatResponse && seatResponse.seats) {
-              setSeats(seatResponse.seats);
-            }
-          } catch (error) {
-            console.error('Error refreshing seat data:', error);
+        // Tạo PayOS payment link
+        try {
+          const paymentResponse = await payOSAPI.createPaymentFromBooking(bookingId);
+          
+          if (paymentResponse.checkoutUrl) {
+            message.success('Đang chuyển đến trang thanh toán...');
+            setBookingModalVisible(false);
+            
+            // Redirect đến PayOS payment page
+            window.location.href = paymentResponse.checkoutUrl;
+          } else {
+            throw new Error('Không thể tạo link thanh toán');
           }
-        }, 1000);
-        
-        setTimeout(() => {
-          navigate(`/booking-details/${response.booking._id}`);
-        }, 2000);
+        } catch (paymentError) {
+          console.error('Error creating payment link:', paymentError);
+          message.error('Không thể tạo link thanh toán. Vui lòng thử lại.');
+        }
       }
     } catch (error) {
       console.error('Error creating booking:', error);
-      message.error('Failed to create booking');
+      message.error('Không thể tạo booking. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
     }
   };
 
