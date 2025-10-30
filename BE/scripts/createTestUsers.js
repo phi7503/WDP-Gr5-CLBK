@@ -20,7 +20,11 @@ async function createTestUsers() {
       email: 'test1@example.com',
       password: '123456',
       phone: '0123456789',
-      role: 'customer'
+      role: 'customer',
+      province: 'Hà Nội',
+      city: 'Hà Nội',
+      gender: 'male',
+      dob: new Date('1999-10-10'),
     });
     
     // Create User 2  
@@ -29,12 +33,30 @@ async function createTestUsers() {
       email: 'test2@example.com', 
       password: '123456',
       phone: '0987654321',
-      role: 'customer'
+      role: 'customer',
+      province: 'Hà Nội',
+      city: 'Hà Nội',
+      gender: 'female',
+      dob: new Date('2001-12-05'),
+    });
+    
+    // Create User 3
+    const user3 = new User({
+      name: 'Nguyễn Văn Mạnh',
+      email: 'manhgg22@gmail.com',
+      password: '123456',
+      phone: '0869287789',
+      role: 'customer',
+      province: 'Hà Nội',
+      city: 'Hà Nội',
+      gender: 'male',
+      dob: new Date('2000-01-01'),
     });
     
     // Save users (password will be hashed by pre-save hook)
     await user1.save();
     await user2.save();
+    await user3.save();
     
     console.log('✅ Created test users:');
     console.log('👤 User 1:');
@@ -46,6 +68,11 @@ async function createTestUsers() {
     console.log('   Email: test2@example.com');
     console.log('   Password: 123456');
     console.log('   Name: Trần Thị B');
+    console.log('');
+    console.log('👤 User 3:');
+    console.log('   Email: manhgg22@gmail.com');
+    console.log('   Password: 123456');
+    console.log('   Name: Nguyễn Văn Mạnh');
     console.log('');
     console.log('🎯 HOW TO TEST SOCKET.IO:');
     console.log('1. Open 2 browser tabs/windows');

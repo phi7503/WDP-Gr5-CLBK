@@ -419,6 +419,32 @@ const BookingDetailsPage = () => {
               </Card>
             </Col>
 
+            {/* User Info */}
+            <Card
+              style={{ 
+                background: '#1a1a1a',
+                border: '1px solid #333',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                marginTop: '24px'
+              }}
+            >
+              <Title level={3} style={{ color: '#fff', marginBottom: '16px' }}>Thông Tin Người Đặt Vé</Title>
+              <div style={{ color: '#fff' }}>
+                <div><Text strong>Họ tên:</Text> {(booking.customerInfo?.name ?? booking.user?.name) || 'N/A'}</div>
+                <div><Text strong>Email:</Text> {(booking.customerInfo?.email ?? booking.user?.email) || 'N/A'}</div>
+                {booking.customerInfo?.phone && (
+                  <div><Text strong>Điện thoại:</Text> {booking.customerInfo.phone}</div>
+                )}
+                {booking.paymentStatus === 'completed' && (
+                  <div style={{ color: '#52c41a', fontWeight: 'bold', marginTop: 10 }}>
+                    Mã QR đã được gửi qua email: {(booking.customerInfo?.email ?? booking.user?.email) || 'N/A'}<br/>
+                    (Vui lòng kiểm tra cả hộp thư Spam)
+                  </div>
+                )}
+              </div>
+            </Card>
+
             {/* QR Code & Actions */}
             <Col xs={24} lg={8}>
               <Card
