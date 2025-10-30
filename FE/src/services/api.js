@@ -253,6 +253,11 @@ export const bookingAPI = {
   cancelBooking: (id) => apiCall(`/bookings/${id}/cancel`, {
     method: 'PUT',
   }),
+  
+  // Resend email with QR code
+  resendEmailQRCode: (id) => apiCall(`/bookings/${id}/resend-email`, {
+    method: 'POST',
+  }),
 };
 
 // PayOS API calls
@@ -264,6 +269,23 @@ export const payOSAPI = {
   
   // Get payment status
   getPaymentStatus: (orderCode) => apiCall(`/payos/status/${orderCode}`),
+
+  // Check and update payment status from PayOS
+  checkAndUpdatePayment: (bookingId) => apiCall(`/payos/check-and-update/${bookingId}`, {
+    method: 'POST',
+  }),
+
+  // Update payment status from PayOS redirect URL (when cannot connect to PayOS API)
+  updatePaymentFromRedirect: (bookingId, params) => apiCall(`/payos/update-from-redirect/${bookingId}`, {
+    method: 'POST',
+    body: JSON.stringify(params),
+  }),
+
+  // Cancel payment and release seats
+  cancelPayment: (bookingId, status, orderCode) => apiCall(`/payos/cancel-booking/${bookingId}`, {
+    method: 'POST',
+    body: JSON.stringify({ status, orderCode }),
+  }),
 };
 
 // Combo API calls

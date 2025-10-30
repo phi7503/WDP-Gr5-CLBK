@@ -138,7 +138,7 @@ const SearchPage = () => {
                       </Text>
                       
                       <Text style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
-                        {showtime.price?.toLocaleString('vi-VN')} VND
+                        {(showtime.price?.standard || showtime.price || 50000).toLocaleString('vi-VN')} VND
                       </Text>
                     </Space>
                     

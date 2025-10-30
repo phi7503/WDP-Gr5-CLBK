@@ -143,7 +143,7 @@ const RealTimeBookingPage = () => {
     socketRef.current.on('seat-reservation-success', (data) => {
       console.log('✅ Seat reservation successful:', data);
       startReservationTimer(data.expiresAt, true);
-      message.success(`Seats reserved! You have ${Math.floor((new Date(data.expiresAt) - new Date()) / 60)} minutes to complete payment.`);
+      message.success(`Ghế đã được giữ chỗ! Bạn có ${Math.floor((new Date(data.expiresAt) - new Date()) / 60)} phút để hoàn tất thanh toán.`);
     });
 
     socketRef.current.on('seat-reservation-failed', (data) => {
@@ -159,12 +159,12 @@ const RealTimeBookingPage = () => {
     socketRef.current.on('payment-initiated', (data) => {
       console.log('💳 Payment initiated:', data);
       startReservationTimer(data.expiresAt, true);
-      message.success(`Payment initiated! You have ${Math.floor((new Date(data.expiresAt) - new Date()) / 60)} minutes to complete payment.`);
+      message.success(`Thanh toán đã được khởi tạo! Bạn có ${Math.floor((new Date(data.expiresAt) - new Date()) / 60)} phút để hoàn tất thanh toán.`);
     });
 
     socketRef.current.on('payment-completed', (data) => {
       console.log('✅ Payment completed:', data);
-      message.success('Booking completed successfully!');
+      message.success('Đặt vé đã hoàn tất thành công!');
       navigate(`/booking-details/${data.bookingId}`);
     });
 
@@ -175,7 +175,7 @@ const RealTimeBookingPage = () => {
 
     socketRef.current.on('reservation-expired', (data) => {
       console.log('⏰ Reservation expired:', data);
-      message.warning('Your reservation has expired. Please select seats again.');
+      message.warning('Giữ chỗ của bạn đã hết hạn. Vui lòng chọn ghế lại.');
       setSelectedSeats([]);
       setReservationTimer(null);
     });
@@ -211,7 +211,7 @@ const RealTimeBookingPage = () => {
           setPaymentCountdown(null);
           setPaymentExpiresAt(null);
           setIsInPaymentMode(false);
-          message.warning('Payment time expired! Please select seats again.');
+          message.warning('Thời gian thanh toán đã hết hạn! Vui lòng chọn ghế lại.');
           setSelectedSeats([]);
         } else {
           setReservationTimer(null);
@@ -250,7 +250,8 @@ const RealTimeBookingPage = () => {
           statusMap.set(status.seat._id, {
             status: status.status,
             userId: status.reservedBy,
-            timestamp: status.reservedAt
+            timestamp: status.reservedAt,
+            price: status.price // ✅ Lưu giá từ seatStatus
           });
         });
         setSeatStatuses(statusMap);
@@ -258,7 +259,7 @@ const RealTimeBookingPage = () => {
       
     } catch (error) {
       console.error('Error loading showtime data:', error);
-      message.error('Failed to load showtime data');
+      message.error('Không thể tải dữ liệu suất chiếu');
     } finally {
       setLoading(false);
     }
@@ -281,11 +282,11 @@ const RealTimeBookingPage = () => {
     // Check if seat is available
     if (seatStatus && seatStatus.status !== 'available') {
       if (seatStatus.status === 'selecting' && seatStatus.userId !== user._id) {
-        message.warning('This seat is being selected by another user');
+        message.warning('Ghế này đang được người dùng khác chọn');
       } else if (seatStatus.status === 'reserved') {
-        message.warning('This seat is reserved');
+        message.warning('Ghế này đã được giữ chỗ');
       } else if (seatStatus.status === 'booked') {
-        message.warning('This seat is already booked');
+        message.warning('Ghế này đã được đặt');
       }
       return;
     }
@@ -324,17 +325,12 @@ const RealTimeBookingPage = () => {
 
   const handleProceedToPayment = () => {
     if (selectedSeats.length === 0) {
-      message.warning('Please select at least one seat');
+      message.warning('Vui lòng chọn ít nhất một ghế');
       return;
     }
     
-    if (socketRef.current && socketConnected) {
-      socketRef.current.emit('reserve-seats', {
-        showtimeId,
-        seatIds: selectedSeats
-      });
-    }
-    
+    // ✅ Không reserve ngay khi mở modal - chỉ mở modal để chọn combos
+    // Reserve sẽ được gọi khi user click "Complete Payment" trong modal
     setIsInPaymentMode(true);
     setBookingModalVisible(true);
   };
@@ -343,6 +339,16 @@ const RealTimeBookingPage = () => {
     if (!customerInfo.name || !customerInfo.email) {
       message.error('Vui lòng điền đầy đủ thông tin khách hàng');
       return;
+    }
+    
+    // ✅ Reserve ghế TRƯỚC KHI tạo booking - chỉ khi user thực sự confirm payment
+    if (socketRef.current && socketConnected) {
+      socketRef.current.emit('reserve-seats', {
+        showtimeId,
+        seatIds: selectedSeats
+      });
+      // Đợi một chút để reservation được xử lý
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
     
     try {
@@ -450,13 +456,27 @@ const RealTimeBookingPage = () => {
     
     selectedSeats.forEach(seatId => {
       const seat = seats.find(s => s._id === seatId);
-      if (seat) {
-        total += seat.price || 0; // Price already in VND
+      const seatStatus = seatStatuses.get(seatId);
+      
+      // ✅ Lấy giá từ seatStatus trước, nếu không có thì từ seat, nếu không có thì từ showtime price
+      let seatPrice = 0;
+      if (seatStatus?.price) {
+        seatPrice = seatStatus.price;
+      } else if (seat?.price) {
+        seatPrice = seat.price;
+      } else if (showtime?.price?.standard) {
+        seatPrice = showtime.price.standard;
+      } else if (showtime?.price) {
+        seatPrice = typeof showtime.price === 'number' ? showtime.price : 50000;
+      } else {
+        seatPrice = 50000; // Default fallback
       }
+      
+      total += seatPrice;
     });
     
     selectedCombos.forEach(combo => {
-      total += combo.price * combo.quantity; // Price already in VND
+      total += combo.price * combo.quantity;
     });
     
     if (appliedVoucher) {
@@ -467,21 +487,21 @@ const RealTimeBookingPage = () => {
       }
     }
     
-    return total;
+    return Math.round(total);
   };
 
   const handleApplyVoucher = async () => {
     if (!voucherCode.trim()) {
-      message.warning('Please enter a voucher code');
+      message.warning('Vui lòng nhập mã voucher');
       return;
     }
     
     try {
       const voucher = await voucherAPI.getVoucherByCode(voucherCode);
       setAppliedVoucher(voucher);
-      message.success('Voucher applied successfully!');
+      message.success('Áp dụng voucher thành công!');
     } catch (error) {
-      message.error('Invalid voucher code');
+      message.error('Mã voucher không hợp lệ');
       setAppliedVoucher(null);
     }
   };
@@ -493,7 +513,7 @@ const RealTimeBookingPage = () => {
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
           <Spin size="large" />
           <div style={{ color: '#fff', fontSize: '18px', marginTop: '16px' }}>
-            Loading booking information...
+            Đang tải thông tin đặt vé...
           </div>
         </Content>
         <Footer />
@@ -507,10 +527,10 @@ const RealTimeBookingPage = () => {
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
           <div style={{ color: '#fff', fontSize: '18px' }}>
-            Showtime not found
+            Không tìm thấy suất chiếu
           </div>
           <Link to="/movies" style={{ color: '#ff4d4f', textDecoration: 'none', marginTop: '16px', display: 'inline-block' }}>
-            ← Back to Movies
+            ← Quay lại Danh sách Phim
           </Link>
         </Content>
         <Footer />
@@ -531,10 +551,10 @@ const RealTimeBookingPage = () => {
                 <Space>
                   <Badge 
                     status={socketConnected ? 'success' : 'error'} 
-                    text={socketConnected ? 'Connected' : 'Disconnected'}
+                    text={socketConnected ? 'Đã kết nối' : 'Mất kết nối'}
                   />
                   <Text style={{ color: '#999' }}>
-                    {activeUsers.length} user(s) currently viewing
+                    {activeUsers.length} người đang xem
                   </Text>
                 </Space>
               </Col>
@@ -548,11 +568,11 @@ const RealTimeBookingPage = () => {
                       >
                         <ClockCircleOutlined style={{ fontSize: '18px', color: '#ff4d4f' }} />
                         <span style={{ color: '#ff4d4f' }}>
-                          ⏰ Payment expires in: {Math.floor(paymentCountdown / 60)}:{(paymentCountdown % 60).toString().padStart(2, '0')}
+                          ⏰ Thanh toán hết hạn sau: {Math.floor(paymentCountdown / 60)}:{(paymentCountdown % 60).toString().padStart(2, '0')}
                         </span>
                       </div>
                     }
-                    description="Complete your payment to secure these seats"
+                    description="Hoàn tất thanh toán để giữ chỗ các ghế này"
                     type="error"
                     showIcon={false}
                     style={{ 
@@ -573,11 +593,11 @@ const RealTimeBookingPage = () => {
                       >
                         <ClockCircleOutlined style={{ fontSize: '18px', color: '#faad14' }} />
                         <span style={{ color: '#faad14' }}>
-                          ⏰ Seat selection expires in: {Math.floor(reservationTimer / 60)}:{(reservationTimer % 60).toString().padStart(2, '0')}
+                          ⏰ Lựa chọn ghế hết hạn sau: {Math.floor(reservationTimer / 60)}:{(reservationTimer % 60).toString().padStart(2, '0')}
                         </span>
                       </div>
                     }
-                    description="Complete your booking to secure these seats"
+                    description="Hoàn tất đặt vé để giữ chỗ các ghế này"
                     type="warning"
                     showIcon={false}
                     style={{ 
@@ -604,29 +624,29 @@ const RealTimeBookingPage = () => {
                 }}
               >
                 <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
-                  🎬 Showtime Details
+                  🎬 Chi Tiết Suất Chiếu
                 </Title>
                 
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
                   <div>
-                    <Text style={{ color: '#999', fontSize: '14px' }}>Movie</Text>
+                    <Text style={{ color: '#999', fontSize: '14px' }}>Phim</Text>
                     <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold', marginTop: '4px' }}>
                       {showtime.movie?.title}
                     </div>
                   </div>
                   
                   <div>
-                    <Text style={{ color: '#999', fontSize: '14px' }}>Date & Time</Text>
+                    <Text style={{ color: '#999', fontSize: '14px' }}>Ngày & Giờ</Text>
                     <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold', marginTop: '4px' }}>
-                      {new Date(showtime.startTime).toLocaleDateString()}
+                      {new Date(showtime.startTime).toLocaleDateString('vi-VN')}
                     </div>
                     <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>
-                      {new Date(showtime.startTime).toLocaleTimeString()}
+                      {new Date(showtime.startTime).toLocaleTimeString('vi-VN')}
                     </div>
                   </div>
                   
                   <div>
-                    <Text style={{ color: '#999', fontSize: '14px' }}>Theater</Text>
+                    <Text style={{ color: '#999', fontSize: '14px' }}>Rạp</Text>
                     <div style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold', marginTop: '4px' }}>
                       {showtime.theater?.name}
                     </div>
@@ -648,7 +668,7 @@ const RealTimeBookingPage = () => {
                 }}
               >
                 <Title level={4} style={{ color: '#fff', marginBottom: '32px', textAlign: 'center' }}>
-                  Select Your Seat
+                  Chọn Ghế Của Bạn
                 </Title>
                 
                 {/* Screen */}
@@ -666,7 +686,7 @@ const RealTimeBookingPage = () => {
                     boxShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
                   }} />
                   <Text style={{ color: '#ff4d4f', fontSize: '16px', fontWeight: 'bold' }}>
-                    🎭 SCREEN
+                    🎭 MÀN HÌNH
                   </Text>
                 </div>
                 
@@ -733,7 +753,7 @@ const RealTimeBookingPage = () => {
                     ))
                   ) : (
                     <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                      No seats available for this showtime
+                      Không có ghế nào cho suất chiếu này
                     </div>
                   )}
                 </div>
@@ -754,7 +774,7 @@ const RealTimeBookingPage = () => {
                       border: '1px solid #666',
                       borderRadius: '4px'
                     }} />
-                    <Text style={{ color: '#999', fontSize: '12px' }}>Available</Text>
+                    <Text style={{ color: '#999', fontSize: '12px' }}>Trống</Text>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -765,7 +785,7 @@ const RealTimeBookingPage = () => {
                       border: '1px solid #ff4d4f',
                       borderRadius: '4px'
                     }} />
-                    <Text style={{ color: '#999', fontSize: '12px' }}>Selected</Text>
+                    <Text style={{ color: '#999', fontSize: '12px' }}>Đã chọn</Text>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -776,7 +796,7 @@ const RealTimeBookingPage = () => {
                       border: '1px solid #1890ff',
                       borderRadius: '4px'
                     }} />
-                    <Text style={{ color: '#999', fontSize: '12px' }}>Selecting</Text>
+                    <Text style={{ color: '#999', fontSize: '12px' }}>Đang chọn</Text>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -787,7 +807,7 @@ const RealTimeBookingPage = () => {
                       border: '1px solid #faad14',
                       borderRadius: '4px'
                     }} />
-                    <Text style={{ color: '#999', fontSize: '12px' }}>Reserved</Text>
+                    <Text style={{ color: '#999', fontSize: '12px' }}>Đã giữ</Text>
                   </div>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -799,7 +819,7 @@ const RealTimeBookingPage = () => {
                       borderRadius: '4px',
                       opacity: 0.5
                     }} />
-                    <Text style={{ color: '#999', fontSize: '12px' }}>Booked</Text>
+                    <Text style={{ color: '#999', fontSize: '12px' }}>Đã đặt</Text>
                   </div>
                 </div>
                 
@@ -820,7 +840,7 @@ const RealTimeBookingPage = () => {
                         width: '100%'
                       }}
                     >
-                      💳 Proceed to Payment (15 min)
+                      💳 Tiến Hành Thanh Toán (15 phút)
                     </Button>
                   ) : (
                     <div style={{ textAlign: 'center' }}>
@@ -830,14 +850,14 @@ const RealTimeBookingPage = () => {
                         fontWeight: 'bold',
                         marginBottom: '16px'
                       }}>
-                        ⏰ Payment in Progress
+                        ⏰ Đang Thanh Toán
                       </div>
                       <div style={{ 
                         color: '#999', 
                         fontSize: '14px',
                         marginBottom: '16px'
                       }}>
-                        Complete your payment to secure these seats
+                        Hoàn tất thanh toán để giữ chỗ các ghế này
                       </div>
                       <Button 
                         type="primary" 
@@ -852,7 +872,7 @@ const RealTimeBookingPage = () => {
                           width: '100%'
                         }}
                       >
-                        💳 Complete Payment
+                        💳 Hoàn Tất Thanh Toán
                       </Button>
                     </div>
                   )}
@@ -873,7 +893,7 @@ const RealTimeBookingPage = () => {
                   }}
                 >
                   <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
-                    👥 Active Users
+                    👥 Người Dùng Đang Hoạt Động
                   </Title>
                   
                   <Space direction="vertical" style={{ width: '100%' }}>
@@ -901,69 +921,151 @@ const RealTimeBookingPage = () => {
                     
                     {activeUsers.length === 0 && (
                       <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
-                        No other users currently viewing
+                        Hiện không có người dùng nào khác đang xem
                       </div>
                     )}
                   </Space>
                 </Card>
 
                 {/* Pricing Summary */}
-                {(selectedSeats.length > 0 || selectedCombos.length > 0) && (
+                {selectedSeats.length > 0 && (
                   <Card
                     style={{ 
-                      background: '#1a1a1a',
-                      border: '1px solid #333',
-                      borderRadius: '12px',
-                      height: 'fit-content'
+                      background: 'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)',
+                      border: '2px solid #ff4d4f',
+                      borderRadius: '16px',
+                      height: 'fit-content',
+                      boxShadow: '0 8px 24px rgba(255, 77, 79, 0.2)'
                     }}
                   >
-                    <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
-                      💰 Order Summary
+                    <Title level={4} style={{ 
+                      color: '#fff', 
+                      marginBottom: '24px',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      borderBottom: '2px solid #ff4d4f',
+                      paddingBottom: '12px'
+                    }}>
+                      💰 TÓM TẮT ĐẶT VÉ
                     </Title>
                     
-                    <Space direction="vertical" style={{ width: '100%' }} size="middle">
-                      {/* Selected Seats */}
-                      {selectedSeats.length > 0 && (
-                        <div>
-                          <Text style={{ color: '#999', fontSize: '14px' }}>Selected Seats:</Text>
-                          {selectedSeats.map(seatId => {
-                            const seat = seats.find(s => s._id === seatId);
-                            return (
-                              <div key={seatId} style={{ 
-                                display: 'flex', 
-                                justifyContent: 'space-between',
-                                marginTop: '4px'
-                              }}>
-                                <Text style={{ color: '#fff', fontSize: '14px' }}>
-                                  {seat?.row}{seat?.number} - {seat?.seatType || 'Standard'}
-                                </Text>
-                                <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
-                                  {seat?.price?.toLocaleString('vi-VN')} VND
-                                </Text>
-                              </div>
-                            );
-                          })}
+                    <Space direction="vertical" style={{ width: '100%' }} size="large">
+                      {/* Movie Info */}
+                      {showtime?.movie && (
+                        <div style={{
+                          padding: '12px',
+                          background: 'rgba(255, 77, 79, 0.1)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 77, 79, 0.3)'
+                        }}>
+                          <Text style={{ color: '#ff4d4f', fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '4px' }}>
+                            🎬 PHIM
+                          </Text>
+                          <Text style={{ color: '#fff', fontSize: '15px', fontWeight: '600' }}>
+                            {showtime.movie.title || showtime.movie.name}
+                          </Text>
+                          <div style={{ marginTop: '8px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                            <Text style={{ color: '#ccc', fontSize: '12px' }}>
+                              🕐 {showtime.startTime ? new Date(showtime.startTime).toLocaleString('vi-VN', { 
+                                day: '2-digit', 
+                                month: '2-digit', 
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              }) : 'N/A'}
+                            </Text>
+                            <Text style={{ color: '#ccc', fontSize: '12px' }}>
+                              🎭 {showtime.theater?.name || 'N/A'}
+                            </Text>
+                          </div>
                         </div>
                       )}
 
-                      {/* Selected Combos */}
-                      {selectedCombos.length > 0 && (
+                      {/* Selected Seats */}
+                      {selectedSeats.length > 0 && (
                         <div>
-                          <Text style={{ color: '#999', fontSize: '14px' }}>Selected Combos:</Text>
-                          {selectedCombos.map((combo, index) => (
-                            <div key={index} style={{ 
-                              display: 'flex', 
-                              justifyContent: 'space-between',
-                              marginTop: '4px'
-                            }}>
-                              <Text style={{ color: '#fff', fontSize: '14px' }}>
-                                {combo.name} x{combo.quantity}
-                              </Text>
-                              <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
-                                {(combo.price * combo.quantity).toLocaleString('vi-VN')} VND
-                              </Text>
-                            </div>
-                          ))}
+                          <Text style={{ 
+                            color: '#fff', 
+                            fontSize: '14px', 
+                            fontWeight: 'bold',
+                            display: 'block',
+                            marginBottom: '12px'
+                          }}>
+                            🪑 GHẾ ĐÃ CHỌN ({selectedSeats.length})
+                          </Text>
+                          <div style={{ 
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '8px',
+                            padding: '12px'
+                          }}>
+                            {selectedSeats.map(seatId => {
+                              const seat = seats.find(s => s._id === seatId);
+                              const seatStatus = seatStatuses.get(seatId);
+                              
+                              // ✅ Lấy giá từ seatStatus trước, nếu không có thì từ seat, nếu không có thì từ showtime price
+                              let seatPrice = 0;
+                              if (seatStatus?.price) {
+                                seatPrice = seatStatus.price;
+                              } else if (seat?.price) {
+                                seatPrice = seat.price;
+                              } else if (showtime?.price?.standard) {
+                                seatPrice = showtime.price.standard;
+                              } else if (showtime?.price) {
+                                seatPrice = typeof showtime.price === 'number' ? showtime.price : 50000;
+                              } else {
+                                seatPrice = 50000; // Default fallback
+                              }
+                              
+                              const seatType = seat?.type || seat?.seatType || 'Standard';
+                              const seatTypeLabel = seatType === 'vip' ? 'VIP' : seatType === 'couple' ? 'Đôi' : 'Thường';
+                              
+                              return (
+                                <div key={seatId} style={{ 
+                                  display: 'flex', 
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  padding: '8px 0',
+                                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                                }}>
+                                  <div>
+                                    <Text style={{ color: '#fff', fontSize: '15px', fontWeight: '600' }}>
+                                      {seat?.row}{seat?.number}
+                                    </Text>
+                                    <Text style={{ color: '#999', fontSize: '12px', marginLeft: '8px' }}>
+                                      {seatTypeLabel}
+                                    </Text>
+                                  </div>
+                                  <Text style={{ color: '#52c41a', fontSize: '15px', fontWeight: 'bold' }}>
+                                    {seatPrice.toLocaleString('vi-VN')} ₫
+                                  </Text>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+
+                      {/* Subtotal */}
+                      {selectedSeats.length > 0 && (
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between',
+                          padding: '12px',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '8px'
+                        }}>
+                          <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '600' }}>
+                            Tạm tính:
+                          </Text>
+                          <Text style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold' }}>
+                            {(selectedSeats.reduce((sum, seatId) => {
+                              const seat = seats.find(s => s._id === seatId);
+                              const seatStatus = seatStatuses.get(seatId);
+                              let seatPrice = seatStatus?.price || seat?.price || showtime?.price?.standard || showtime?.price || 50000;
+                              return sum + seatPrice;
+                            }, 0) + selectedCombos.reduce((sum, c) => sum + (c.price * c.quantity), 0)).toLocaleString('vi-VN')} ₫
+                          </Text>
                         </div>
                       )}
 
@@ -972,18 +1074,23 @@ const RealTimeBookingPage = () => {
                         <div style={{ 
                           display: 'flex', 
                           justifyContent: 'space-between',
-                          padding: '8px 12px',
-                          background: '#2a2a2a',
-                          borderRadius: '6px',
-                          border: '1px solid #52c41a'
+                          padding: '12px',
+                          background: 'rgba(82, 196, 26, 0.15)',
+                          borderRadius: '8px',
+                          border: '2px solid #52c41a'
                         }}>
-                          <Text style={{ color: '#52c41a', fontSize: '14px' }}>
-                            Voucher: {appliedVoucher.code}
-                          </Text>
-                          <Text style={{ color: '#52c41a', fontSize: '14px', fontWeight: 'bold' }}>
+                          <div>
+                            <Text style={{ color: '#52c41a', fontSize: '13px', fontWeight: 'bold', display: 'block' }}>
+                              ✅ VOUCHER ĐÃ ÁP DỤNG
+                            </Text>
+                            <Text style={{ color: '#fff', fontSize: '12px', marginTop: '4px' }}>
+                              Mã: {appliedVoucher.code}
+                            </Text>
+                          </div>
+                          <Text style={{ color: '#52c41a', fontSize: '16px', fontWeight: 'bold' }}>
                             -{appliedVoucher.discountType === 'percentage' 
                               ? `${appliedVoucher.discountValue}%`
-                              : `${appliedVoucher.discountValue.toLocaleString('vi-VN')} VND`
+                              : `${appliedVoucher.discountValue.toLocaleString('vi-VN')} ₫`
                             }
                           </Text>
                         </div>
@@ -991,26 +1098,38 @@ const RealTimeBookingPage = () => {
 
                       {/* Total */}
                       <div style={{ 
-                        borderTop: '1px solid #333',
-                        paddingTop: '12px',
-                        marginTop: '12px'
+                        borderTop: '2px solid #ff4d4f',
+                        paddingTop: '16px',
+                        marginTop: '8px',
+                        background: 'rgba(255, 77, 79, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px'
                       }}>
                         <div style={{ 
                           display: 'flex', 
                           justifyContent: 'space-between',
                           alignItems: 'center'
                         }}>
-                          <Text style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>
-                            Total:
+                          <Text style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>
+                            TỔNG CỘNG:
                           </Text>
                           <Text style={{ 
                             color: '#ff4d4f', 
-                            fontSize: '18px', 
-                            fontWeight: 'bold' 
+                            fontSize: '24px', 
+                            fontWeight: 'bold',
+                            textShadow: '0 0 10px rgba(255, 77, 79, 0.5)'
                           }}>
-                            {calculateTotal().toLocaleString('vi-VN')} VND
+                            {calculateTotal().toLocaleString('vi-VN')} ₫
                           </Text>
                         </div>
+                        <Text style={{ 
+                          color: '#999', 
+                          fontSize: '11px', 
+                          marginTop: '8px',
+                          textAlign: 'right'
+                        }}>
+                          (Đã bao gồm VAT)
+                        </Text>
                       </div>
                     </Space>
                   </Card>
@@ -1040,6 +1159,7 @@ const RealTimeBookingPage = () => {
         setCustomerInfo={setCustomerInfo}
         paymentCountdown={paymentCountdown}
         calculateTotal={calculateTotal}
+        seatStatuses={seatStatuses} // ✅ Truyền seatStatuses vào PaymentModal
       />
       
       

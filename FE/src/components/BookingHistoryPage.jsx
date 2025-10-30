@@ -218,7 +218,20 @@ const BookingHistoryPage = () => {
                                 <Text strong style={{ color: '#e0e0e0' }}>Ghế:</Text>
                                 <br />
                                 <Text style={{ color: '#fff' }}>
-                                  {booking.seats.join(', ')}
+                                  {booking.seats && Array.isArray(booking.seats) 
+                                    ? booking.seats.map(seat => {
+                                        // ✅ Xử lý cả object và string
+                                        if (typeof seat === 'string') {
+                                          return seat;
+                                        } else if (seat && seat.row && seat.number) {
+                                          return `${seat.row}${seat.number}`;
+                                        } else if (seat && seat._id) {
+                                          // Nếu là object chỉ có _id, cần lấy thông tin từ seat
+                                          return seat._id;
+                                        }
+                                        return seat;
+                                      }).join(', ')
+                                    : booking.seats || 'N/A'}
                                 </Text>
                               </div>
                               

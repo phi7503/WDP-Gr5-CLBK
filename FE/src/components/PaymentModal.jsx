@@ -21,16 +21,10 @@ const PaymentModal = ({
   customerInfo,
   setCustomerInfo,
   paymentCountdown,
-  calculateTotal 
+  calculateTotal,
+  seatStatuses // ✅ Thêm seatStatuses để lấy giá đúng
 }) => {
   const [paymentStep, setPaymentStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [cardInfo, setCardInfo] = useState({
-    number: '',
-    expiry: '',
-    cvv: '',
-    name: ''
-  });
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -40,22 +34,11 @@ const PaymentModal = ({
     }
   }, [visible]);
 
-  const handlePaymentMethodChange = (method) => {
-    setPaymentMethod(method);
-  };
-
-  const handleCardInfoChange = (field, value) => {
-    setCardInfo(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
   const handleNextStep = () => {
     if (paymentStep === 1) {
-      setPaymentStep(2);
+      setPaymentStep(2); // Chuyển sang phần chọn combos
     } else if (paymentStep === 2) {
-      setPaymentStep(3);
+      setPaymentStep(3); // Chuyển sang phần thông tin khách hàng
     }
   };
 
@@ -74,20 +57,11 @@ const PaymentModal = ({
     setTimeout(() => {
       setIsProcessing(false);
       onComplete({
-        paymentMethod,
-        cardInfo,
+        paymentMethod: 'bank',
         total: calculateTotal(),
         timestamp: new Date()
       });
     }, 2000);
-  };
-
-  const formatCardNumber = (value) => {
-    return value.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
-  };
-
-  const formatExpiry = (value) => {
-    return value.replace(/\D/g, '').replace(/(.{2})/, '$1/').trim();
   };
 
   const renderStep1 = () => (
@@ -124,6 +98,25 @@ const PaymentModal = ({
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
           {selectedSeats.map(seatId => {
             const seat = seats.find(s => s._id === seatId);
+            const seatStatus = seatStatuses?.get?.(seatId); // ✅ Lấy seatStatus nếu có
+            
+            // ✅ Lấy giá từ seatStatus trước, nếu không có thì từ seat, nếu không có thì từ showtime price
+            let seatPrice = 0;
+            if (seatStatus?.price) {
+              seatPrice = seatStatus.price;
+            } else if (seat?.price) {
+              seatPrice = seat.price;
+            } else if (showtime?.price?.standard) {
+              seatPrice = showtime.price.standard;
+            } else if (showtime?.price) {
+              seatPrice = typeof showtime.price === 'number' ? showtime.price : 50000;
+            } else {
+              seatPrice = 50000; // Default fallback
+            }
+            
+            const seatType = seat?.type || seat?.seatType || 'Standard';
+            const seatTypeLabel = seatType === 'vip' ? 'VIP' : seatType === 'couple' ? 'Đôi' : 'Thường';
+            
             return (
               <div key={seatId} style={{ 
                 padding: '12px 16px', 
@@ -140,7 +133,9 @@ const PaymentModal = ({
                 <span>🎯</span>
                 <span>{seat?.row}{seat?.number}</span>
                 <span>-</span>
-                <span>{((seat?.price || 0) * 24000).toLocaleString('vi-VN')} VND</span>
+                <span>{seatTypeLabel}</span>
+                <span>-</span>
+                <span>{seatPrice.toLocaleString('vi-VN')} ₫</span>
               </div>
             );
           })}
@@ -169,7 +164,7 @@ const PaymentModal = ({
                   </Text>
                 </div>
                 <Text style={{ color: '#ff4d4f', fontSize: '14px', fontWeight: 'bold' }}>
-                  {(combo.price * combo.quantity * 24000).toLocaleString('vi-VN')} VND
+                  {(combo.price * combo.quantity).toLocaleString('vi-VN')} ₫
                 </Text>
               </div>
             ))}
@@ -189,7 +184,7 @@ const PaymentModal = ({
             color: '#ff4d4f',
             textShadow: '0 2px 4px rgba(255, 77, 79, 0.3)'
           }}>
-            {(calculateTotal() * 24000).toLocaleString('vi-VN')} VND
+            {calculateTotal().toLocaleString('vi-VN')} ₫
           </Text>
         </div>
       </Card>
@@ -199,85 +194,144 @@ const PaymentModal = ({
   const renderStep2 = () => (
     <div>
       <Title level={4} style={{ color: '#fff', marginBottom: '24px', textAlign: 'center' }}>
-        💳 Payment Method
+        🍿 Chọn Bỏng & Nước
       </Title>
       
-      <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '1px solid #444' }}>
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <Button 
-            type={paymentMethod === 'card' ? 'primary' : 'default'}
-            size="large"
-            icon={<CreditCardOutlined />}
-            onClick={() => handlePaymentMethodChange('card')}
-            style={{ width: '100%', height: '48px' }}
-          >
-            Credit/Debit Card
-          </Button>
-          
-          <Button 
-            type={paymentMethod === 'paypal' ? 'primary' : 'default'}
-            size="large"
-            onClick={() => handlePaymentMethodChange('paypal')}
-            style={{ width: '100%', height: '48px' }}
-          >
-            PayPal
-          </Button>
-          
-          <Button 
-            type={paymentMethod === 'bank' ? 'primary' : 'default'}
-            size="large"
-            onClick={() => handlePaymentMethodChange('bank')}
-            style={{ width: '100%', height: '48px' }}
-          >
-            Bank Transfer
-          </Button>
+      {combos.length === 0 ? (
+        <Card style={{ background: '#2a2a2a', border: '1px solid #444', textAlign: 'center', padding: '40px' }}>
+          <Text style={{ color: '#999', fontSize: '16px' }}>
+            Đang tải combos...
+          </Text>
+        </Card>
+      ) : (
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          {combos.map(combo => {
+            const selectedCombo = selectedCombos.find(sc => sc._id === combo._id);
+            const quantity = selectedCombo?.quantity || 0;
+            
+            return (
+              <Card 
+                key={combo._id}
+                style={{
+                  background: quantity > 0 ? 'rgba(82, 196, 26, 0.1)' : '#2a2a2a',
+                  border: quantity > 0 ? '2px solid #52c41a' : '1px solid #444',
+                  borderRadius: '12px',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                <Row gutter={[16, 16]} align="middle">
+                  <Col flex="auto">
+                    <div>
+                      <Text strong style={{ color: '#fff', fontSize: '16px', display: 'block', marginBottom: '8px' }}>
+                        {combo.name}
+                      </Text>
+                      <Text style={{ color: '#999', fontSize: '13px', display: 'block', marginBottom: '12px' }}>
+                        {combo.description || 'Combo hấp dẫn'}
+                      </Text>
+                      <Text style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}>
+                        {combo.price.toLocaleString('vi-VN')} ₫
+                      </Text>
+                    </div>
+                  </Col>
+                  
+                  <Col>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <Button
+                        size="large"
+                        onClick={() => {
+                          if (quantity > 0) {
+                            const newQuantity = quantity - 1;
+                            if (newQuantity === 0) {
+                              setSelectedCombos(selectedCombos.filter(sc => sc._id !== combo._id));
+                            } else {
+                              setSelectedCombos(selectedCombos.map(sc => 
+                                sc._id === combo._id ? { ...sc, quantity: newQuantity } : sc
+                              ));
+                            }
+                          }
+                        }}
+                        disabled={quantity === 0}
+                        style={{ 
+                          minWidth: '40px', 
+                          height: '40px',
+                          fontSize: '18px',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        -
+                      </Button>
+                      
+                      <Text style={{ 
+                        color: '#fff', 
+                        fontSize: '20px', 
+                        fontWeight: 'bold',
+                        minWidth: '40px',
+                        textAlign: 'center',
+                        background: '#333',
+                        padding: '8px 12px',
+                        borderRadius: '8px'
+                      }}>
+                        {quantity}
+                      </Text>
+                      
+                      <Button
+                        size="large"
+                        onClick={() => {
+                          if (quantity === 0) {
+                            setSelectedCombos([...selectedCombos, { ...combo, quantity: 1 }]);
+                          } else {
+                            setSelectedCombos(selectedCombos.map(sc => 
+                              sc._id === combo._id ? { ...sc, quantity: quantity + 1 } : sc
+                            ));
+                          }
+                        }}
+                        style={{ 
+                          minWidth: '40px', 
+                          height: '40px',
+                          fontSize: '18px',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+                
+                {quantity > 0 && (
+                  <div style={{ 
+                    marginTop: '12px', 
+                    padding: '8px', 
+                    background: 'rgba(82, 196, 26, 0.2)', 
+                    borderRadius: '6px',
+                    textAlign: 'center'
+                  }}>
+                    <Text style={{ color: '#52c41a', fontSize: '14px', fontWeight: '600' }}>
+                      Tổng: {(combo.price * quantity).toLocaleString('vi-VN')} ₫
+                    </Text>
+                  </div>
+                )}
+              </Card>
+            );
+          })}
         </Space>
-      </Card>
-
-      {paymentMethod === 'card' && (
-        <Card style={{ background: '#2a2a2a', border: '1px solid #444' }}>
-          <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
-            Card Information
-          </Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Input
-              placeholder="Card Number"
-              value={cardInfo.number}
-              onChange={(e) => handleCardInfoChange('number', formatCardNumber(e.target.value))}
-              maxLength={19}
-              size="large"
-              style={{ background: '#333', borderColor: '#555', color: '#fff' }}
-            />
-            <Row gutter={16}>
-              <Col span={12}>
-                <Input
-                  placeholder="MM/YY"
-                  value={cardInfo.expiry}
-                  onChange={(e) => handleCardInfoChange('expiry', formatExpiry(e.target.value))}
-                  maxLength={5}
-                  size="large"
-                  style={{ background: '#333', borderColor: '#555', color: '#fff' }}
-                />
-              </Col>
-              <Col span={12}>
-                <Input
-                  placeholder="CVV"
-                  value={cardInfo.cvv}
-                  onChange={(e) => handleCardInfoChange('cvv', e.target.value.replace(/\D/g, ''))}
-                  maxLength={4}
-                  size="large"
-                  style={{ background: '#333', borderColor: '#555', color: '#fff' }}
-                />
-              </Col>
-            </Row>
-            <Input
-              placeholder="Cardholder Name"
-              value={cardInfo.name}
-              onChange={(e) => handleCardInfoChange('name', e.target.value)}
-              size="large"
-              style={{ background: '#333', borderColor: '#555', color: '#fff' }}
-            />
-          </Space>
+      )}
+      
+      {/* Selected Combos Summary */}
+      {selectedCombos.length > 0 && (
+        <Card style={{ marginTop: '24px', background: '#2a2a2a', border: '2px solid #52c41a' }}>
+          <div style={{ textAlign: 'center' }}>
+            <Text style={{ color: '#52c41a', fontSize: '14px', fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>
+              Đã chọn {selectedCombos.reduce((sum, c) => sum + c.quantity, 0)} combo
+            </Text>
+            <Text style={{ 
+              color: '#fff', 
+              fontSize: '20px', 
+              fontWeight: 'bold'
+            }}>
+              Tổng: {selectedCombos.reduce((sum, c) => sum + (c.price * c.quantity), 0).toLocaleString('vi-VN')} ₫
+            </Text>
+          </div>
         </Card>
       )}
     </div>
@@ -286,20 +340,24 @@ const PaymentModal = ({
   const renderStep3 = () => (
     <div>
       <Title level={4} style={{ color: '#fff', marginBottom: '24px', textAlign: 'center' }}>
-        👤 Customer Information
+        👤 Thông Tin Khách Hàng & Thanh Toán
       </Title>
       
+      {/* Customer Information */}
       <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '1px solid #444' }}>
-        <Space direction="vertical" style={{ width: '100%' }}>
+        <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
+          Thông tin liên hệ
+        </Title>
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
           <Input
-            placeholder="Full Name"
+            placeholder="Họ và tên *"
             value={customerInfo.name}
             onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
             size="large"
             style={{ background: '#333', borderColor: '#555', color: '#fff' }}
           />
           <Input
-            placeholder="Email Address"
+            placeholder="Email *"
             type="email"
             value={customerInfo.email}
             onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
@@ -307,7 +365,7 @@ const PaymentModal = ({
             style={{ background: '#333', borderColor: '#555', color: '#fff' }}
           />
           <Input
-            placeholder="Phone Number"
+            placeholder="Số điện thoại"
             value={customerInfo.phone}
             onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
             size="large"
@@ -316,18 +374,99 @@ const PaymentModal = ({
         </Space>
       </Card>
 
+      {/* Banking Information */}
+      <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '2px solid #52c41a' }}>
+        <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
+          💳 Thông Tin Chuyển Khoản
+        </Title>
+        <Space direction="vertical" style={{ width: '100%' }} size="middle">
+          <div style={{ 
+            padding: '16px', 
+            background: 'rgba(82, 196, 26, 0.1)', 
+            borderRadius: '8px',
+            border: '1px solid #52c41a'
+          }}>
+            <div style={{ marginBottom: '12px' }}>
+              <Text style={{ color: '#999', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
+                Ngân hàng
+              </Text>
+              <Text strong style={{ color: '#fff', fontSize: '16px' }}>
+                Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV)
+              </Text>
+            </div>
+            
+            <div style={{ marginBottom: '12px' }}>
+              <Text style={{ color: '#999', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
+                Số tài khoản
+              </Text>
+              <Text strong style={{ color: '#52c41a', fontSize: '18px', fontFamily: 'monospace' }}>
+                1234567890
+              </Text>
+            </div>
+            
+            <div style={{ marginBottom: '12px' }}>
+              <Text style={{ color: '#999', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
+                Chủ tài khoản
+              </Text>
+              <Text strong style={{ color: '#fff', fontSize: '16px' }}>
+                CÔNG TY TNHH QUICKSHOW
+              </Text>
+            </div>
+            
+            <div style={{ marginBottom: '12px' }}>
+              <Text style={{ color: '#999', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
+                Nội dung chuyển khoản
+              </Text>
+              <Text strong style={{ color: '#ff4d4f', fontSize: '16px', fontFamily: 'monospace' }}>
+                DATVE {showtime?._id?.toString().slice(-6).toUpperCase() || 'XXXXXX'}
+              </Text>
+              <Text style={{ color: '#999', fontSize: '11px', display: 'block', marginTop: '4px' }}>
+                ⚠️ Vui lòng ghi đúng nội dung để hệ thống tự động xác nhận thanh toán
+              </Text>
+            </div>
+            
+            <div>
+              <Text style={{ color: '#999', fontSize: '12px', display: 'block', marginBottom: '4px' }}>
+                Số tiền cần chuyển
+              </Text>
+              <Text strong style={{ 
+                color: '#ff4d4f', 
+                fontSize: '24px', 
+                fontWeight: 'bold',
+                textShadow: '0 0 10px rgba(255, 77, 79, 0.5)'
+              }}>
+                {calculateTotal().toLocaleString('vi-VN')} ₫
+              </Text>
+            </div>
+          </div>
+          
+          <div style={{ 
+            padding: '12px', 
+            background: 'rgba(255, 193, 7, 0.1)', 
+            borderRadius: '8px',
+            border: '1px solid #ffc107'
+          }}>
+            <Text style={{ color: '#ffc107', fontSize: '12px' }}>
+              ⏰ Sau khi chuyển khoản, hệ thống sẽ tự động xác nhận trong vòng 5-10 phút.
+              Vui lòng kiểm tra email để nhận vé sau khi thanh toán thành công.
+            </Text>
+          </div>
+        </Space>
+      </Card>
+
       {/* Payment Summary */}
       <Card style={{ background: '#2a2a2a', border: '2px solid #ff4d4f' }}>
         <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
-          💰 Payment Summary
+          💰 Tổng Thanh Toán
         </Title>
         <div style={{ textAlign: 'center' }}>
           <Text style={{ 
-            fontSize: '24px', 
+            fontSize: '28px', 
             fontWeight: 'bold', 
-            color: '#ff4d4f'
+            color: '#ff4d4f',
+            textShadow: '0 2px 4px rgba(255, 77, 79, 0.3)'
           }}>
-            {(calculateTotal() * 24000).toLocaleString('vi-VN')} VND
+            {calculateTotal().toLocaleString('vi-VN')} ₫
           </Text>
         </div>
       </Card>
@@ -450,7 +589,7 @@ const PaymentModal = ({
               }}>
                 2
               </div>
-              <Text style={{ color: '#999', fontSize: '12px' }}>Payment</Text>
+              <Text style={{ color: '#999', fontSize: '12px' }}>Combos</Text>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ 

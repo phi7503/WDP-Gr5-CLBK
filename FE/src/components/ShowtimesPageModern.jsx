@@ -131,6 +131,38 @@ const ShowtimesPageModern = () => {
     }
   }, [selectedDate, selectedCity, selectedCinemaChain, selectedBranch, selectedMovie, selectedTimeRange]);
 
+  // Reload data when page becomes visible (user returns from booking page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && movies.length > 0 && branches.length > 0) {
+        // Reload data when page becomes visible
+        loadShowtimes();
+      }
+    };
+
+    const handleFocus = () => {
+      // Reload data when window gains focus
+      if (movies.length > 0 && branches.length > 0) {
+        loadShowtimes();
+      }
+    };
+
+    // Check if need to reload after booking
+    const shouldReload = localStorage.getItem('shouldReloadShowtimes');
+    if (shouldReload === 'true' && movies.length > 0 && branches.length > 0) {
+      localStorage.removeItem('shouldReloadShowtimes');
+      loadShowtimes();
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [selectedDate, selectedCity, selectedCinemaChain, selectedBranch, selectedMovie, selectedTimeRange, movies.length, branches.length]);
+
   // Scroll reveal effect + Lazy load images
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -512,7 +544,7 @@ const ShowtimesPageModern = () => {
             <div><strong>{showtime.theater?.name || 'Screen'}</strong></div>
             <div style={{ marginTop: '8px' }}>
               <div>🪑 Còn: {showtime.totalSeats - (showtime.bookedSeats || 0)}/{showtime.totalSeats} ghế</div>
-              <div style={{ marginTop: '4px' }}>💰 {showtime.price?.standard?.toLocaleString('vi-VN')} VNĐ</div>
+              <div style={{ marginTop: '4px' }}>💰 {(showtime.price?.standard || showtime.price || 50000).toLocaleString('vi-VN')} VNĐ</div>
             </div>
           </div>
         }
@@ -1074,7 +1106,7 @@ const ShowtimesPageModern = () => {
                             {branch.location?.city}
                           </Tag>
                           <Tag>
-                            💰 {st.price?.standard?.toLocaleString('vi-VN')} VNĐ
+                            💰 {(st.price?.standard || st.price || 50000).toLocaleString('vi-VN')} VNĐ
                           </Tag>
                         </div>
                       </div>

@@ -41,6 +41,36 @@ const ShowtimesByChainPage = () => {
     loadAllData();
   }, [selectedDate]);
 
+  // Reload data when page becomes visible (user returns from booking page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Reload data when page becomes visible
+        loadAllData();
+      }
+    };
+
+    const handleFocus = () => {
+      // Reload data when window gains focus
+      loadAllData();
+    };
+
+    // Check if need to reload after booking
+    const shouldReload = localStorage.getItem('shouldReloadShowtimes');
+    if (shouldReload === 'true') {
+      localStorage.removeItem('shouldReloadShowtimes');
+      loadAllData();
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [selectedDate]);
+
   const loadAllData = async () => {
     try {
       setLoading(true);

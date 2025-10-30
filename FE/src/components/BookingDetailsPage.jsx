@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Typography, Card, Row, Col, Button, QRCode, message } from 'antd';
+import { Layout, Typography, Card, Row, Col, Button, QRCode, message, Spin } from 'antd';
 import { Link, useParams } from 'react-router-dom';
-import { PrinterOutlined, MailOutlined } from '@ant-design/icons';
+import { PrinterOutlined, MailOutlined, ReloadOutlined } from '@ant-design/icons';
 import Header from './Header';
 import Footer from './Footer';
-import { bookingAPI } from '../services/api';
+import { bookingAPI, payOSAPI } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -13,6 +13,7 @@ const BookingDetailsPage = () => {
   const { bookingId } = useParams();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [checkingPayment, setCheckingPayment] = useState(false);
 
   useEffect(() => {
     if (bookingId) {
@@ -24,15 +25,84 @@ const BookingDetailsPage = () => {
     try {
       setLoading(true);
       const response = await bookingAPI.getBookingById(bookingId);
+      let bookingData = null;
+      
       if (response && response.booking) {
-        setBooking(response.booking);
+        bookingData = response.booking;
       } else if (response) {
         // Handle case where response is booking directly
-        setBooking(response);
+        bookingData = response;
       }
+
+      // Nếu paymentStatus vẫn là "pending" và có transactionId, check lại từ PayOS
+      if (bookingData && bookingData.paymentStatus === 'pending' && bookingData.transactionId) {
+        console.log('📋 Payment status is pending, checking PayOS...');
+        setCheckingPayment(true);
+        try {
+          const checkResponse = await payOSAPI.checkAndUpdatePayment(bookingId);
+          console.log('✅ Payment status checked and updated:', checkResponse);
+          
+          // ✅ Sử dụng booking từ response của checkAndUpdatePayment nếu có
+          if (checkResponse && checkResponse.booking) {
+            setBooking(checkResponse.booking);
+            setLoading(false);
+            setCheckingPayment(false);
+            
+            // Hiển thị warning nếu không thể kết nối PayOS
+            if (checkResponse.warning) {
+              message.warning(checkResponse.warning);
+            }
+            
+            return; // Return early để không reload lại
+          }
+          
+          // Nếu không thể kết nối PayOS nhưng vẫn có booking trong response
+          if (checkResponse && checkResponse.success === false && checkResponse.booking) {
+            setBooking(checkResponse.booking);
+            setLoading(false);
+            setCheckingPayment(false);
+            message.warning(checkResponse.warning || checkResponse.message);
+            return;
+          }
+          
+          // Reload booking details sau khi update
+          setTimeout(async () => {
+            try {
+              const updatedResponse = await bookingAPI.getBookingById(bookingId);
+              if (updatedResponse && updatedResponse.booking) {
+                setBooking(updatedResponse.booking);
+              } else if (updatedResponse) {
+                setBooking(updatedResponse);
+              }
+            } catch (error) {
+              console.error('Error reloading booking:', error);
+            } finally {
+              setLoading(false);
+              setCheckingPayment(false);
+            }
+          }, 1000);
+          return; // Return early để không set booking ngay
+        } catch (error) {
+          console.error('Error checking payment status:', error);
+          
+          // Hiển thị thông báo lỗi chi tiết hơn
+          const errorMessage = error.message || error.error || 'Không thể kiểm tra trạng thái thanh toán';
+          
+          if (errorMessage.includes('không thể kết nối') || errorMessage.includes('ENOTFOUND') || errorMessage.includes('không khả dụng')) {
+            message.error('Không thể kết nối đến PayOS. Vui lòng kiểm tra kết nối mạng và thử lại sau.');
+          } else {
+            message.error(errorMessage);
+          }
+          
+          setCheckingPayment(false);
+          // Continue to show booking even if check fails
+        }
+      }
+
+      setBooking(bookingData);
     } catch (error) {
       console.error('Error loading booking details:', error);
-      message.error('Failed to load booking details');
+          message.error('Không thể tải thông tin đặt vé');
     } finally {
       setLoading(false);
     }
@@ -42,6 +112,79 @@ const BookingDetailsPage = () => {
     window.print();
   };
 
+  const handleCheckPayment = async () => {
+    if (!booking || !booking.transactionId) {
+      message.warning('Không có thông tin thanh toán để kiểm tra');
+      return;
+    }
+
+    setCheckingPayment(true);
+    try {
+      const checkResponse = await payOSAPI.checkAndUpdatePayment(bookingId);
+      console.log('✅ Payment status checked:', checkResponse);
+      
+      if (checkResponse && checkResponse.booking) {
+        setBooking(checkResponse.booking);
+        if (checkResponse.booking.paymentStatus === 'completed') {
+          message.success('Thanh toán đã được xác nhận thành công!');
+        } else if (checkResponse.warning) {
+          // Nếu có warning từ backend (không thể kết nối PayOS)
+          message.warning(checkResponse.warning);
+        } else {
+          message.info(`Trạng thái thanh toán: ${checkResponse.paymentStatus || 'Chưa xác định'}`);
+        }
+      } else if (checkResponse && checkResponse.success === false && checkResponse.booking) {
+        // Nếu không thể kết nối PayOS nhưng vẫn có booking
+        setBooking(checkResponse.booking);
+        
+        // ✅ Hiển thị cảnh báo và cho phép retry nếu có thể
+        if (checkResponse.canRetry) {
+          message.warning({
+            content: checkResponse.warning || checkResponse.message,
+            duration: 5,
+            onClose: () => {
+              // Có thể thêm logic khi message đóng
+            }
+          });
+        } else {
+          message.warning(checkResponse.warning || checkResponse.message);
+        }
+      } else {
+        // Reload booking sau khi check
+        setTimeout(async () => {
+          try {
+            const updatedResponse = await bookingAPI.getBookingById(bookingId);
+            if (updatedResponse && updatedResponse.booking) {
+              setBooking(updatedResponse.booking);
+              if (updatedResponse.booking.paymentStatus === 'completed') {
+                message.success('Thanh toán đã được xác nhận thành công!');
+              }
+            } else if (updatedResponse) {
+              setBooking(updatedResponse);
+            }
+          } catch (error) {
+            console.error('Error reloading booking:', error);
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      
+      // Hiển thị thông báo lỗi chi tiết hơn
+      const errorMessage = error.message || error.error || 'Không thể kiểm tra trạng thái thanh toán';
+      
+      if (errorMessage.includes('không thể kết nối') || errorMessage.includes('ENOTFOUND') || errorMessage.includes('không khả dụng')) {
+        message.error('Không thể kết nối đến PayOS. Vui lòng kiểm tra kết nối mạng và thử lại sau.');
+      } else {
+        message.error(errorMessage);
+      }
+      
+      setCheckingPayment(false);
+    } finally {
+      setCheckingPayment(false);
+    }
+  };
+
   const handleSendEmail = async () => {
     if (!booking.qrCode) {
       message.warning('QR code chưa có sẵn. Vui lòng đợi thanh toán hoàn tất.');
@@ -49,19 +192,11 @@ const BookingDetailsPage = () => {
     }
 
     try {
-      // Gọi API để gửi lại email QR code
-      const response = await fetch(`${window.location.origin}/api/bookings/${bookingId}/resend-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
+      const response = await bookingAPI.resendEmailQRCode(bookingId);
+      if (response.success) {
         message.success('Email đã được gửi thành công!');
       } else {
-        message.error('Không thể gửi email. Vui lòng thử lại sau.');
+        message.error(response.message || 'Không thể gửi email. Vui lòng thử lại sau.');
       }
     } catch (error) {
       console.error('Error sending email:', error);
@@ -69,12 +204,14 @@ const BookingDetailsPage = () => {
     }
   };
 
-  if (loading) {
+  if (loading || checkingPayment) {
     return (
       <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
-          <Text style={{ color: '#fff' }}>Loading booking details...</Text>
+          <Text style={{ color: '#fff' }}>
+            {checkingPayment ? 'Đang kiểm tra trạng thái thanh toán...' : 'Đang tải thông tin đặt vé...'}
+          </Text>
         </Content>
         <Footer />
       </Layout>
@@ -86,7 +223,7 @@ const BookingDetailsPage = () => {
       <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
-          <Text style={{ color: '#fff' }}>Booking not found</Text>
+          <Text style={{ color: '#fff' }}>Không tìm thấy thông tin đặt vé</Text>
         </Content>
         <Footer />
       </Layout>
@@ -100,7 +237,7 @@ const BookingDetailsPage = () => {
       <Content style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <Title level={2} style={{ color: '#fff', marginBottom: '32px', textAlign: 'center' }}>
-            Booking Confirmation
+            Xác Nhận Đặt Vé
           </Title>
           
           <Row gutter={[32, 32]}>
@@ -115,42 +252,42 @@ const BookingDetailsPage = () => {
                 }}
               >
                 <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
-                  Booking Information
+                  Thông Tin Đặt Vé
                 </Title>
                 
                 <Row gutter={[16, 16]}>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Booking ID:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Mã Đặt Vé:</Text><br/>
                     <Text style={{ color: '#999' }}>{booking._id}</Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Status:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Trạng Thái:</Text><br/>
                     <Text style={{ 
                       color: booking.bookingStatus === 'confirmed' ? '#52c41a' : '#ff4d4f',
                       fontWeight: 'bold'
                     }}>
-                      {booking.bookingStatus?.toUpperCase()}
+                      {booking.bookingStatus === 'confirmed' ? 'ĐÃ XÁC NHẬN' : booking.bookingStatus === 'pending' ? 'ĐANG CHỜ' : booking.bookingStatus?.toUpperCase()}
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Movie:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Phim:</Text><br/>
                     <Text style={{ color: '#999' }}>{booking.showtime?.movie?.title}</Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Date & Time:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Ngày & Giờ:</Text><br/>
                     <Text style={{ color: '#999' }}>
                       {booking.showtime?.startTime ? 
-                        `${new Date(booking.showtime.startTime).toLocaleDateString()} at ${new Date(booking.showtime.startTime).toLocaleTimeString()}` :
+                        `${new Date(booking.showtime.startTime).toLocaleDateString('vi-VN')} lúc ${new Date(booking.showtime.startTime).toLocaleTimeString('vi-VN')}` :
                         'N/A'
                       }
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Theater:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Rạp:</Text><br/>
                     <Text style={{ color: '#999' }}>{booking.showtime?.theater?.name}</Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Branch:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Chi Nhánh:</Text><br/>
                     <Text style={{ color: '#999' }}>{booking.showtime?.branch?.name}</Text>
                   </Col>
                 </Row>
@@ -166,7 +303,7 @@ const BookingDetailsPage = () => {
                 }}
               >
                 <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
-                  Selected Seats
+                  Ghế Đã Chọn
                 </Title>
                 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
@@ -196,7 +333,7 @@ const BookingDetailsPage = () => {
                   }}
                 >
                   <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
-                    Combos & Concessions
+                    Combo & Đồ Uống
                   </Title>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -211,7 +348,7 @@ const BookingDetailsPage = () => {
                       }}>
                         <div>
                           <Text strong style={{ color: '#fff' }}>{combo.name}</Text><br/>
-                          <Text style={{ color: '#999' }}>Quantity: {combo.quantity}</Text>
+                          <Text style={{ color: '#999' }}>Số lượng: {combo.quantity}</Text>
                         </div>
                         <Text style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
                           {(combo.price * combo.quantity).toLocaleString('vi-VN')} VND
@@ -231,34 +368,48 @@ const BookingDetailsPage = () => {
                 }}
               >
                 <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
-                  Payment Information
+                  Thông Tin Thanh Toán
                 </Title>
                 
                 <Row gutter={[16, 16]}>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Total Amount:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Tổng Tiền:</Text><br/>
                     <Text style={{ color: '#ff4d4f', fontSize: '20px', fontWeight: 'bold' }}>
                       {booking.totalAmount?.toLocaleString('vi-VN')} VND
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Payment Method:</Text><br/>
+                    <Text strong style={{ color: '#fff' }}>Phương Thức Thanh Toán:</Text><br/>
                     <Text style={{ color: '#999' }}>
                       {booking.paymentMethod?.toUpperCase() || 'N/A'}
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Payment Status:</Text><br/>
-                    <Text style={{ 
-                      color: booking.paymentStatus === 'completed' ? '#52c41a' : '#ff4d4f',
-                      fontWeight: 'bold'
-                    }}>
-                      {booking.paymentStatus?.toUpperCase() || 'PENDING'}
-                    </Text>
+                    <Text strong style={{ color: '#fff' }}>Trạng Thái Thanh Toán:</Text><br/>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                      <Text style={{ 
+                        color: booking.paymentStatus === 'completed' ? '#52c41a' : '#ff4d4f',
+                        fontWeight: 'bold'
+                      }}>
+                        {booking.paymentStatus === 'completed' ? 'ĐÃ THANH TOÁN' : booking.paymentStatus === 'pending' ? 'ĐANG CHỜ' : booking.paymentStatus?.toUpperCase() || 'ĐANG CHỜ'}
+                      </Text>
+                      {booking.paymentStatus === 'pending' && booking.transactionId && (
+                        <Button
+                          type="link"
+                          size="small"
+                          icon={<ReloadOutlined />}
+                          onClick={handleCheckPayment}
+                          loading={checkingPayment}
+                          style={{ color: '#1890ff', padding: 0 }}
+                        >
+                          Kiểm tra lại
+                        </Button>
+                      )}
+                    </div>
                   </Col>
                   {booking.discountAmount > 0 && (
                     <Col xs={24} sm={12}>
-                      <Text strong style={{ color: '#fff' }}>Discount Applied:</Text><br/>
+                      <Text strong style={{ color: '#fff' }}>Giảm Giá:</Text><br/>
                       <Text style={{ color: '#52c41a', fontWeight: 'bold' }}>
                         -{booking.discountAmount?.toLocaleString('vi-VN')} VND
                       </Text>
@@ -280,7 +431,7 @@ const BookingDetailsPage = () => {
                 }}
               >
                 <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
-                  Your Ticket
+                  Vé Của Bạn
                 </Title>
                 
                 {booking.paymentStatus === 'completed' ? (
@@ -329,18 +480,33 @@ const BookingDetailsPage = () => {
                 )}
                 
                 <Text style={{ color: '#999', display: 'block', marginBottom: '24px' }}>
-                  Show this QR code at the theater entrance
+                  Hiển thị mã QR này tại cửa vào rạp
                 </Text>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {booking.paymentStatus === 'pending' && booking.transactionId && (
+                    <Button 
+                      type="primary" 
+                      className="primary-button"
+                      icon={<ReloadOutlined />}
+                      onClick={handleCheckPayment}
+                      loading={checkingPayment}
+                      size="large"
+                      style={{ background: '#1890ff', borderColor: '#1890ff' }}
+                    >
+                      {checkingPayment ? 'Đang kiểm tra...' : 'Kiểm Tra Trạng Thái Thanh Toán'}
+                    </Button>
+                  )}
+                  
                   <Button 
                     type="primary" 
                     className="primary-button"
                     icon={<PrinterOutlined />}
                     onClick={handlePrintTicket}
                     size="large"
+                    disabled={booking.paymentStatus !== 'completed'}
                   >
-                    Print Ticket
+                    In Vé
                   </Button>
                   
                   <Button 
@@ -348,8 +514,9 @@ const BookingDetailsPage = () => {
                     onClick={handleSendEmail}
                     size="large"
                     style={{ background: '#333', borderColor: '#555', color: '#fff' }}
+                    disabled={booking.paymentStatus !== 'completed'}
                   >
-                    Send Email
+                    Gửi Email
                   </Button>
                 </div>
               </Card>
@@ -363,14 +530,14 @@ const BookingDetailsPage = () => {
                 }}
               >
                 <Title level={4} style={{ color: '#fff', marginBottom: '16px' }}>
-                  Important Notes
+                  Lưu Ý Quan Trọng
                 </Title>
                 
                 <ul style={{ color: '#999', paddingLeft: '20px' }}>
-                  <li>Arrive at least 15 minutes before showtime</li>
-                  <li>Bring a valid ID for verification</li>
-                  <li>No refunds for no-shows</li>
-                  <li>Contact support for any issues</li>
+                  <li>Đến rạp ít nhất 15 phút trước giờ chiếu</li>
+                  <li>Mang theo CMND/CCCD để xác minh</li>
+                  <li>Không hoàn tiền khi không đến</li>
+                  <li>Liên hệ hỗ trợ nếu có vấn đề</li>
                 </ul>
               </Card>
             </Col>
@@ -385,7 +552,7 @@ const BookingDetailsPage = () => {
                 size="large"
                 style={{ marginRight: '16px' }}
               >
-                Back to Home
+                Về Trang Chủ
               </Button>
             </Link>
             
@@ -394,7 +561,7 @@ const BookingDetailsPage = () => {
                 size="large"
                 style={{ background: '#333', borderColor: '#555', color: '#fff' }}
               >
-                Browse More Movies
+                Xem Thêm Phim
               </Button>
             </Link>
           </div>

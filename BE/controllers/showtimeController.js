@@ -54,8 +54,11 @@ export const getAllShowtimes = async (req, res) => {
     const showtimesWithSeats = await Promise.all(showtimes.map(async (s) => {
       // Tổng số ghế active của rạp này
       const totalSeats = await Seat.countDocuments({ theater: s.theater._id, branch: s.branch._id, isActive: true });
-      // Số ghế đã đặt
-      const bookedSeats = await SeatStatus.countDocuments({ showtime: s._id, status: "booked" });
+      // Số ghế đã đặt (chỉ đếm ghế có status "booked") HOẶC đã reserve (status "reserved")
+      const bookedSeats = await SeatStatus.countDocuments({ 
+        showtime: s._id, 
+        status: { $in: ["booked", "reserved"] } // ✅ Đếm cả booked và reserved
+      });
       return {
         ...s.toObject(),
         totalSeats,

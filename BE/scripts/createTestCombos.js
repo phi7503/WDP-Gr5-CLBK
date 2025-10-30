@@ -23,9 +23,10 @@ const createTestCombos = async () => {
   try {
     console.log('\n🍿 Creating test combos for payment testing...\n');
 
+    // ✅ Giảm số combo xuống chỉ còn 4 combo phổ biến
     const combos = [
       {
-        name: 'Combo 1 - Bắp Nước Nhỏ',
+        name: 'Combo Nhỏ',
         description: '1 bắp rang bơ nhỏ + 1 nước ngọt nhỏ',
         price: 50000,
         category: 'combo',
@@ -36,7 +37,7 @@ const createTestCombos = async () => {
         isActive: true,
       },
       {
-        name: 'Combo 2 - Bắp Nước Vừa',
+        name: 'Combo Vừa',
         description: '1 bắp rang bơ vừa + 1 nước ngọt vừa',
         price: 80000,
         category: 'combo',
@@ -47,7 +48,7 @@ const createTestCombos = async () => {
         isActive: true,
       },
       {
-        name: 'Combo 3 - Bắp Nước Lớn',
+        name: 'Combo Lớn',
         description: '1 bắp rang bơ lớn + 1 nước ngọt lớn',
         price: 120000,
         category: 'combo',
@@ -58,56 +59,13 @@ const createTestCombos = async () => {
         isActive: true,
       },
       {
-        name: 'Combo 4 - Gia Đình',
-        description: '2 bắp lớn + 4 nước ngọt + 2 snack',
-        price: 250000,
-        category: 'combo',
-        items: [
-          { name: 'Bắp rang bơ lớn', quantity: 2 },
-          { name: 'Nước ngọt lớn', quantity: 4 },
-          { name: 'Snack', quantity: 2 }
-        ],
-        isActive: true,
-      },
-      {
-        name: 'Combo 5 - Đôi Lứa',
-        description: '1 bắp lớn + 2 nước ngọt lớn + 1 snack',
+        name: 'Combo Đôi',
+        description: '1 bắp lớn + 2 nước ngọt lớn',
         price: 150000,
         category: 'combo',
         items: [
           { name: 'Bắp rang bơ lớn', quantity: 1 },
-          { name: 'Nước ngọt lớn', quantity: 2 },
-          { name: 'Snack', quantity: 1 }
-        ],
-        isActive: true,
-      },
-      {
-        name: 'Bắp Rang Bơ Đơn',
-        description: 'Bắp rang bơ lớn',
-        price: 60000,
-        category: 'popcorn',
-        items: [
-          { name: 'Bắp rang bơ lớn', quantity: 1 }
-        ],
-        isActive: true,
-      },
-      {
-        name: 'Nước Ngọt Đơn',
-        description: 'Nước ngọt lớn',
-        price: 40000,
-        category: 'drinks',
-        items: [
-          { name: 'Nước ngọt lớn', quantity: 1 }
-        ],
-        isActive: true,
-      },
-      {
-        name: 'Snack Mix',
-        description: 'Mix các loại snack',
-        price: 50000,
-        category: 'snacks',
-        items: [
-          { name: 'Snack mix', quantity: 1 }
+          { name: 'Nước ngọt lớn', quantity: 2 }
         ],
         isActive: true,
       },

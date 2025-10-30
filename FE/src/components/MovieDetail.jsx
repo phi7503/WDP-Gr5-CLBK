@@ -36,6 +36,66 @@ const MovieDetail = () => {
     }
   }, [selectedDate]);
 
+  // Reload showtimes when page becomes visible (user returns from booking page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && id) {
+        // Reload showtimes when page becomes visible
+        reloadShowtimes();
+      }
+    };
+
+    const handleFocus = () => {
+      // Reload showtimes when window gains focus
+      if (id) {
+        reloadShowtimes();
+      }
+    };
+
+    // Check if need to reload after booking - check every 2 seconds
+    const intervalId = setInterval(() => {
+      const shouldReload = localStorage.getItem('shouldReloadShowtimes');
+      if (shouldReload === 'true' && id) {
+        localStorage.removeItem('shouldReloadShowtimes');
+        reloadShowtimes();
+      }
+    }, 2000);
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [id, selectedDate]);
+
+  // Helper function to reload showtimes
+  const reloadShowtimes = async () => {
+    try {
+      const sts = await showtimeAPI.getShowtimes({ movie: id, limit: 1000 });
+      const showtimesList = Array.isArray(sts) ? sts : (sts?.showtimes || []);
+      
+      setAllShowtimes(showtimesList);
+      
+      // Extract available dates
+      const dates = [...new Set(showtimesList.map(st => {
+        const date = new Date(st.startTime);
+        return date.toISOString().split('T')[0];
+      }))].sort();
+      
+      setAvailableDates(dates);
+      
+      // Filter showtimes by selected date
+      if (selectedDate) {
+        filterShowtimesByDate(showtimesList, selectedDate);
+      }
+    } catch (error) {
+      console.error('Error reloading showtimes:', error);
+    }
+  };
+
   // Helper function to filter showtimes by date
   const filterShowtimesByDate = (showtimesList, date) => {
     const filtered = showtimesList.filter(st => {
@@ -516,6 +576,9 @@ const MovieDetail = () => {
                                 </span>
                                 <span style={{ fontSize: '12px', opacity: 0.8 }}>
                                   {dateStr}
+                                </span>
+                                <span style={{ fontSize: '11px', opacity: 0.9, marginTop: '2px' }}>
+                                  {(st.totalSeats - (st.bookedSeats || 0))} ghế
                                 </span>
                                 {st.isFirstShow && (
                                   <Tag color="blue" style={{ margin: 0, fontSize: '10px' }}>

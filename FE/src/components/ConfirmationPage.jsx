@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Button, Card, Row, Col, Space, Divider, QRCode } from 'antd';
+import { Layout, Typography, Button, Card, Row, Col, Space, Divider, QRCode, message } from 'antd';
 import { CheckCircleOutlined, DownloadOutlined, PrinterOutlined } from '@ant-design/icons';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
@@ -192,7 +192,19 @@ const ConfirmationPage = () => {
                     <Text strong style={{ color: '#e0e0e0' }}>Ghế đã chọn:</Text>
                     <br />
                     <Text style={{ color: '#fff' }}>
-                      {booking.seats?.join(', ')}
+                      {booking.seats && Array.isArray(booking.seats) 
+                        ? booking.seats.map(seat => {
+                            // ✅ Xử lý cả object và string
+                            if (typeof seat === 'string') {
+                              return seat;
+                            } else if (seat && seat.row && seat.number) {
+                              return `${seat.row}${seat.number}`;
+                            } else if (seat && seat._id) {
+                              return seat._id;
+                            }
+                            return seat;
+                          }).join(', ')
+                        : booking.seats || 'N/A'}
                     </Text>
                   </div>
                   
