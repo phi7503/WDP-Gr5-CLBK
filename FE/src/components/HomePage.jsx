@@ -140,7 +140,7 @@ const HomePage = () => {
       }
     } catch (error) {
       console.error('Error loading movies:', error);
-      message.error('Failed to load movies. Please check your backend connection.');
+      message.error('Không thể tải phim. Vui lòng kiểm tra kết nối backend.');
       
       // Don't use fallback data - show empty state instead
       setFeaturedMovie(null);
@@ -158,7 +158,7 @@ const HomePage = () => {
       <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
         <Header />
         <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-          <Text style={{ color: '#fff', fontSize: '18px' }}>Loading movies...</Text>
+          <Text style={{ color: '#fff', fontSize: '18px' }}>Đang tải phim...</Text>
         </Content>
         <Footer />
       </Layout>
@@ -237,7 +237,7 @@ const HomePage = () => {
                         textTransform: 'uppercase',
                         letterSpacing: '2px'
                       }}>
-                        ⭐ FEATURED MOVIE {index + 1}/{featuredMoviesSlider.length}
+                        ⭐ PHIM NỔI BẬT {index + 1}/{featuredMoviesSlider.length}
                       </Text>
                     </div>
                     
@@ -311,7 +311,7 @@ const HomePage = () => {
                           }}
                         >
                           <span style={{ marginRight: '8px' }}>🎟️</span>
-                          Book Now
+                          Đặt vé ngay
                         </Button>
                       </Link>
                       
@@ -331,7 +331,7 @@ const HomePage = () => {
                         }}
                       >
                         <PlayCircleOutlined style={{ fontSize: '20px', marginRight: '8px' }} />
-                        Watch Trailer
+                        Xem trailer
                       </Button>
                     </div>
                   </div>
@@ -442,10 +442,10 @@ const HomePage = () => {
                 fontWeight: '800',
                 letterSpacing: '-0.5px'
               }}>
-              Now Showing
+              Đang chiếu
             </Title>
               <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
-                Catch the latest blockbusters in theaters
+                Xem những bộ phim bom tấn mới nhất tại rạp
               </Text>
             </div>
             <Link to="/movies?status=now-showing">
@@ -458,7 +458,7 @@ const HomePage = () => {
                   fontWeight: '600'
                 }}
               >
-              View All →
+              Xem tất cả →
               </Button>
             </Link>
           </div>
@@ -481,7 +481,7 @@ const HomePage = () => {
           {nowShowingMovies.length === 0 && !loading && (
             <div style={{ textAlign: 'center', padding: '60px 0' }}>
               <Text style={{ color: '#666', fontSize: '18px' }}>
-                No movies currently showing
+                Hiện không có phim nào đang chiếu
               </Text>
             </div>
           )}
@@ -511,11 +511,11 @@ const HomePage = () => {
                       fontWeight: '800',
                       letterSpacing: '-0.5px'
                     }}>
-                      Trending Now
+                      Đang thịnh hành
               </Title>
                   </div>
                   <Text style={{ color: '#9ca3af', fontSize: '16px' }}>
-                    The hottest movies everyone's watching
+                    Những bộ phim hot nhất mọi người đang xem
                   </Text>
                 </div>
                 <Link to="/movies?sortBy=hotness">
@@ -528,7 +528,7 @@ const HomePage = () => {
                       fontWeight: '600'
                     }}
                   >
-                View All →
+                Xem tất cả →
                   </Button>
               </Link>
             </div>
@@ -568,10 +568,10 @@ const HomePage = () => {
                   fontWeight: '800',
                   letterSpacing: '-0.5px'
                 }}>
-                🎬 Coming Soon
+                🎬 Sắp công chiếu
               </Title>
                 <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
-                  Get ready for these upcoming releases
+                  Chuẩn bị cho những bộ phim sắp ra mắt
                 </Text>
               </div>
               <Link to="/movies?status=coming-soon">
@@ -584,7 +584,7 @@ const HomePage = () => {
                     fontWeight: '600'
                   }}
                 >
-                View All →
+                Xem tất cả →
                 </Button>
               </Link>
             </div>
@@ -620,10 +620,10 @@ const HomePage = () => {
                 fontWeight: '800',
                 letterSpacing: '-0.5px'
               }}>
-                Latest Trailers
+                Trailer mới nhất
             </Title>
               <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
-                Watch the newest trailers and teasers
+                Xem những trailer và teaser mới nhất
               </Text>
             </div>
             
@@ -731,10 +731,10 @@ const HomePage = () => {
                 fontWeight: '800',
                 letterSpacing: '-0.5px'
               }}>
-                🍿 Combos & Snacks
+                🍿 Combo & Đồ ăn vặt
               </Title>
               <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
-                Complete your movie experience
+                Hoàn thiện trải nghiệm xem phim của bạn
               </Text>
             </div>
             <Link to="/combos">
@@ -747,7 +747,7 @@ const HomePage = () => {
                   fontWeight: '600'
                 }}
               >
-                View All →
+                Xem tất cả →
               </Button>
             </Link>
           </div>

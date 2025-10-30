@@ -20,8 +20,8 @@ const Footer = () => {
               <span style={{ color: '#ff4d4f' }}>Quick</span>Show
             </Title>
             <Text style={{ color: '#999', display: 'block', marginBottom: '16px' }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-              Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              QuickShow - Hệ thống đặt vé xem phim trực tuyến hàng đầu Việt Nam. 
+              Trải nghiệm điện ảnh tuyệt vời với công nghệ hiện đại và dịch vụ chuyên nghiệp.
             </Text>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <Button 
@@ -31,7 +31,7 @@ const Footer = () => {
                   color: '#fff'
                 }}
               >
-                Get it on Google Play
+                Tải trên Google Play
               </Button>
               <Button 
                 style={{ 
@@ -40,7 +40,7 @@ const Footer = () => {
                   color: '#fff'
                 }}
               >
-                Download on the App Store
+                Tải trên App Store
               </Button>
             </div>
           </div>
@@ -50,20 +50,20 @@ const Footer = () => {
         <Col xs={24} md={8}>
           <div>
             <Title level={4} style={{ color: '#ffffff', marginBottom: '16px' }}>
-              Company
+              Công ty
             </Title>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <Link to="/" style={{ color: '#999', textDecoration: 'none' }}>
-                Home
+                Trang chủ
               </Link>
               <Link to="/about" style={{ color: '#999', textDecoration: 'none' }}>
-                About us
+                Về chúng tôi
               </Link>
               <Link to="/contact" style={{ color: '#999', textDecoration: 'none' }}>
-                Contact us
+                Liên hệ
               </Link>
               <Link to="/privacy" style={{ color: '#999', textDecoration: 'none' }}>
-                Privacy policy
+                Chính sách bảo mật
               </Link>
             </div>
           </div>
@@ -73,11 +73,11 @@ const Footer = () => {
         <Col xs={24} md={8}>
           <div>
             <Title level={4} style={{ color: '#ffffff', marginBottom: '16px' }}>
-              Get in touch
+              Liên hệ
             </Title>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <Text style={{ color: '#999' }}>+1-212-456-7890</Text>
-              <Text style={{ color: '#999' }}>contact@example.com</Text>
+              <Text style={{ color: '#999' }}>+84-123-456-7890</Text>
+              <Text style={{ color: '#999' }}>contact@quickshow.vn</Text>
             </div>
           </div>
         </Col>
@@ -91,7 +91,7 @@ const Footer = () => {
         borderTop: '1px solid #333'
       }}>
         <Text style={{ color: '#666' }}>
-          Copyright 2025 © GreatStack. All Right Reserved.
+          Bản quyền © 2025 QuickShow. Tất cả quyền được bảo lưu.
         </Text>
       </div>
     </AntFooter>

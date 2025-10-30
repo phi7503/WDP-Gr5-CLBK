@@ -21,12 +21,12 @@ const Header = () => {
   const userMenuItems = [
     {
       key: 'profile',
-      label: 'Profile',
+      label: 'Hồ sơ',
       icon: <UserOutlined />,
     },
     {
       key: 'bookings',
-      label: 'My Bookings',
+      label: 'Lịch sử đặt vé',
       icon: <BookOutlined />,
       onClick: () => navigate('/bookings'),
     },
@@ -35,7 +35,7 @@ const Header = () => {
     },
     {
       key: 'logout',
-      label: 'Logout',
+      label: 'Đăng xuất',
       icon: <LogoutOutlined />,
       onClick: handleLogout,
     },
@@ -53,27 +53,27 @@ const Header = () => {
   const menuItems = [
     {
       key: 'home',
-      label: <Link to="/">Home</Link>,
+      label: <Link to="/">Trang chủ</Link>,
     },
     {
       key: 'movies',
-      label: <Link to="/movies">Movies</Link>,
+      label: <Link to="/movies">Phim</Link>,
     },
     {
       key: 'showtimes',
-      label: <Link to="/showtimes">Showtimes</Link>,
+      label: <Link to="/showtimes">Lịch chiếu</Link>,
     },
     {
       key: 'branches',
-      label: <Link to="/branches">Branches</Link>,
+      label: <Link to="/branches">Chi nhánh</Link>,
     },
     {
       key: 'combos',
-      label: <Link to="/combos">Combos</Link>,
+      label: <Link to="/combos">Combo</Link>,
     },
     {
       key: 'vouchers',
-      label: <Link to="/vouchers">Vouchers</Link>,
+      label: <Link to="/vouchers">Voucher</Link>,
     },
   ];
 
@@ -116,7 +116,7 @@ const Header = () => {
       {/* Search and Login */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <Search
-          placeholder="Search movies..."
+          placeholder="Tìm kiếm phim..."
           className="cinema-search-bar"
           style={{ width: 200 }}
           prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
@@ -149,7 +149,7 @@ const Header = () => {
             icon={<UserOutlined />}
             onClick={() => navigate('/auth')}
           >
-            Log In
+            Đăng nhập
           </Button>
         )}
       </div>

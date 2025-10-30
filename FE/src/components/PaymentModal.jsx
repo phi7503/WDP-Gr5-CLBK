@@ -67,7 +67,7 @@ const PaymentModal = ({
   const renderStep1 = () => (
     <div>
       <Title level={4} style={{ color: '#fff', marginBottom: '24px', textAlign: 'center' }}>
-        📋 Review Your Order
+        📋 Xem lại đơn hàng
       </Title>
       
       {/* Showtime Info */}
@@ -75,16 +75,16 @@ const PaymentModal = ({
         <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '1px solid #444' }}>
           <Row gutter={[16, 8]}>
             <Col span={12}>
-              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Movie:</strong> {showtime.movie?.title}</Text>
+              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Phim:</strong> {showtime.movie?.title}</Text>
             </Col>
             <Col span={12}>
-              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Date:</strong> {new Date(showtime.startTime).toLocaleDateString()}</Text>
+              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Ngày:</strong> {new Date(showtime.startTime).toLocaleDateString('vi-VN')}</Text>
             </Col>
             <Col span={12}>
-              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Time:</strong> {new Date(showtime.startTime).toLocaleTimeString()}</Text>
+              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Giờ:</strong> {new Date(showtime.startTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</Text>
             </Col>
             <Col span={12}>
-              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Theater:</strong> {showtime.theater?.name}</Text>
+              <Text style={{ color: '#ccc' }}><strong style={{ color: '#fff' }}>Rạp:</strong> {showtime.theater?.name}</Text>
             </Col>
           </Row>
         </Card>
@@ -93,7 +93,7 @@ const PaymentModal = ({
       {/* Selected Seats */}
       <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '1px solid #444' }}>
         <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
-          🎫 Selected Seats
+          🎫 Ghế đã chọn
         </Title>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
           {selectedSeats.map(seatId => {
@@ -146,7 +146,7 @@ const PaymentModal = ({
       {selectedCombos.length > 0 && (
         <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '1px solid #444' }}>
           <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
-            🍿 Combos & Concessions
+            🍿 Combo & Đồ ăn vặt
           </Title>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {selectedCombos.map(combo => (
@@ -176,7 +176,7 @@ const PaymentModal = ({
       <Card style={{ background: '#2a2a2a', border: '2px solid #ff4d4f' }}>
         <div style={{ textAlign: 'center' }}>
           <Title level={4} style={{ color: '#fff', marginBottom: '8px' }}>
-            💰 Total Amount
+            💰 Tổng tiền
           </Title>
           <Text style={{ 
             fontSize: '28px', 
@@ -483,7 +483,7 @@ const PaymentModal = ({
           textAlign: 'center',
           padding: '20px 0'
         }}>
-          💳 Complete Payment
+          💳 Hoàn tất thanh toán
         </div>
       }
       open={visible}
@@ -511,7 +511,7 @@ const PaymentModal = ({
             padding: '0 32px'
           }}
         >
-          Cancel
+          Hủy
         </Button>,
         ...(paymentStep > 1 ? [
           <Button 
@@ -526,7 +526,7 @@ const PaymentModal = ({
               padding: '0 32px'
             }}
           >
-            Back
+            Quay lại
           </Button>
         ] : []),
         <Button 
@@ -543,7 +543,7 @@ const PaymentModal = ({
             fontWeight: 'bold'
           }}
         >
-          {paymentStep === 3 ? (isProcessing ? 'Processing...' : 'Complete Payment') : 'Next'}
+          {paymentStep === 3 ? (isProcessing ? 'Đang xử lý...' : 'Hoàn tất thanh toán') : 'Tiếp theo'}
         </Button>
       ]}
     >
@@ -572,7 +572,7 @@ const PaymentModal = ({
               }}>
                 1
               </div>
-              <Text style={{ color: '#999', fontSize: '12px' }}>Review</Text>
+              <Text style={{ color: '#999', fontSize: '12px' }}>Xem lại</Text>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ 
@@ -589,7 +589,7 @@ const PaymentModal = ({
               }}>
                 2
               </div>
-              <Text style={{ color: '#999', fontSize: '12px' }}>Combos</Text>
+              <Text style={{ color: '#999', fontSize: '12px' }}>Bỏng & Nước</Text>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ 
@@ -606,7 +606,7 @@ const PaymentModal = ({
               }}>
                 3
               </div>
-              <Text style={{ color: '#999', fontSize: '12px' }}>Confirm</Text>
+              <Text style={{ color: '#999', fontSize: '12px' }}>Xác nhận</Text>
             </div>
           </div>
         </div>
@@ -614,7 +614,7 @@ const PaymentModal = ({
         {/* Payment Countdown */}
         {paymentCountdown && (
           <Alert
-            message={`Payment expires in ${Math.floor(paymentCountdown / 60)}:${(paymentCountdown % 60).toString().padStart(2, '0')}`}
+            message={`Thanh toán hết hạn sau ${Math.floor(paymentCountdown / 60)}:${(paymentCountdown % 60).toString().padStart(2, '0')}`}
             type="error"
             showIcon
             icon={<ClockCircleOutlined />}
