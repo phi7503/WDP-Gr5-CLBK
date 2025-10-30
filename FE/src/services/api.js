@@ -2,7 +2,7 @@
 const API_BASE_URL = '/api';
 
 // Backend server URL for static files (images)
-export const BACKEND_URL = 'http://localhost:5000';
+export const BACKEND_URL = 'http://localhost:9999';
 
 // Helper to get full image URL
 export const getImageUrl = (path) => {
@@ -165,6 +165,9 @@ export const seatStatusAPI = {
     method: 'POST',
     body: JSON.stringify(seatData),
   }),
+  
+  // Get seat statuses by showtime
+  getSeatStatusByShowtime: (showtimeId) => apiCall(`/seat-status/${showtimeId}`),
 };
 
 // Branch API calls
@@ -241,7 +244,7 @@ export const bookingAPI = {
   }),
   
   // Get user bookings
-  getUserBookings: () => apiCall('/bookings/user'),
+  getUserBookings: () => apiCall('/bookings/my-bookings'),
   
   // Get booking by ID
   getBookingById: (id) => apiCall(`/bookings/${id}`),
@@ -250,6 +253,17 @@ export const bookingAPI = {
   cancelBooking: (id) => apiCall(`/bookings/${id}/cancel`, {
     method: 'PUT',
   }),
+};
+
+// PayOS API calls
+export const payOSAPI = {
+  // Create payment link from booking ID
+  createPaymentFromBooking: (bookingId) => apiCall(`/payos/create-from-booking/${bookingId}`, {
+    method: 'POST',
+  }),
+  
+  // Get payment status
+  getPaymentStatus: (orderCode) => apiCall(`/payos/status/${orderCode}`),
 };
 
 // Combo API calls

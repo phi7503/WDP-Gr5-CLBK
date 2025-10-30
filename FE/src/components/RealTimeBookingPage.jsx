@@ -6,8 +6,9 @@ import io from 'socket.io-client';
 import Header from './Header';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
-import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI } from '../services/api';
+import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI, payOSAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import '../booking-animations.css';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -79,7 +80,7 @@ const RealTimeBookingPage = () => {
   }, [showtimeId]);
 
   const initializeSocket = () => {
-    socketRef.current = io('http://localhost:5000', {
+    socketRef.current = io('http://localhost:9999', {
       auth: {
         token: token
       }
@@ -90,6 +91,7 @@ const RealTimeBookingPage = () => {
       setSocketConnected(true);
       
       // Join showtime room
+      console.log('🚪 Joining showtime room:', showtimeId);
       socketRef.current.emit('join-showtime', showtimeId);
     });
 
@@ -136,6 +138,22 @@ const RealTimeBookingPage = () => {
     socketRef.current.on('seat-selection-failed', (data) => {
       console.log('❌ Seat selection failed:', data);
       message.error(data.message);
+    });
+
+    socketRef.current.on('seat-reservation-success', (data) => {
+      console.log('✅ Seat reservation successful:', data);
+      startReservationTimer(data.expiresAt, true);
+      message.success(`Seats reserved! You have ${Math.floor((new Date(data.expiresAt) - new Date()) / 60)} minutes to complete payment.`);
+    });
+
+    socketRef.current.on('seat-reservation-failed', (data) => {
+      console.log('❌ Seat reservation failed:', data);
+      message.error(data.message);
+    });
+
+    socketRef.current.on('seats-reserved', (data) => {
+      console.log('🔒 Seats reserved:', data);
+      updateSeatStatuses(data.seatIds, 'reserved', data.userId);
     });
 
     socketRef.current.on('payment-initiated', (data) => {
@@ -274,25 +292,35 @@ const RealTimeBookingPage = () => {
     
     // Toggle seat selection
     if (selectedSeats.includes(seatId)) {
-      setSelectedSeats(selectedSeats.filter(id => id !== seatId));
+      // Remove seat from selection
+      const newSelectedSeats = selectedSeats.filter(id => id !== seatId);
+      setSelectedSeats(newSelectedSeats);
+      
+      // Release seat via socket
+      if (socketRef.current && socketConnected) {
+        socketRef.current.emit('release-seats', {
+          showtimeId,
+          seatIds: [seatId]
+        });
+      }
     } else {
-      setSelectedSeats([...selectedSeats, seatId]);
+      // Add seat to selection
+      const newSelectedSeats = [...selectedSeats, seatId];
+      setSelectedSeats(newSelectedSeats);
+      
+      // Lock only the newly selected seat via socket
+      if (socketRef.current && socketConnected) {
+        console.log('🔒 Emitting select-seats for:', seatId);
+        socketRef.current.emit('select-seats', {
+          showtimeId,
+          seatIds: [seatId] // Only emit the newly selected seat
+        });
+      } else {
+        console.log('❌ Socket not connected or not available');
+      }
     }
   };
 
-  const handleSelectSeats = () => {
-    if (selectedSeats.length === 0) {
-      message.warning('Please select at least one seat');
-      return;
-    }
-    
-    if (socketRef.current && socketConnected) {
-      socketRef.current.emit('select-seats', {
-        showtimeId,
-        seatIds: selectedSeats
-      });
-    }
-  };
 
   const handleProceedToPayment = () => {
     if (selectedSeats.length === 0) {
@@ -301,22 +329,24 @@ const RealTimeBookingPage = () => {
     }
     
     if (socketRef.current && socketConnected) {
-      socketRef.current.emit('initiate-payment', {
+      socketRef.current.emit('reserve-seats', {
         showtimeId,
         seatIds: selectedSeats
       });
     }
     
+    setIsInPaymentMode(true);
     setBookingModalVisible(true);
   };
 
   const handleCompletePayment = async () => {
     if (!customerInfo.name || !customerInfo.email) {
-      message.error('Please fill in customer information');
+      message.error('Vui lòng điền đầy đủ thông tin khách hàng');
       return;
     }
     
     try {
+      setLoading(true);
       const bookingData = {
         showtimeId: showtimeId,
         seatIds: selectedSeats,
@@ -325,23 +355,35 @@ const RealTimeBookingPage = () => {
         customerInfo: customerInfo
       };
       
+      // Tạo booking với trạng thái pending
       const response = await bookingAPI.createBooking(bookingData);
       
-      if (response.success) {
-        // Notify socket about payment completion
-        if (socketRef.current && socketConnected) {
-          socketRef.current.emit('complete-payment', {
-            showtimeId,
-            seatIds: selectedSeats,
-            paymentData: {
-              bookingId: response.booking._id
-            }
-          });
+      if (response.success && response.booking) {
+        const bookingId = response.booking._id;
+        
+        // Tạo PayOS payment link
+        try {
+          const paymentResponse = await payOSAPI.createPaymentFromBooking(bookingId);
+          
+          if (paymentResponse.checkoutUrl) {
+            message.success('Đang chuyển đến trang thanh toán...');
+            setBookingModalVisible(false);
+            
+            // Redirect đến PayOS payment page
+            window.location.href = paymentResponse.checkoutUrl;
+          } else {
+            throw new Error('Không thể tạo link thanh toán');
+          }
+        } catch (paymentError) {
+          console.error('Error creating payment link:', paymentError);
+          message.error('Không thể tạo link thanh toán. Vui lòng thử lại.');
         }
       }
     } catch (error) {
       console.error('Error creating booking:', error);
-      message.error('Failed to create booking');
+      message.error('Không thể tạo booking. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -409,12 +451,12 @@ const RealTimeBookingPage = () => {
     selectedSeats.forEach(seatId => {
       const seat = seats.find(s => s._id === seatId);
       if (seat) {
-        total += (seat.price || 0) * 24000; // Convert USD to VND
+        total += seat.price || 0; // Price already in VND
       }
     });
     
     selectedCombos.forEach(combo => {
-      total += combo.price * combo.quantity * 24000; // Convert USD to VND
+      total += combo.price * combo.quantity; // Price already in VND
     });
     
     if (appliedVoucher) {
@@ -499,24 +541,51 @@ const RealTimeBookingPage = () => {
               <Col>
                 {paymentCountdown && isInPaymentMode && (
                   <Alert
-                    message={`Payment expires in ${Math.floor(paymentCountdown / 60)}:${(paymentCountdown % 60).toString().padStart(2, '0')}`}
+                    message={
+                      <div 
+                        className={`timer-${paymentCountdown <= 60 ? 'critical' : paymentCountdown <= 300 ? 'warning' : 'normal'}`}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold' }}
+                      >
+                        <ClockCircleOutlined style={{ fontSize: '18px', color: '#ff4d4f' }} />
+                        <span style={{ color: '#ff4d4f' }}>
+                          ⏰ Payment expires in: {Math.floor(paymentCountdown / 60)}:{(paymentCountdown % 60).toString().padStart(2, '0')}
+                        </span>
+                      </div>
+                    }
+                    description="Complete your payment to secure these seats"
                     type="error"
-                    showIcon
-                    icon={<ClockCircleOutlined />}
+                    showIcon={false}
                     style={{ 
-                      background: 'linear-gradient(135deg, #fff2f0 0%, #ffccc7 100%)', 
-                      border: '1px solid #ff4d4f',
-                      animation: 'paymentPulse 1s ease-in-out infinite alternate'
+                      background: '#2a1a1a', 
+                      border: '2px solid #ff4d4f',
+                      borderRadius: '12px',
+                      marginBottom: '16px',
+                      animation: paymentCountdown <= 60 ? 'paymentPulse 0.5s ease-in-out infinite alternate' : 'paymentPulse 1s ease-in-out infinite alternate'
                     }}
                   />
                 )}
                 {reservationTimer && !isInPaymentMode && (
                   <Alert
-                    message={`Seat selection expires in ${reservationTimer} seconds`}
+                    message={
+                      <div 
+                        className={`timer-${reservationTimer <= 30 ? 'critical' : reservationTimer <= 120 ? 'warning' : 'normal'}`}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold' }}
+                      >
+                        <ClockCircleOutlined style={{ fontSize: '18px', color: '#faad14' }} />
+                        <span style={{ color: '#faad14' }}>
+                          ⏰ Seat selection expires in: {Math.floor(reservationTimer / 60)}:{(reservationTimer % 60).toString().padStart(2, '0')}
+                        </span>
+                      </div>
+                    }
+                    description="Complete your booking to secure these seats"
                     type="warning"
-                    showIcon
-                    icon={<ClockCircleOutlined />}
-                    style={{ background: '#fff7e6', border: '1px solid #ffd591' }}
+                    showIcon={false}
+                    style={{ 
+                      background: '#2a1a1a', 
+                      border: '2px solid #faad14',
+                      borderRadius: '12px',
+                      marginBottom: '16px'
+                    }}
                   />
                 )}
               </Col>
@@ -737,40 +806,22 @@ const RealTimeBookingPage = () => {
                 {/* Action Buttons */}
                 <div style={{ textAlign: 'center' }}>
                   {!isInPaymentMode ? (
-                    <Space size="large" direction="vertical" style={{ width: '100%' }}>
-                      <Button 
-                        type="default"
-                        size="large"
-                        onClick={handleSelectSeats}
-                        disabled={selectedSeats.length === 0 || !socketConnected}
-                        style={{ 
-                          height: '48px', 
-                          padding: '0 32px',
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          width: '100%'
-                        }}
-                      >
-                        🔒 Hold Seats (30s)
-                      </Button>
-                      
-                      <Button 
-                        type="primary" 
-                        size="large"
-                        className="primary-button"
-                        onClick={handleProceedToPayment}
-                        disabled={selectedSeats.length === 0 || !socketConnected}
-                        style={{ 
-                          height: '48px', 
-                          padding: '0 32px',
-                          fontSize: '16px',
-                          fontWeight: 'bold',
-                          width: '100%'
-                        }}
-                      >
-                        💳 Proceed to Payment (7 min)
-                      </Button>
-                    </Space>
+                    <Button 
+                      type="primary" 
+                      size="large"
+                      className="primary-button"
+                      onClick={handleProceedToPayment}
+                      disabled={selectedSeats.length === 0 || !socketConnected}
+                      style={{ 
+                        height: '48px', 
+                        padding: '0 32px',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        width: '100%'
+                      }}
+                    >
+                      💳 Proceed to Payment (15 min)
+                    </Button>
                   ) : (
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ 
@@ -811,48 +862,160 @@ const RealTimeBookingPage = () => {
 
             {/* Active Users & Summary */}
             <Col xs={24} lg={6}>
-              <Card
-                style={{ 
-                  background: '#1a1a1a',
-                  border: '1px solid #333',
-                  borderRadius: '12px',
-                  height: 'fit-content'
-                }}
-              >
-                <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
-                  👥 Active Users
-                </Title>
-                
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  {activeUsers.map(user => (
-                    <div key={user.userId} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '8px 12px',
-                      background: '#2a2a2a',
-                      borderRadius: '8px',
-                      border: '1px solid #444'
-                    }}>
-                      <UserOutlined style={{ color: '#1890ff' }} />
-                      <div>
-                        <div style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
-                          {user.userName}
-                        </div>
-                        <div style={{ color: '#999', fontSize: '12px' }}>
-                          {new Date(user.timestamp).toLocaleTimeString()}
+              <Space direction="vertical" style={{ width: '100%' }} size="large">
+                {/* Active Users */}
+                <Card
+                  style={{ 
+                    background: '#1a1a1a',
+                    border: '1px solid #333',
+                    borderRadius: '12px',
+                    height: 'fit-content'
+                  }}
+                >
+                  <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
+                    👥 Active Users
+                  </Title>
+                  
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    {activeUsers.map(user => (
+                      <div key={user.userId} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '8px 12px',
+                        background: '#2a2a2a',
+                        borderRadius: '8px',
+                        border: '1px solid #444'
+                      }}>
+                        <UserOutlined style={{ color: '#1890ff' }} />
+                        <div>
+                          <div style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                            {user.userName}
+                          </div>
+                          <div style={{ color: '#999', fontSize: '12px' }}>
+                            {new Date(user.timestamp).toLocaleTimeString()}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                  
-                  {activeUsers.length === 0 && (
-                    <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
-                      No other users currently viewing
-                    </div>
-                  )}
-                </Space>
-              </Card>
+                    ))}
+                    
+                    {activeUsers.length === 0 && (
+                      <div style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
+                        No other users currently viewing
+                      </div>
+                    )}
+                  </Space>
+                </Card>
+
+                {/* Pricing Summary */}
+                {(selectedSeats.length > 0 || selectedCombos.length > 0) && (
+                  <Card
+                    style={{ 
+                      background: '#1a1a1a',
+                      border: '1px solid #333',
+                      borderRadius: '12px',
+                      height: 'fit-content'
+                    }}
+                  >
+                    <Title level={4} style={{ color: '#fff', marginBottom: '24px' }}>
+                      💰 Order Summary
+                    </Title>
+                    
+                    <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                      {/* Selected Seats */}
+                      {selectedSeats.length > 0 && (
+                        <div>
+                          <Text style={{ color: '#999', fontSize: '14px' }}>Selected Seats:</Text>
+                          {selectedSeats.map(seatId => {
+                            const seat = seats.find(s => s._id === seatId);
+                            return (
+                              <div key={seatId} style={{ 
+                                display: 'flex', 
+                                justifyContent: 'space-between',
+                                marginTop: '4px'
+                              }}>
+                                <Text style={{ color: '#fff', fontSize: '14px' }}>
+                                  {seat?.row}{seat?.number} - {seat?.seatType || 'Standard'}
+                                </Text>
+                                <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                                  {seat?.price?.toLocaleString('vi-VN')} VND
+                                </Text>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Selected Combos */}
+                      {selectedCombos.length > 0 && (
+                        <div>
+                          <Text style={{ color: '#999', fontSize: '14px' }}>Selected Combos:</Text>
+                          {selectedCombos.map((combo, index) => (
+                            <div key={index} style={{ 
+                              display: 'flex', 
+                              justifyContent: 'space-between',
+                              marginTop: '4px'
+                            }}>
+                              <Text style={{ color: '#fff', fontSize: '14px' }}>
+                                {combo.name} x{combo.quantity}
+                              </Text>
+                              <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                                {(combo.price * combo.quantity).toLocaleString('vi-VN')} VND
+                              </Text>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Voucher Discount */}
+                      {appliedVoucher && (
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between',
+                          padding: '8px 12px',
+                          background: '#2a2a2a',
+                          borderRadius: '6px',
+                          border: '1px solid #52c41a'
+                        }}>
+                          <Text style={{ color: '#52c41a', fontSize: '14px' }}>
+                            Voucher: {appliedVoucher.code}
+                          </Text>
+                          <Text style={{ color: '#52c41a', fontSize: '14px', fontWeight: 'bold' }}>
+                            -{appliedVoucher.discountType === 'percentage' 
+                              ? `${appliedVoucher.discountValue}%`
+                              : `${appliedVoucher.discountValue.toLocaleString('vi-VN')} VND`
+                            }
+                          </Text>
+                        </div>
+                      )}
+
+                      {/* Total */}
+                      <div style={{ 
+                        borderTop: '1px solid #333',
+                        paddingTop: '12px',
+                        marginTop: '12px'
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
+                        }}>
+                          <Text style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold' }}>
+                            Total:
+                          </Text>
+                          <Text style={{ 
+                            color: '#ff4d4f', 
+                            fontSize: '18px', 
+                            fontWeight: 'bold' 
+                          }}>
+                            {calculateTotal().toLocaleString('vi-VN')} VND
+                          </Text>
+                        </div>
+                      </div>
+                    </Space>
+                  </Card>
+                )}
+              </Space>
             </Col>
           </Row>
         </div>

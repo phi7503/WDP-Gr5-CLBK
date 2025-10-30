@@ -13,7 +13,7 @@ import HomePage from "./components/HomePage";
 // 🚀 Lazy loading cho các trang khác (load khi cần)
 const MoviesListPage = lazy(() => import("./components/MoviesListPage"));
 const MovieDetail = lazy(() => import("./components/MovieDetail"));
-const BookingPage = lazy(() => import("./components/BookingPage"));
+const BookingPageModern = lazy(() => import("./components/BookingPageModern"));
 const RealTimeBookingPage = lazy(() => import("./components/RealTimeBookingPage"));
 const SocketTestPage = lazy(() => import("./components/SocketTestPage"));
 const ShowtimesPage = lazy(() => import("./components/ShowtimesPage"));
@@ -23,6 +23,10 @@ const BranchListPage = lazy(() => import("./components/BranchListPage"));
 const ComboPage = lazy(() => import("./components/ComboPage"));
 const VoucherPage = lazy(() => import("./components/VoucherPage"));
 const BookingDetailsPage = lazy(() => import("./components/BookingDetailsPage"));
+const AuthPage = lazy(() => import("./components/AuthPage"));
+const BookingHistoryPage = lazy(() => import("./components/BookingHistoryPage"));
+const PaymentSuccessPage = lazy(() => import("./components/PaymentSuccessPage"));
+const PaymentCancelPage = lazy(() => import("./components/PaymentCancelPage"));
 
 // 🎬 Cinema Loading Component (Fallback khi lazy load)
 const CinemaPageLoader = () => (
@@ -195,21 +199,25 @@ ReactDOM.createRoot(document.getElementById("app")).render(
     <AuthProvider>
       <Router>
         <Suspense fallback={<CinemaPageLoader />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/movies" element={<MoviesListPage />} />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/movies" element={<MoviesListPage />} />
             <Route path="/showtimes" element={<ShowtimesPageModern />} />
             <Route path="/showtimes-old" element={<ShowtimesPage />} />
             <Route path="/showtimes-by-chain" element={<ShowtimesByChainPage />} />
-            <Route path="/branches" element={<BranchListPage />} />
-            <Route path="/combos" element={<ComboPage />} />
-            <Route path="/vouchers" element={<VoucherPage />} />
-            <Route path="/movie/:id" element={<MovieDetail />} />
-            <Route path="/booking/:showtimeId" element={<BookingPage />} />
-            <Route path="/realtime-booking/:showtimeId" element={<RealTimeBookingPage />} />
-            <Route path="/socket-test" element={<SocketTestPage />} />
-            <Route path="/booking-details/:bookingId" element={<BookingDetailsPage />} />
-          </Routes>
+          <Route path="/branches" element={<BranchListPage />} />
+          <Route path="/combos" element={<ComboPage />} />
+          <Route path="/vouchers" element={<VoucherPage />} />
+          <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/booking/:showtimeId" element={<RealTimeBookingPage />} />
+          <Route path="/realtime-booking/:showtimeId" element={<RealTimeBookingPage />} />
+          <Route path="/socket-test" element={<SocketTestPage />} />
+          <Route path="/booking-details/:bookingId" element={<BookingDetailsPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/bookings" element={<BookingHistoryPage />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/payment-cancel" element={<PaymentCancelPage />} />
+        </Routes>
         </Suspense>
       </Router>
     </AuthProvider>

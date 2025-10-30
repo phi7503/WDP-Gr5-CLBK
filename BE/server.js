@@ -12,6 +12,7 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import startCleanupJob from "./jobs/cleanupExpiredReservations.js";
 import { initializeSocketHandlers } from "./socket/socketHandlers.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+import payosRoutes from "./routes/payOSRoutes.js";
 
 // Load env
 dotenv.config();
@@ -75,8 +76,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-// API Routes
+// Static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/showtimes", showtimeRoutes);
@@ -90,11 +93,13 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/combos", comboRoutes);
 app.use("/api/admin-dashboard", adminDashboardRoutes);
+app.use("/api/payos", payosRoutes);
 
 //app.use("/api/debug", debugRoutes);
 
 // Make io available globally
 global.io = io;
+
 // Initialize Socket.IO handlers
 initializeSocketHandlers(io);
 
@@ -107,6 +112,7 @@ startCleanupJob();
 
 // Start server
 const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 server.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running in ${NODE_ENV} mode on port ${PORT}`);
 });

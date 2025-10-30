@@ -49,13 +49,18 @@ const createBooking = asyncHandler(async (req, res) => {
         status: { $in: ["available", "reserved"] }
       }).populate("seat");
     } else {
-      // Khách hàng vẫn phải reserve trước
+      // Khách hàng có thể book ghế available hoặc reserved (nếu đã reserve trước)
       seatStatuses = await SeatStatus.find({
         showtime: showtimeId,
         seat: { $in: seatIds },
-        status: "reserved",
-        reservedBy: userId,
-        reservationExpires: { $gt: new Date() },
+        $or: [
+          { status: "available" },
+          { 
+            status: "reserved", 
+            reservedBy: userId, 
+            reservationExpires: { $gt: new Date() } 
+          }
+        ]
       }).populate("seat");
     }
 
@@ -127,7 +132,7 @@ const createBooking = asyncHandler(async (req, res) => {
     // 4. Tính tổng tiền cuối cùng
     const totalAmount = Math.max(seatTotal + comboTotal - discountAmount, 0);
 
-    // 5. Tạo booking
+    // 5. Tạo booking với trạng thái pending (chờ thanh toán)
     const booking = await Booking.create({
       user: userId,
       employeeId,
@@ -144,8 +149,8 @@ const createBooking = asyncHandler(async (req, res) => {
       combos: comboDetails,
       voucher: appliedVoucher,
       discountAmount,
-      paymentStatus: "pending",
-      bookingStatus: "pending",
+      paymentStatus: "pending", // Chờ thanh toán qua PayOS
+      bookingStatus: "pending", // Chờ thanh toán
     });
 
     if (!booking) {
@@ -153,16 +158,15 @@ const createBooking = asyncHandler(async (req, res) => {
       throw new Error("Failed to create booking record");
     }
 
-    // Tạo mã QR cho booking (dùng booking._id làm nội dung QR)
-    const qrData = booking._id.toString();
-    const qrCodeBase64 = await QRCode.toDataURL(qrData);
-    booking.qrCode = qrCodeBase64;
-    await booking.save();
-
-    // Link the seat statuses to this new pending booking
+    // Link the seat statuses to this booking (vẫn giữ status "reserved" cho đến khi thanh toán thành công)
     await SeatStatus.updateMany(
         { _id: { $in: seatStatuses.map(s => s._id) } },
-        { $set: { booking: booking._id } }
+        { 
+          $set: { 
+            booking: booking._id,
+            status: "reserved", // Giữ reserved cho đến khi thanh toán thành công
+          } 
+        }
     );
 
     const populatedBooking = await Booking.findById(booking._id)
@@ -172,7 +176,7 @@ const createBooking = asyncHandler(async (req, res) => {
     res.status(201).json({
       success: true,
       booking: populatedBooking,
-      message: "Pending booking created successfully. Please proceed to payment.",
+      message: "Booking created and payment completed successfully!",
     });
   } catch (error) {
     console.error("Error creating booking:", {
@@ -191,12 +195,32 @@ const getMyBookings = asyncHandler(async (req, res) => {
   const bookings = await Booking.find({ user: req.user._id })
       .populate({
         path: "showtime",
-        populate: {
-          path: "movie",
-          select: "title poster duration",
-        },
+        populate: [
+          {
+            path: "movie",
+            select: "title poster duration genre",
+          },
+          {
+            path: "theater",
+            select: "name",
+          },
+          {
+            path: "branch",
+            select: "name location",
+          },
+        ],
       })
       .sort({ createdAt: -1 });
+
+  // Manual populate fallback for theater and branch if initial populate fails
+  for (let booking of bookings) {
+    if (booking.showtime && !booking.showtime.theater) {
+      await booking.showtime.populate('theater', 'name');
+    }
+    if (booking.showtime && !booking.showtime.branch) {
+      await booking.showtime.populate('branch', 'name location');
+    }
+  }
 
   res.json({
     success: true,
@@ -290,8 +314,17 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
     // Gửi email xác nhận vé cho user (chỉ gửi nếu không phải nhân viên đặt)
     if (!booking.employeeId && booking.user && booking.user.email) {
       // Tạo QR code buffer để đính kèm
-      const qrData = booking._id.toString();
-      const qrCodeBuffer = await QRCode.toBuffer(qrData, { type: 'png', width: 300 });
+      const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const qrData = `${baseUrl}/booking-details/${booking._id}`;
+      const qrCodeBuffer = await QRCode.toBuffer(qrData, { 
+        type: 'png', 
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
       const emailHtml = `
         <h2>Chúc mừng bạn đã đặt vé thành công!</h2>
         <p><b>Phim:</b> ${booking.showtime.movie.title}</p>
