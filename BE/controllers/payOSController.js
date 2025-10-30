@@ -342,90 +342,62 @@ export const checkAndUpdatePayment = async (req, res) => {
       status: paymentStatusResponse.status,
       amount: paymentStatusResponse.amount,
       qrCode: paymentStatusResponse.qrCode ? "Present" : "Not present", // ✅ Log QR code status
+      transactions: paymentStatusResponse.transactions ? paymentStatusResponse.transactions.length : 0, // ✅ Log transactions count
     }); // ✅ Debug
 
     // ✅ CHỈ cập nhật nếu status thực sự là "PAID" và booking chưa được thanh toán
-    if (paymentStatusResponse.status === "PAID" && booking.paymentStatus !== "completed") {
-      console.log("✅ Payment verified as PAID. Updating booking...");
+    // ✅ Hoặc nếu booking đã completed nhưng chưa có paidAt (booking cũ)
+    if (paymentStatusResponse.status === "PAID") {
+      // ✅ Lấy transactionDateTime từ PayOS response
+      let paidAtDate = null;
       
-      // Cập nhật booking status
-      booking.paymentStatus = "completed";
-      booking.bookingStatus = "confirmed";
-      booking.paymentMethod = "payos";
-
-      // ✅ Ưu tiên sử dụng QR code từ PayOS API nếu có
-      if (paymentStatusResponse.qrCode && !booking.qrCode) {
-        console.log("✅ Using QR code from PayOS API response");
-        booking.qrCode = paymentStatusResponse.qrCode;
-      } else if (!booking.qrCode) {
-        // Tạo QR code tự động nếu PayOS không có
-        console.log("📱 Generating QR code locally");
-        const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-        const qrData = `${baseUrl}/booking-details/${booking._id}`;
-        const qrCodeBase64 = await QRCode.toDataURL(qrData, {
-          width: 300,
-          margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF'
-          }
-        });
-        booking.qrCode = qrCodeBase64;
-      }
-
-      await booking.save();
-      
-      // ✅ Reload booking từ database để đảm bảo có đầy đủ thông tin mới nhất
-      const updatedBooking = await Booking.findById(bookingId)
-        .populate({
-          path: "showtime",
-          populate: [
-            { path: "movie", select: "title" },
-            { path: "theater", select: "name" },
-            { path: "branch", select: "name location" }
-          ]
-        })
-        .populate("user", "name email");
-
-      // Cập nhật seat statuses thành "booked"
-      const seatIds = updatedBooking.seats.map(s => s._id);
-      console.log("🔒 Updating seats to BOOKED status:", seatIds); // ✅ Debug
-      console.log("📋 Booking ID:", updatedBooking._id); // ✅ Debug
-      
-      // ✅ Sửa: Thêm điều kiện booking để chỉ update đúng ghế của booking này
-      const updateResult = await SeatStatus.updateMany(
-        { 
-          showtime: updatedBooking.showtime._id, 
-          seat: { $in: seatIds },
-          booking: updatedBooking._id // ✅ Đảm bảo chỉ update ghế của booking này
-        },
-        {
-          $set: {
-            status: 'booked',
-            bookedAt: new Date(),
-            reservedBy: null,
-            reservationExpires: null
-          }
+      // PayOS trả về transactionDateTime trong transactions array hoặc trực tiếp trong data
+      if (paymentStatusResponse.transactions && paymentStatusResponse.transactions.length > 0) {
+        // Lấy transaction đầu tiên (giao dịch thanh toán chính)
+        const mainTransaction = paymentStatusResponse.transactions[0];
+        if (mainTransaction.transactionDateTime) {
+          paidAtDate = new Date(mainTransaction.transactionDateTime);
+          console.log("✅ Found transactionDateTime from transactions array:", paidAtDate);
         }
-      );
+      } else if (paymentStatusResponse.transactionDateTime) {
+        // Nếu có transactionDateTime trực tiếp trong response
+        paidAtDate = new Date(paymentStatusResponse.transactionDateTime);
+        console.log("✅ Found transactionDateTime from response:", paidAtDate);
+      }
+      
+      // Nếu không tìm thấy từ PayOS, dùng thời gian hiện tại
+      if (!paidAtDate) {
+        paidAtDate = new Date();
+        console.log("⚠️ No transactionDateTime from PayOS, using current time:", paidAtDate);
+      }
+      
+      // ✅ Update paidAt nếu booking chưa có (cho booking cũ)
+      if (!booking.paidAt && paidAtDate) {
+        booking.paidAt = paidAtDate;
+        console.log("✅ Updated paidAt for old booking:", paidAtDate);
+        await booking.save(); // ✅ Save ngay để cập nhật paidAt
+      }
+      
+      // ✅ Chỉ cập nhật status nếu chưa được thanh toán
+      if (booking.paymentStatus !== "completed") {
+        console.log("✅ Payment verified as PAID. Updating booking...");
+        
+        // Cập nhật booking status
+        booking.paymentStatus = "completed";
+        booking.bookingStatus = "confirmed";
+        booking.paymentMethod = "payos";
+        booking.paidAt = paidAtDate; // ✅ Lưu thời gian thanh toán từ PayOS
 
-      console.log("✅ Seats updated to BOOKED status. Modified count:", updateResult.modifiedCount); // ✅ Debug
-
-      // Broadcast socket event
-      broadcastSeatUpdate(updatedBooking.showtime._id.toString(), {
-        type: 'seats-booked',
-        seatIds: seatIds,
-        bookingId: updatedBooking._id,
-      });
-
-      // Gửi email với QR code nếu chưa gửi
-      const customerEmail = updatedBooking.customerInfo?.email || updatedBooking.user?.email;
-      if (customerEmail) {
-        try {
+        // ✅ Ưu tiên sử dụng QR code từ PayOS API nếu có
+        if (paymentStatusResponse.qrCode && !booking.qrCode) {
+          console.log("✅ Using QR code from PayOS API response");
+          booking.qrCode = paymentStatusResponse.qrCode;
+        } else if (!booking.qrCode) {
+          // Tạo QR code tự động nếu PayOS không có
+          console.log("📱 Generating QR code locally");
           const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-          const qrData = `${baseUrl}/booking-details/${updatedBooking._id}`;
-          const qrCodeBuffer = await QRCode.toBuffer(qrData, {
-            type: 'png',
+          const qrData = `${baseUrl}/booking-details/${booking._id}`;
+          const qrCodeBase64 = await QRCode.toDataURL(qrData, {
             width: 300,
             margin: 2,
             color: {
@@ -433,49 +405,133 @@ export const checkAndUpdatePayment = async (req, res) => {
               light: '#FFFFFF'
             }
           });
-
-          const emailHtml = `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-              <h2 style="color: #D32F2F;">🎉 Chúc mừng bạn đã đặt vé thành công!</h2>
-              <p><b>Phim:</b> ${updatedBooking.showtime.movie.title}</p>
-              <p><b>Suất chiếu:</b> ${new Date(updatedBooking.showtime.startTime).toLocaleString('vi-VN')}</p>
-              <p><b>Rạp:</b> ${updatedBooking.showtime.branch?.name || ""} - ${updatedBooking.showtime.theater?.name || ""}</p>
-              <p><b>Ghế:</b> ${updatedBooking.seats.map(s => s.row + s.number).join(", ")}</p>
-              <p><b>Tổng tiền:</b> ${updatedBooking.totalAmount.toLocaleString('vi-VN')} VND</p>
-              <p><b>Trạng thái:</b> Đã thanh toán</p>
-              <p><b>Mã QR:</b> <i>(Vui lòng mở file đính kèm để check-in tại rạp)</i></p>
-              <p style="margin-top: 20px;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
-            </div>
-          `;
-
-          await sendEmail({
-            to: customerEmail,
-            subject: "Xác nhận đặt vé thành công - QR Code",
-            html: emailHtml,
-            attachments: [
-              {
-                filename: 'qrcode.png',
-                content: qrCodeBuffer,
-                contentType: 'image/png',
-              },
-            ],
-          });
-
-          console.log("✅ Email sent successfully to:", customerEmail);
-        } catch (emailError) {
-          console.error("❌ Error sending email:", emailError);
+          booking.qrCode = qrCodeBase64;
         }
-      }
 
-      console.log("✅ Payment verified and booking updated:", bookingId);
+        await booking.save();
       
-      // ✅ Trả về updatedBooking thay vì booking cũ
-      return res.json({
-        success: true,
-        paymentStatus: paymentStatusResponse.status,
-        booking: updatedBooking,
-        message: "Thanh toán đã được xác nhận thành công"
-      });
+        // ✅ Reload booking từ database để đảm bảo có đầy đủ thông tin mới nhất
+        const updatedBooking = await Booking.findById(bookingId)
+          .populate({
+            path: "showtime",
+            populate: [
+              { path: "movie", select: "title" },
+              { path: "theater", select: "name" },
+              { path: "branch", select: "name location" }
+            ]
+          })
+          .populate("user", "name email");
+
+        // Cập nhật seat statuses thành "booked"
+        const seatIds = updatedBooking.seats.map(s => s._id);
+        console.log("🔒 Updating seats to BOOKED status:", seatIds); // ✅ Debug
+        console.log("📋 Booking ID:", updatedBooking._id); // ✅ Debug
+        
+        // ✅ Sửa: Thêm điều kiện booking để chỉ update đúng ghế của booking này
+        const updateResult = await SeatStatus.updateMany(
+          { 
+            showtime: updatedBooking.showtime._id, 
+            seat: { $in: seatIds },
+            booking: updatedBooking._id // ✅ Đảm bảo chỉ update ghế của booking này
+          },
+          {
+            $set: {
+              status: 'booked',
+              bookedAt: new Date(),
+              reservedBy: null,
+              reservationExpires: null
+            }
+          }
+        );
+
+        console.log("✅ Seats updated to BOOKED status. Modified count:", updateResult.modifiedCount); // ✅ Debug
+
+        // Broadcast socket event
+        broadcastSeatUpdate(updatedBooking.showtime._id.toString(), {
+          type: 'seats-booked',
+          seatIds: seatIds,
+          bookingId: updatedBooking._id,
+        });
+
+        // Gửi email với QR code nếu chưa gửi
+        const customerEmail = updatedBooking.customerInfo?.email || updatedBooking.user?.email;
+        if (customerEmail) {
+          try {
+            const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+            const qrData = `${baseUrl}/booking-details/${updatedBooking._id}`;
+            const qrCodeBuffer = await QRCode.toBuffer(qrData, {
+              type: 'png',
+              width: 300,
+              margin: 2,
+              color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+              }
+            });
+
+            const emailHtml = `
+              <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #D32F2F;">🎉 Chúc mừng bạn đã đặt vé thành công!</h2>
+                <p><b>Phim:</b> ${updatedBooking.showtime.movie.title}</p>
+                <p><b>Suất chiếu:</b> ${new Date(updatedBooking.showtime.startTime).toLocaleString('vi-VN')}</p>
+                <p><b>Rạp:</b> ${updatedBooking.showtime.branch?.name || ""} - ${updatedBooking.showtime.theater?.name || ""}</p>
+                <p><b>Ghế:</b> ${updatedBooking.seats.map(s => s.row + s.number).join(", ")}</p>
+                <p><b>Tổng tiền:</b> ${updatedBooking.totalAmount.toLocaleString('vi-VN')} VND</p>
+                <p><b>Trạng thái:</b> Đã thanh toán</p>
+                <p><b>Mã QR:</b> <i>(Vui lòng mở file đính kèm để check-in tại rạp)</i></p>
+                <p style="margin-top: 20px;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+              </div>
+            `;
+
+            await sendEmail({
+              to: customerEmail,
+              subject: "Xác nhận đặt vé thành công - QR Code",
+              html: emailHtml,
+              attachments: [
+                {
+                  filename: 'qrcode.png',
+                  content: qrCodeBuffer,
+                  contentType: 'image/png',
+                },
+              ],
+            });
+
+            console.log("✅ Email sent successfully to:", customerEmail);
+          } catch (emailError) {
+            console.error("❌ Error sending email:", emailError);
+          }
+        }
+
+        console.log("✅ Payment verified and booking updated:", bookingId);
+        
+        // ✅ Trả về updatedBooking thay vì booking cũ
+        return res.json({
+          success: true,
+          paymentStatus: paymentStatusResponse.status,
+          booking: updatedBooking,
+          message: "Thanh toán đã được xác nhận thành công"
+        });
+      } else {
+        // ✅ Booking đã completed, chỉ reload để có paidAt nếu đã update
+        console.log("✅ Booking already completed, reloading to get updated paidAt");
+        const updatedBooking = await Booking.findById(bookingId)
+          .populate({
+            path: "showtime",
+            populate: [
+              { path: "movie", select: "title" },
+              { path: "theater", select: "name" },
+              { path: "branch", select: "name location" }
+            ]
+          })
+          .populate("user", "name email");
+        
+        return res.json({
+          success: true,
+          paymentStatus: paymentStatusResponse.status,
+          booking: updatedBooking,
+          message: "Thanh toán đã được xác nhận"
+        });
+      }
     } else {
       console.log("⚠️ Payment status is NOT PAID yet:", paymentStatusResponse.status);
       console.log("⚠️ Booking remains PENDING. Seats remain RESERVED.");
@@ -547,10 +603,16 @@ export const updatePaymentFromRedirect = async (req, res) => {
 
     console.log("✅ Updating booking from PayOS redirect URL. Status: PAID");
     
+    // ✅ Lấy thời gian thanh toán từ URL params hoặc dùng thời gian hiện tại
+    // PayOS redirect không có transactionDateTime, nên dùng thời gian hiện tại
+    const paidAtDate = new Date();
+    console.log("✅ Setting paidAt to current time:", paidAtDate);
+    
     // Cập nhật booking status
     booking.paymentStatus = "completed";
     booking.bookingStatus = "confirmed";
     booking.paymentMethod = "payos";
+    booking.paidAt = paidAtDate; // ✅ Lưu thời gian thanh toán
 
     // Tạo QR code nếu chưa có
     if (!booking.qrCode) {
@@ -788,6 +850,7 @@ export const handleWebhook = async (req, res) => {
       amount: data.amount,
       description: data.description,
       status: data.status,
+      transactionDateTime: data.transactionDateTime, // ✅ Log transactionDateTime
     });
     
     // ✅ Debug: Log tất cả các status có thể từ PayOS
@@ -826,10 +889,24 @@ export const handleWebhook = async (req, res) => {
         bookingStatus: booking.bookingStatus,
       }); // ✅ Debug
       
+      // ✅ Lấy transactionDateTime từ PayOS webhook data
+      let paidAtDate = null;
+      
+      if (data.transactionDateTime) {
+        // PayOS webhook có transactionDateTime trong format "YYYY-MM-DD HH:mm:ss"
+        paidAtDate = new Date(data.transactionDateTime);
+        console.log("✅ Found transactionDateTime from webhook:", paidAtDate);
+      } else {
+        // Nếu không có, dùng thời gian hiện tại
+        paidAtDate = new Date();
+        console.log("⚠️ No transactionDateTime from webhook, using current time:", paidAtDate);
+      }
+      
       // Cập nhật booking status
       booking.paymentStatus = "completed";
       booking.bookingStatus = "confirmed";
       booking.paymentMethod = "payos";
+      booking.paidAt = paidAtDate; // ✅ Lưu thời gian thanh toán từ PayOS
 
       // Tạo QR code
       const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';

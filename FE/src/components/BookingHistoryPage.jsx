@@ -75,13 +75,10 @@ const BookingHistoryPage = () => {
   };
 
   const handleViewDetails = (booking) => {
-    navigate('/confirmation', { 
-      state: { 
-        booking, 
-        movie: booking.movie, 
-        showtime: booking.showtime 
-      } 
-    });
+    // ✅ Navigate đến BookingDetailsPage thay vì ConfirmationPage
+    // ConfirmationPage là trang confirmation sau khi đặt vé
+    // BookingDetailsPage là trang xem chi tiết booking từ lịch sử
+    navigate(`/booking-details/${booking._id}`);
   };
 
   const handleViewQRCode = (booking) => {
