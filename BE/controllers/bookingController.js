@@ -34,10 +34,15 @@ const createBooking = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("Showtime not found");
     }
-    // Prevent booking if showtime has started
-    if (showtime.startTime <= new Date()) {
+    // Prevent booking if showtime has started or ended
+    const now = new Date();
+    if (showtime.startTime <= now) {
       res.status(400);
-      throw new Error("Showtime has already started. Cannot book tickets.");
+      throw new Error("Suất chiếu đã bắt đầu. Không thể đặt vé.");
+    }
+    if (showtime.endTime && showtime.endTime <= now) {
+      res.status(400);
+      throw new Error("Suất chiếu đã kết thúc. Không thể đặt vé.");
     }
 
     let seatStatuses;

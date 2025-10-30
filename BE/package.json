@@ -25,6 +25,7 @@
     "organize-chains": "node scripts/organizeCinemaChains.js",
     "organize-chains:create": "node scripts/organizeCinemaChains.js --create-showtimes",
     "setup-full": "node scripts/createBasicData.js",
+    "create-showtime": "node scripts/createShowtime.js",
     "fix-showtimes": "node scripts/fixAllMoviesShowtimes.js",
     "add-backdrops": "node scripts/addBackdropImages.js",
     "fix-cinema-chains": "node scripts/fixCinemaChains.js"

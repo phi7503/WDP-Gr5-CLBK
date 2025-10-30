@@ -34,6 +34,11 @@ export const getAllShowtimes = async (req, res) => {
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
       filter.startTime = { $gte: startOfDay, $lte: endOfDay };
+    } else {
+      // Filter out past showtimes by default (unless explicitly requested)
+      if (!req.query.includePast) {
+        filter.startTime = { $gte: new Date() };
+      }
     }
 
     const count = await Showtime.countDocuments(filter);
@@ -165,6 +170,14 @@ export const createShowtime = async (req, res) => {
       return res
         .status(400)
         .json({ message: "endTime must be after startTime" });
+
+    // ✅ Prevent creating showtime in the past
+    const now = new Date();
+    if (start < now) {
+      return res
+        .status(400)
+        .json({ message: "Cannot create showtime in the past. startTime must be in the future." });
+    }
 
     // ✅ Check for scheduling conflicts
     const conflictingShowtime = await Showtime.findOne({
