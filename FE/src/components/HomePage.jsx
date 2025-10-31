@@ -140,7 +140,7 @@ const HomePage = () => {
       }
     } catch (error) {
       console.error('Error loading movies:', error);
-      message.error('Không thể tải phim. Vui lòng kiểm tra kết nối backend.');
+      // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
       
       // Don't use fallback data - show empty state instead
       setFeaturedMovie(null);

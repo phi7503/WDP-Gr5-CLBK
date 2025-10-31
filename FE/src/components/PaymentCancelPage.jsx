@@ -17,34 +17,53 @@ const PaymentCancelPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true; // Flag để tránh duplicate calls
+    
     const handleCancel = async () => {
       if (!bookingId) {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
         return;
       }
 
       try {
-        setLoading(true);
+        if (isMounted) {
+          setLoading(true);
+        }
         
         // ✅ Gọi API để cancel booking và release ghế
         if (status === 'CANCELLED' || searchParams.get('cancel') === 'true') {
           try {
             await payOSAPI.cancelPayment(bookingId, status, orderCode);
             console.log('✅ Booking cancelled and seats released');
-            message.success('Đã hủy booking và giải phóng ghế thành công');
+            // ✅ Lỗi sẽ tự động được hiển thị bởi api.js nếu có
+            // Chỉ hiển thị success message nếu thành công
+            if (isMounted) {
+              message.success('Đã hủy booking và giải phóng ghế thành công');
+            }
           } catch (error) {
             console.error('Error cancelling payment:', error);
-            message.error('Không thể hủy booking. Vui lòng thử lại.');
+            // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
+            // Không cần hiển thị lại ở đây để tránh duplicate
           }
         }
       } catch (error) {
         console.error('Error:', error);
+        // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     handleCancel();
+
+    // Cleanup function để tránh duplicate calls
+    return () => {
+      isMounted = false;
+    };
   }, [bookingId, status, orderCode, searchParams]);
 
   return (

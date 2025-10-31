@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Typography, Button, Form, Input, Card, Space, message, Tabs } from 'antd';
+import { Layout, Typography, Button, Form, Input, Card, Space, message, notification, Tabs } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
@@ -29,7 +29,8 @@ const AuthPage = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      message.error('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
+      // Không cần hiển thị lại ở đây để tránh duplicate
     } finally {
       setLoading(false);
     }
@@ -47,7 +48,8 @@ const AuthPage = () => {
       }
     } catch (error) {
       console.error('Register error:', error);
-      message.error('Đăng ký thất bại. Vui lòng thử lại.');
+      // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
+      // Không cần hiển thị lại ở đây để tránh duplicate
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,10 @@ const AuthPage = () => {
       children: (
         <Form
           name="login"
-          onFinish={onLogin}
+          onFinish={async (values) => {
+            await onLogin(values);
+            return false; // Ngăn form submit và reload
+          }}
           layout="vertical"
           size="large"
         >
@@ -116,7 +121,10 @@ const AuthPage = () => {
       children: (
         <Form
           name="register"
-          onFinish={onRegister}
+          onFinish={async (values) => {
+            await onRegister(values);
+            return false; // Ngăn form submit và reload
+          }}
           layout="vertical"
           size="large"
         >

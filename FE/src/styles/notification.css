@@ -1,0 +1,192 @@
+/* ============================================
+   Notification Styles - Simple & Clean
+   Slide from right to left animation
+   ============================================ */
+
+/* Container */
+.ant-notification {
+  position: fixed !important;
+  top: 80px !important;
+  right: 24px !important;
+  left: auto !important; /* Force right side */
+  z-index: 9999 !important;
+  pointer-events: none;
+}
+
+/* Đảm bảo notification container luôn ở bên phải */
+body > .ant-notification {
+  right: 24px !important;
+  left: auto !important;
+}
+
+/* Force right placement cho tất cả notification containers */
+.ant-notification.ant-notification-topRight {
+  right: 24px !important;
+  left: auto !important;
+}
+
+/* Notification Card */
+.ant-notification-notice {
+  pointer-events: auto;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border-left: 4px solid #dc2626;
+  color: #fff;
+  max-width: 400px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Content */
+.ant-notification-notice-content {
+  color: #fff;
+}
+
+/* Message Title */
+.ant-notification-notice-message {
+  color: #fff !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  margin-bottom: 4px;
+}
+
+/* Description */
+.ant-notification-notice-description {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px !important;
+  line-height: 1.5;
+}
+
+/* Icon */
+.ant-notification-notice-icon {
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+/* ============================================
+   Animation - Slide from Right to Left
+   ============================================ */
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(calc(100% + 50px));
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(100% + 50px));
+    opacity: 0;
+  }
+}
+
+/* Enter Animation */
+.ant-notification-notice.ant-notification-fade-enter,
+.ant-notification-notice.ant-notification-fade-appear {
+  transform: translateX(calc(100% + 50px)) !important;
+  opacity: 0 !important;
+}
+
+.ant-notification-notice.ant-notification-fade-enter-active,
+.ant-notification-notice.ant-notification-fade-appear-active {
+  animation: slideInFromRight 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards !important;
+}
+
+/* Leave Animation */
+.ant-notification-notice.ant-notification-fade-leave,
+.ant-notification-notice.ant-notification-fade-exit {
+  transform: translateX(0) !important;
+  opacity: 1 !important;
+}
+
+.ant-notification-notice.ant-notification-fade-leave-active,
+.ant-notification-notice.ant-notification-fade-exit-active {
+  animation: slideOutToRight 0.3s cubic-bezier(0.755, 0.05, 0.855, 0.06) forwards !important;
+}
+
+/* Force visible state */
+.ant-notification-notice:not(.ant-notification-fade-leave):not(.ant-notification-fade-exit):not(.ant-notification-fade-enter):not(.ant-notification-fade-appear) {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+  visibility: visible !important;
+}
+
+/* ============================================
+   Notification Types
+   ============================================ */
+
+/* Error - Red */
+.ant-notification-notice-error {
+  border-left-color: #dc2626 !important;
+}
+
+.ant-notification-notice-error .ant-notification-notice-icon {
+  color: #ef4444 !important;
+}
+
+/* Success - Green */
+.ant-notification-notice-success {
+  border-left-color: #22c55e !important;
+}
+
+.ant-notification-notice-success .ant-notification-notice-icon {
+  color: #22c55e !important;
+}
+
+/* Warning - Orange */
+.ant-notification-notice-warning {
+  border-left-color: #f59e0b !important;
+}
+
+.ant-notification-notice-warning .ant-notification-notice-icon {
+  color: #f59e0b !important;
+}
+
+/* Info - Blue */
+.ant-notification-notice-info {
+  border-left-color: #3b82f6 !important;
+}
+
+.ant-notification-notice-info .ant-notification-notice-icon {
+  color: #3b82f6 !important;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+/* Force right placement - Override any RTL or direction changes */
+.ant-notification {
+  direction: ltr !important; /* Force left-to-right */
+}
+
+.ant-notification-notice {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+@media (max-width: 768px) {
+  .ant-notification {
+    right: 12px !important;
+    left: auto !important;
+    top: 60px !important;
+  }
+  
+  .ant-notification-notice {
+    max-width: calc(100% - 24px);
+    padding: 12px 16px;
+  }
+}

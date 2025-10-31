@@ -4,6 +4,9 @@ const API_BASE_URL = '/api';
 // Backend server URL for static files (images)
 export const BACKEND_URL = 'http://localhost:5000';
 
+// Import notification service để hiển thị lỗi tự động
+import { showErrorNotification } from './notificationService.js';
+
 // Helper to get full image URL
 export const getImageUrl = (path) => {
   if (!path) return null;
@@ -16,7 +19,7 @@ export const getImageUrl = (path) => {
   return `${BACKEND_URL}/${cleanPath}`;
 };
 
-// Generic API call function
+// Generic API call function với tự động hiển thị lỗi
 const apiCall = async (endpoint, options = {}) => {
   try {
     const url = `${API_BASE_URL}${endpoint}`;
@@ -37,18 +40,97 @@ const apiCall = async (endpoint, options = {}) => {
     
     if (!response.ok) {
       if (response.status === 401) {
-        // Token expired or invalid
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/auth';
-        throw new Error('Unauthorized');
+        // Kiểm tra xem có token không để phân biệt:
+        // - Có token + 401 = token expired => redirect
+        // - Không có token + 401 = login sai => hiển thị notification
+        const token = localStorage.getItem('token');
+        if (token) {
+          // Token expired - redirect về auth
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/auth';
+          throw new Error('Unauthorized - Token expired');
+        }
+        // Nếu không có token, để xử lý như lỗi thông thường (hiển thị notification)
       }
-      throw new Error(`HTTP error! status: ${response.status}`);
+      
+      // Try to parse error message from response
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      let errorData = null;
+      
+      // Clone response để có thể đọc body nhiều lần nếu cần
+      const contentType = response.headers.get('content-type');
+      const isJson = contentType && contentType.includes('application/json');
+      
+      if (isJson) {
+        try {
+          // Đọc response body
+          const text = await response.text();
+          if (text) {
+            errorData = JSON.parse(text);
+            if (errorData.message) {
+              errorMessage = errorData.message;
+            } else if (errorData.error) {
+              errorMessage = errorData.error;
+            }
+          }
+        } catch (parseError) {
+          console.error('Error parsing error response:', parseError);
+          errorMessage = response.statusText || `HTTP error! status: ${response.status}`;
+        }
+      } else {
+        // Nếu không phải JSON, thử đọc text
+        try {
+          const text = await response.text();
+          if (text) {
+            errorMessage = text;
+          } else {
+            errorMessage = response.statusText || `HTTP error! status: ${response.status}`;
+          }
+        } catch (textError) {
+          errorMessage = response.statusText || `HTTP error! status: ${response.status}`;
+        }
+      }
+      
+      console.error('API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        message: errorMessage,
+        data: errorData
+      });
+      
+      const error = new Error(errorMessage);
+      error.status = response.status;
+      error.data = errorData;
+      throw error;
     }
     
     return await response.json();
   } catch (error) {
     console.error('API call failed:', error);
+    
+    // ✅ Tự động hiển thị error notification
+    // Chỉ hiển thị nếu không phải là 401 với token expired (đã redirect)
+    const isUnauthorizedRedirect = error.message === 'Unauthorized - Token expired';
+    
+    if (!isUnauthorizedRedirect) {
+      let errorMessage = 'Đã xảy ra lỗi. Vui lòng thử lại.';
+      
+      // Lấy error message từ nhiều nguồn
+      if (error.message && error.message !== 'API call failed:' && error.message !== 'Unauthorized') {
+        errorMessage = error.message;
+      } else if (error.data && error.data.message) {
+        errorMessage = error.data.message;
+      } else if (error.data && error.data.error) {
+        errorMessage = error.data.error;
+      } else if (error.status === 401) {
+        errorMessage = 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra lại.';
+      }
+      
+      // Hiển thị notification bằng notificationService
+      showErrorNotification(errorMessage);
+    }
+    
     throw error;
   }
 };

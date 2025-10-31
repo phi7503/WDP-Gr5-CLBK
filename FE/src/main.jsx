@@ -3,9 +3,45 @@ import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { message } from "antd";
 import "./style.css";
 import "./animations.css";
 import "./showtimes-colors.css";
+import "./styles/message.css";
+import "./styles/notification.css"; // ✅ Import notification styles
+
+// ✅ Cấu hình Ant Design Message để hiển thị từ phải sang trái
+message.config({
+  top: 80, // Khoảng cách từ trên xuống
+  duration: 4, // Thời gian hiển thị mặc định (giây)
+  maxCount: 3, // Số lượng notification tối đa cùng lúc
+  rtl: false, // Right-to-left mode (false = left-to-right)
+  prefixCls: 'ant-message',
+  getContainer: () => document.body,
+});
+
+// ✅ Override Ant Design Message để đảm bảo luôn hiển thị từ phải
+const originalSuccess = message.success;
+const originalError = message.error;
+const originalWarning = message.warning;
+const originalInfo = message.info;
+
+// Wrap tất cả các method để đảm bảo style được áp dụng
+message.success = function(content, duration) {
+  return originalSuccess.call(this, content, duration);
+};
+
+message.error = function(content, duration) {
+  return originalError.call(this, content, duration);
+};
+
+message.warning = function(content, duration) {
+  return originalWarning.call(this, content, duration);
+};
+
+message.info = function(content, duration) {
+  return originalInfo.call(this, content, duration);
+};
 
 // ✅ Eager loading cho trang chính (HomePage)
 import HomePage from "./components/HomePage";

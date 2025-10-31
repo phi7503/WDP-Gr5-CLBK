@@ -69,11 +69,6 @@ async function createTestUsers() {
     console.log('   Password: 123456');
     console.log('   Name: Trần Thị B');
     console.log('');
-    console.log('👤 User 3:');
-    console.log('   Email: manhgg22@gmail.com');
-    console.log('   Password: 123456');
-    console.log('   Name: Nguyễn Văn Mạnh');
-    console.log('');
     console.log('🎯 HOW TO TEST SOCKET.IO:');
     console.log('1. Open 2 browser tabs/windows');
     console.log('2. Tab 1: Login with test1@example.com');

@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import startCleanupJob from "./jobs/cleanupExpiredReservations.js";
+import { scheduleCleanupOldShowtimes } from "./jobs/cleanupOldShowtimes.js";
 import { initializeSocketHandlers } from "./socket/socketHandlers.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import payosRoutes from "./routes/payOSRoutes.js";
@@ -107,8 +108,9 @@ initializeSocketHandlers(io);
 app.use(notFound);
 app.use(errorHandler);
 
-// ✅ Start cleanup job
-startCleanupJob();
+// ✅ Start cleanup jobs
+startCleanupJob(); // Cleanup expired seat reservations
+scheduleCleanupOldShowtimes(); // Cleanup old showtimes (runs daily at 2 AM)
 
 // Start server
 const PORT = process.env.PORT || 5000;

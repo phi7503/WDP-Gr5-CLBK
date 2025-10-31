@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Typography, Row, Col, Card, Select, DatePicker, Spin, Empty, Tag, Pagination, Input, Button } from 'antd';
+import { Layout, Typography, Row, Col, Card, Select, DatePicker, Spin, Empty, Tag, Pagination, Input, Button, message } from 'antd';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -84,6 +84,7 @@ const ShowtimesPage = () => {
         setShowtimes(list);
       } catch (e) {
         console.error('Error loading showtimes:', e);
+        // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
         setShowtimes([]);
       } finally {
         setLoading(false);

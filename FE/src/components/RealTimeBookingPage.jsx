@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Typography, Button, Row, Col, Card, Space, message, Modal, Input, Select, Badge, Alert, Spin } from 'antd';
+import { Layout, Typography, Button, Row, Col, Card, Space, message, notification, Modal, Input, Select, Badge, Alert, Spin } from 'antd';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { UserOutlined, ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import io from 'socket.io-client';
@@ -259,7 +259,9 @@ const RealTimeBookingPage = () => {
       
     } catch (error) {
       console.error('Error loading showtime data:', error);
-      message.error('Không thể tải dữ liệu suất chiếu');
+      // Hiển thị error message cụ thể từ API
+      const errorMessage = error.message || 'Không thể tải dữ liệu suất chiếu';
+      message.error(errorMessage, 5);
     } finally {
       setLoading(false);
     }
@@ -361,6 +363,8 @@ const RealTimeBookingPage = () => {
         customerInfo: customerInfo
       };
       
+      console.log('Creating booking with data:', bookingData);
+      
       // Tạo booking với trạng thái pending
       const response = await bookingAPI.createBooking(bookingData);
       
@@ -382,12 +386,74 @@ const RealTimeBookingPage = () => {
           }
         } catch (paymentError) {
           console.error('Error creating payment link:', paymentError);
-          message.error('Không thể tạo link thanh toán. Vui lòng thử lại.');
+          const paymentErrorMsg = paymentError.message || 'Không thể tạo link thanh toán. Vui lòng thử lại.';
+          message.error(paymentErrorMsg);
         }
       }
     } catch (error) {
       console.error('Error creating booking:', error);
-      message.error('Không thể tạo booking. Vui lòng thử lại.');
+      console.error('Error details:', {
+        message: error.message,
+        status: error.status,
+        data: error.data
+      });
+      
+      // Hiển thị message lỗi cụ thể từ server
+      let errorMessage = 'Không thể tạo booking. Vui lòng thử lại.';
+      
+      // Lấy message từ nhiều nguồn
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.data && error.data.message) {
+        errorMessage = error.data.message;
+      } else if (error.data && error.data.error) {
+        errorMessage = error.data.error;
+      }
+      
+      console.log('Displaying error message:', errorMessage);
+      
+      // Đảm bảo modal đóng trước khi hiển thị message
+      if (setBookingModalVisible) {
+        setBookingModalVisible(false);
+      }
+      
+      // Đợi một chút để modal đóng hoàn toàn
+      setTimeout(() => {
+        // Kiểm tra các loại lỗi cụ thể
+        if (errorMessage.includes('đã bắt đầu') || errorMessage.includes('đã kết thúc')) {
+          // Chỉ reload khi suất chiếu đã bắt đầu/kết thúc - nhưng cho người dùng 6 giây để đọc notification
+          notification.error({
+            message: 'Lỗi',
+            description: errorMessage,
+            placement: 'topRight',
+            duration: 6,
+            onClose: () => {
+              // Reload sau khi notification đóng (sau 6 giây)
+              window.location.reload();
+            }
+          });
+        } else if (errorMessage.includes('no longer available') || errorMessage.includes('không còn khả dụng') || errorMessage.includes('are no longer available')) {
+          notification.warning({
+            message: 'Cảnh báo',
+            description: 'Một số ghế đã được đặt bởi người khác. Vui lòng chọn ghế khác.',
+            placement: 'topRight',
+            duration: 6,
+          });
+          // Refresh seat statuses - KHÔNG reload trang
+          if (typeof loadSeatStatuses === 'function') {
+            loadSeatStatuses();
+          }
+        } else {
+          // ✅ Các lỗi khác - CHỈ hiển thị notification, KHÔNG reload trang
+          notification.error({
+            message: 'Lỗi',
+            description: errorMessage,
+            placement: 'topRight',
+            duration: 6,
+          });
+          // KHÔNG reload - người dùng có thể thử lại hoặc chọn ghế khác
+        }
+      }, 100);
     } finally {
       setLoading(false);
     }

@@ -9,6 +9,50 @@ import { bookingAPI, payOSAPI } from '../services/api';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
+// Cinema Theme Styles
+const cinemaStyles = {
+  layout: {
+    background: 'linear-gradient(180deg, #1a1a1a 0%, #252525 50%, #1f1f1f 100%)',
+    minHeight: '100vh',
+    transition: 'background 0.3s ease',
+    position: 'relative',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'radial-gradient(circle at 50% 0%, rgba(255, 77, 79, 0.03) 0%, transparent 50%)',
+      pointerEvents: 'none'
+    }
+  },
+  card: {
+    background: 'linear-gradient(135deg, #1f1f1f 0%, #252525 100%)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    borderRadius: '12px',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      boxShadow: '0 8px 24px rgba(255, 77, 79, 0.15), 0 0 0 1px rgba(255, 77, 79, 0.2)',
+      transform: 'translateY(-2px)'
+    }
+  },
+  title: {
+    color: '#f5f5f5',
+    textShadow: '0 2px 8px rgba(255, 77, 79, 0.3), 0 0 20px rgba(255, 255, 255, 0.1)',
+    fontWeight: 700
+  },
+  text: {
+    color: '#f0f0f0',
+    textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+  },
+  textLabel: {
+    color: 'rgba(255, 255, 255, 0.85)',
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+  }
+};
+
 const BookingDetailsPage = () => {
   const { bookingId } = useParams();
   const [booking, setBooking] = useState(null);
@@ -206,12 +250,24 @@ const BookingDetailsPage = () => {
 
   if (loading || checkingPayment) {
     return (
-      <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+      <Layout style={{ 
+        background: 'linear-gradient(180deg, #1a1a1a 0%, #252525 50%, #1f1f1f 100%)', 
+        minHeight: '100vh',
+        transition: 'background 0.3s ease'
+      }}>
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
-          <Text style={{ color: '#fff' }}>
-            {checkingPayment ? 'Đang kiểm tra trạng thái thanh toán...' : 'Đang tải thông tin đặt vé...'}
-          </Text>
+          <Spin size="large" />
+          <div style={{ marginTop: '16px' }}>
+            <Text style={{ 
+              color: '#f5f5f5', 
+              fontSize: '18px',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+              fontWeight: 500
+            }}>
+              {checkingPayment ? 'Đang kiểm tra trạng thái thanh toán...' : 'Đang tải thông tin đặt vé...'}
+            </Text>
+          </div>
         </Content>
         <Footer />
       </Layout>
@@ -220,10 +276,21 @@ const BookingDetailsPage = () => {
 
   if (!booking) {
     return (
-      <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+      <Layout style={{ 
+        background: 'linear-gradient(180deg, #1a1a1a 0%, #252525 50%, #1f1f1f 100%)', 
+        minHeight: '100vh',
+        transition: 'background 0.3s ease'
+      }}>
         <Header />
         <Content style={{ padding: '80px 24px', textAlign: 'center' }}>
-          <Text style={{ color: '#fff' }}>Không tìm thấy thông tin đặt vé</Text>
+          <Text style={{ 
+            color: '#f5f5f5', 
+            fontSize: '18px',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+            fontWeight: 500
+          }}>
+            Không tìm thấy thông tin đặt vé
+          </Text>
         </Content>
         <Footer />
       </Layout>
@@ -231,12 +298,55 @@ const BookingDetailsPage = () => {
   }
 
   return (
-    <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+    <Layout style={{ 
+      background: 'linear-gradient(180deg, #1a1a1a 0%, #252525 50%, #1f1f1f 100%)',
+      minHeight: '100vh',
+      transition: 'background 0.3s ease',
+      position: 'relative'
+    }}>
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .booking-content {
+          animation: fadeInUp 0.6s ease-out;
+        }
+        .booking-card {
+          transition: all 0.3s ease;
+        }
+        .booking-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 32px rgba(255, 77, 79, 0.2), 0 0 0 1px rgba(255, 77, 79, 0.3) !important;
+        }
+      `}</style>
       <Header />
       
-      <Content style={{ padding: '80px 24px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <Title level={2} style={{ color: '#fff', marginBottom: '32px', textAlign: 'center' }}>
+      <Content style={{ padding: '80px 24px', position: 'relative' }}>
+        <div 
+          className="booking-content"
+          style={{ 
+            maxWidth: '1200px', 
+            margin: '0 auto',
+            position: 'relative',
+            zIndex: 1
+          }}
+        >
+          <Title level={2} style={{ 
+            color: '#f5f5f5', 
+            marginBottom: '32px', 
+            textAlign: 'center', 
+            fontSize: '36px', 
+            fontWeight: 700, 
+            letterSpacing: '0.5px',
+            textShadow: '0 4px 12px rgba(255, 77, 79, 0.4), 0 0 30px rgba(255, 255, 255, 0.1)'
+          }}>
             Xác Nhận Đặt Vé
           </Title>
           
@@ -244,38 +354,100 @@ const BookingDetailsPage = () => {
             {/* Booking Details */}
             <Col xs={24} lg={16}>
               <Card
+                className="booking-card"
                 style={{ 
-                  background: '#1a1a1a',
-                  border: '1px solid #333',
-                  borderRadius: '8px',
-                  marginBottom: '24px'
+                  background: 'linear-gradient(135deg, #1f1f1f 0%, #252525 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  marginBottom: '28px',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+                  transition: 'all 0.3s ease'
                 }}
               >
-                <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
+                <Title level={3} style={{ 
+                  color: '#f5f5f5', 
+                  marginBottom: '24px', 
+                  fontSize: '22px', 
+                  fontWeight: 700,
+                  textShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
+                }}>
                   Thông Tin Đặt Vé
                 </Title>
                 
-                <Row gutter={[16, 16]}>
+                <Row gutter={[16, 20]}>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Mã Đặt Vé:</Text><br/>
-                    <Text style={{ color: '#999' }}>{booking._id}</Text>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Mã Đặt Vé:</Text>
+                    </div>
+                    <Text style={{ 
+                      color: '#f0f0f0', 
+                      fontSize: '17px', 
+                      fontWeight: 600, 
+                      letterSpacing: '0.3px',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                    }}>{booking._id}</Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Trạng Thái:</Text><br/>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Trạng Thái:</Text>
+                    </div>
                     <Text style={{ 
-                      color: booking.bookingStatus === 'confirmed' ? '#52c41a' : '#ff4d4f',
-                      fontWeight: 'bold'
+                      color: booking.bookingStatus === 'confirmed' ? '#52c41a' : booking.bookingStatus === 'pending' ? '#faad14' : '#ff4d4f',
+                      fontWeight: 'bold',
+                      fontSize: '17px',
+                      letterSpacing: '0.3px',
+                      textShadow: booking.bookingStatus === 'confirmed' ? '0 2px 8px rgba(82, 196, 26, 0.4)' : booking.bookingStatus === 'pending' ? '0 2px 8px rgba(250, 173, 20, 0.4)' : '0 2px 8px rgba(255, 77, 79, 0.4)'
                     }}>
                       {booking.bookingStatus === 'confirmed' ? 'ĐÃ XÁC NHẬN' : booking.bookingStatus === 'pending' ? 'ĐANG CHỜ' : booking.bookingStatus?.toUpperCase()}
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Phim:</Text><br/>
-                    <Text style={{ color: '#999' }}>{booking.showtime?.movie?.title}</Text>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Phim:</Text>
+                    </div>
+                    <Text style={{ 
+                      color: '#f0f0f0', 
+                      fontSize: '17px', 
+                      fontWeight: 600, 
+                      letterSpacing: '0.3px',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                    }}>{booking.showtime?.movie?.title}</Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Ngày & Giờ:</Text><br/>
-                    <Text style={{ color: '#999' }}>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Ngày & Giờ:</Text>
+                    </div>
+                    <Text style={{ 
+                      color: '#f0f0f0', 
+                      fontSize: '17px', 
+                      fontWeight: 600, 
+                      letterSpacing: '0.3px',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                    }}>
                       {booking.showtime?.startTime ? 
                         `${new Date(booking.showtime.startTime).toLocaleDateString('vi-VN')} lúc ${new Date(booking.showtime.startTime).toLocaleTimeString('vi-VN')}` :
                         'N/A'
@@ -283,26 +455,63 @@ const BookingDetailsPage = () => {
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Rạp:</Text><br/>
-                    <Text style={{ color: '#999' }}>{booking.showtime?.theater?.name}</Text>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Rạp:</Text>
+                    </div>
+                    <Text style={{ 
+                      color: '#f0f0f0', 
+                      fontSize: '17px', 
+                      fontWeight: 600, 
+                      letterSpacing: '0.3px',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                    }}>{booking.showtime?.theater?.name}</Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Chi Nhánh:</Text><br/>
-                    <Text style={{ color: '#999' }}>{booking.showtime?.branch?.name}</Text>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Chi Nhánh:</Text>
+                    </div>
+                    <Text style={{ 
+                      color: '#f0f0f0', 
+                      fontSize: '17px', 
+                      fontWeight: 600, 
+                      letterSpacing: '0.3px',
+                      textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                    }}>{booking.showtime?.branch?.name}</Text>
                   </Col>
                 </Row>
               </Card>
 
               {/* Seats */}
               <Card
+                className="booking-card"
                 style={{ 
-                  background: '#1a1a1a',
-                  border: '1px solid #333',
-                  borderRadius: '8px',
-                  marginBottom: '24px'
+                  background: 'linear-gradient(135deg, #1f1f1f 0%, #252525 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  marginBottom: '28px',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+                  transition: 'all 0.3s ease'
                 }}
               >
-                <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
+                <Title level={3} style={{ 
+                  color: '#f5f5f5', 
+                  marginBottom: '24px', 
+                  fontSize: '22px', 
+                  fontWeight: 700,
+                  textShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
+                }}>
                   Ghế Đã Chọn
                 </Title>
                 
@@ -310,11 +519,14 @@ const BookingDetailsPage = () => {
                   {booking.seats?.map((seat, index) => (
                     <div key={index} style={{ 
                       padding: '12px 16px', 
-                      background: '#ff4d4f', 
+                      background: 'linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%)', 
                       color: 'white', 
-                      borderRadius: '6px',
+                      borderRadius: '8px',
                       fontSize: '16px',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 8px rgba(255, 77, 79, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+                      transition: 'all 0.3s ease'
                     }}>
                       {seat.row}{seat.number}
                     </div>
@@ -325,14 +537,23 @@ const BookingDetailsPage = () => {
               {/* Combos */}
               {booking.combos && booking.combos.length > 0 && (
                 <Card
+                  className="booking-card"
                   style={{ 
-                    background: '#1a1a1a',
-                    border: '1px solid #333',
-                    borderRadius: '8px',
-                    marginBottom: '24px'
+                    background: 'linear-gradient(135deg, #1f1f1f 0%, #252525 100%)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '12px',
+                    marginBottom: '28px',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+                    transition: 'all 0.3s ease'
                   }}
                 >
-                  <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
+                  <Title level={3} style={{ 
+                    color: '#f5f5f5', 
+                    marginBottom: '24px', 
+                    fontSize: '22px', 
+                    fontWeight: 700,
+                    textShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
+                  }}>
                     Combo & Đồ Uống
                   </Title>
                   
@@ -342,15 +563,36 @@ const BookingDetailsPage = () => {
                         display: 'flex', 
                         justifyContent: 'space-between', 
                         alignItems: 'center',
-                        padding: '12px',
-                        border: '1px solid #333',
-                        borderRadius: '4px'
+                        padding: '14px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        transition: 'all 0.3s ease'
                       }}>
                         <div>
-                          <Text strong style={{ color: '#fff' }}>{combo.name}</Text><br/>
-                          <Text style={{ color: '#999' }}>Số lượng: {combo.quantity}</Text>
+                          <Text strong style={{ 
+                            color: '#f0f0f0', 
+                            fontSize: '17px', 
+                            fontWeight: 600, 
+                            letterSpacing: '0.3px',
+                            textShadow: '0 1px 3px rgba(0, 0, 0, 0.5)'
+                          }}>{combo.name}</Text><br/>
+                          <Text style={{ 
+                            color: 'rgba(255, 255, 255, 0.8)', 
+                            fontSize: '16px', 
+                            fontWeight: 500, 
+                            marginTop: '4px', 
+                            display: 'block',
+                            textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                          }}>Số lượng: {combo.quantity}</Text>
                         </div>
-                        <Text style={{ color: '#ff4d4f', fontWeight: 'bold' }}>
+                        <Text style={{ 
+                          color: '#ff4d4f', 
+                          fontWeight: 'bold', 
+                          fontSize: '18px', 
+                          letterSpacing: '0.3px',
+                          textShadow: '0 2px 6px rgba(255, 77, 79, 0.5)'
+                        }}>
                           {(combo.price * combo.quantity).toLocaleString('vi-VN')} VND
                         </Text>
                       </div>
@@ -361,35 +603,65 @@ const BookingDetailsPage = () => {
 
               {/* Payment Info */}
               <Card
+                className="booking-card"
                 style={{ 
-                  background: '#1a1a1a',
-                  border: '1px solid #333',
-                  borderRadius: '8px'
+                  background: 'linear-gradient(135deg, #1f1f1f 0%, #252525 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+                  transition: 'all 0.3s ease'
                 }}
               >
-                <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
+                <Title level={3} style={{ 
+                  color: '#f5f5f5', 
+                  marginBottom: '24px', 
+                  fontSize: '22px', 
+                  fontWeight: 700,
+                  textShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
+                }}>
                   Thông Tin Thanh Toán
                 </Title>
                 
-                <Row gutter={[16, 16]}>
+                <Row gutter={[16, 20]}>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Tổng Tiền:</Text><br/>
-                    <Text style={{ color: '#ff4d4f', fontSize: '20px', fontWeight: 'bold' }}>
+                    <div style={{ marginBottom: '6px' }}>
+                      <Text strong style={{ 
+                        color: 'rgba(255, 255, 255, 0.85)', 
+                        fontSize: '16px', 
+                        fontWeight: 600, 
+                        letterSpacing: '0.3px',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+                      }}>Tổng Tiền:</Text>
+                    </div>
+                    <Text style={{ 
+                      color: '#ff4d4f', 
+                      fontSize: '26px', 
+                      fontWeight: 'bold', 
+                      letterSpacing: '0.3px',
+                      textShadow: '0 3px 10px rgba(255, 77, 79, 0.6), 0 0 20px rgba(255, 77, 79, 0.3)'
+                    }}>
                       {booking.totalAmount?.toLocaleString('vi-VN')} VND
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Phương Thức Thanh Toán:</Text><br/>
-                    <Text style={{ color: '#999' }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <Text strong style={{ color: '#ffffff', fontSize: '16px', fontWeight: 600, letterSpacing: '0.3px' }}>Phương Thức Thanh Toán:</Text>
+                    </div>
+                    <Text style={{ color: '#ffffff', fontSize: '17px', fontWeight: 600, letterSpacing: '0.3px' }}>
                       {booking.paymentMethod?.toUpperCase() || 'N/A'}
                     </Text>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Text strong style={{ color: '#fff' }}>Trạng Thái Thanh Toán:</Text><br/>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <Text strong style={{ color: '#ffffff', fontSize: '16px', fontWeight: 600, letterSpacing: '0.3px' }}>Trạng Thái Thanh Toán:</Text>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <Text style={{ 
-                        color: booking.paymentStatus === 'completed' ? '#52c41a' : '#ff4d4f',
-                        fontWeight: 'bold'
+                        color: booking.paymentStatus === 'completed' ? '#52c41a' : booking.paymentStatus === 'pending' ? '#faad14' : '#ff4d4f',
+                        fontWeight: 'bold',
+                        fontSize: '17px',
+                        letterSpacing: '0.3px',
+                        textShadow: booking.paymentStatus === 'completed' ? '0 2px 8px rgba(82, 196, 26, 0.5)' : booking.paymentStatus === 'pending' ? '0 2px 8px rgba(250, 173, 20, 0.5)' : '0 2px 8px rgba(255, 77, 79, 0.5)'
                       }}>
                         {booking.paymentStatus === 'completed' ? 'ĐÃ THANH TOÁN' : booking.paymentStatus === 'pending' ? 'ĐANG CHỜ' : booking.paymentStatus?.toUpperCase() || 'ĐANG CHỜ'}
                       </Text>
@@ -400,7 +672,7 @@ const BookingDetailsPage = () => {
                           icon={<ReloadOutlined />}
                           onClick={handleCheckPayment}
                           loading={checkingPayment}
-                          style={{ color: '#1890ff', padding: 0 }}
+                          style={{ color: '#40a9ff', padding: 0, fontSize: '15px', fontWeight: 600 }}
                         >
                           Kiểm tra lại
                         </Button>
@@ -409,8 +681,10 @@ const BookingDetailsPage = () => {
                   </Col>
                   {booking.discountAmount > 0 && (
                     <Col xs={24} sm={12}>
-                      <Text strong style={{ color: '#fff' }}>Giảm Giá:</Text><br/>
-                      <Text style={{ color: '#52c41a', fontWeight: 'bold' }}>
+                      <div style={{ marginBottom: '4px' }}>
+                        <Text strong style={{ color: '#ffffff', fontSize: '16px', fontWeight: 600, letterSpacing: '0.3px' }}>Giảm Giá:</Text>
+                      </div>
+                      <Text style={{ color: '#52c41a', fontWeight: 'bold', fontSize: '18px', letterSpacing: '0.3px' }}>
                         -{booking.discountAmount?.toLocaleString('vi-VN')} VND
                       </Text>
                     </Col>
@@ -421,24 +695,42 @@ const BookingDetailsPage = () => {
 
             {/* User Info */}
             <Card
+              className="booking-card"
               style={{ 
-                background: '#1a1a1a',
-                border: '1px solid #333',
-                borderRadius: '8px',
-                marginBottom: '24px',
-                marginTop: '24px'
+                background: 'linear-gradient(135deg, #1f1f1f 0%, #252525 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '12px',
+                marginBottom: '28px',
+                marginTop: '24px',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+                transition: 'all 0.3s ease'
               }}
             >
-              <Title level={3} style={{ color: '#fff', marginBottom: '16px' }}>Thông Tin Người Đặt Vé</Title>
-              <div style={{ color: '#fff' }}>
-                <div><Text strong>Họ tên:</Text> {(booking.customerInfo?.name ?? booking.user?.name) || 'N/A'}</div>
-                <div><Text strong>Email:</Text> {(booking.customerInfo?.email ?? booking.user?.email) || 'N/A'}</div>
+              <Title level={3} style={{ 
+                color: '#f5f5f5', 
+                marginBottom: '20px', 
+                fontSize: '20px', 
+                fontWeight: 700,
+                textShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
+              }}>Thông Tin Người Đặt Vé</Title>
+              <div style={{ color: '#ffffff' }}>
+                <div style={{ marginBottom: '16px', fontSize: '16px', lineHeight: 1.8 }}>
+                  <Text strong style={{ color: '#ffffff', fontSize: '16px', fontWeight: 600, letterSpacing: '0.3px' }}>Họ tên:</Text>{' '}
+                  <Text style={{ color: '#ffffff', fontWeight: 600, fontSize: '17px', letterSpacing: '0.3px' }}>{(booking.customerInfo?.name ?? booking.user?.name) || 'N/A'}</Text>
+                </div>
+                <div style={{ marginBottom: '16px', fontSize: '16px', lineHeight: 1.8 }}>
+                  <Text strong style={{ color: '#ffffff', fontSize: '16px', fontWeight: 600, letterSpacing: '0.3px' }}>Email:</Text>{' '}
+                  <Text style={{ color: '#ffffff', fontWeight: 600, fontSize: '17px', letterSpacing: '0.3px' }}>{(booking.customerInfo?.email ?? booking.user?.email) || 'N/A'}</Text>
+                </div>
                 {booking.customerInfo?.phone && (
-                  <div><Text strong>Điện thoại:</Text> {booking.customerInfo.phone}</div>
+                  <div style={{ marginBottom: '16px', fontSize: '16px', lineHeight: 1.8 }}>
+                    <Text strong style={{ color: '#ffffff', fontSize: '16px', fontWeight: 600, letterSpacing: '0.3px' }}>Điện thoại:</Text>{' '}
+                    <Text style={{ color: '#ffffff', fontWeight: 600, fontSize: '17px', letterSpacing: '0.3px' }}>{booking.customerInfo.phone}</Text>
+                  </div>
                 )}
                 {booking.paymentStatus === 'completed' && (
-                  <div style={{ color: '#52c41a', fontWeight: 'bold', marginTop: 10 }}>
-                    Mã QR đã được gửi qua email: {(booking.customerInfo?.email ?? booking.user?.email) || 'N/A'}<br/>
+                  <div style={{ color: '#52c41a', fontWeight: 'bold', marginTop: 20, fontSize: '16px', lineHeight: 1.8, letterSpacing: '0.3px', padding: '12px', background: 'rgba(82, 196, 26, 0.1)', borderRadius: '6px', border: '1px solid rgba(82, 196, 26, 0.3)' }}>
+                    ✓ Mã QR đã được gửi qua email: {(booking.customerInfo?.email ?? booking.user?.email) || 'N/A'}<br/>
                     (Vui lòng kiểm tra cả hộp thư Spam)
                   </div>
                 )}
@@ -456,7 +748,7 @@ const BookingDetailsPage = () => {
                   marginBottom: '24px'
                 }}
               >
-                <Title level={3} style={{ color: '#fff', marginBottom: '24px' }}>
+                <Title level={3} style={{ color: '#ffffff', marginBottom: '24px', fontSize: '22px', fontWeight: 700 }}>
                   Vé Của Bạn
                 </Title>
                 
@@ -492,12 +784,12 @@ const BookingDetailsPage = () => {
                   </>
                 ) : (
                   <div style={{ marginBottom: '24px', padding: '40px', textAlign: 'center' }}>
-                    <Text style={{ color: '#999', fontSize: '16px' }}>
+                    <Text style={{ color: '#ffffff', fontSize: '17px', fontWeight: 600, letterSpacing: '0.3px' }}>
                       QR code sẽ được tạo sau khi thanh toán thành công
                     </Text>
                     {booking.paymentStatus === 'pending' && (
-                      <div style={{ marginTop: '16px' }}>
-                        <Text style={{ color: '#faad14' }}>
+                      <div style={{ marginTop: '20px' }}>
+                        <Text style={{ color: '#faad14', fontSize: '18px', fontWeight: 700, letterSpacing: '0.3px' }}>
                           ⏳ Đang chờ thanh toán...
                         </Text>
                       </div>
@@ -505,7 +797,7 @@ const BookingDetailsPage = () => {
                   </div>
                 )}
                 
-                <Text style={{ color: '#999', display: 'block', marginBottom: '24px' }}>
+                <Text style={{ color: '#ffffff', display: 'block', marginBottom: '24px', fontSize: '17px', fontWeight: 600, letterSpacing: '0.3px' }}>
                   Hiển thị mã QR này tại cửa vào rạp
                 </Text>
                 
@@ -555,15 +847,15 @@ const BookingDetailsPage = () => {
                   borderRadius: '8px'
                 }}
               >
-                <Title level={4} style={{ color: '#fff', marginBottom: '16px' }}>
+                <Title level={4} style={{ color: '#ffffff', marginBottom: '20px', fontSize: '18px', fontWeight: 700 }}>
                   Lưu Ý Quan Trọng
                 </Title>
                 
-                <ul style={{ color: '#999', paddingLeft: '20px' }}>
-                  <li>Đến rạp ít nhất 15 phút trước giờ chiếu</li>
-                  <li>Mang theo CMND/CCCD để xác minh</li>
-                  <li>Không hoàn tiền khi không đến</li>
-                  <li>Liên hệ hỗ trợ nếu có vấn đề</li>
+                <ul style={{ color: '#ffffff', paddingLeft: '24px', fontSize: '16px', lineHeight: 2.0 }}>
+                  <li style={{ marginBottom: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>Đến rạp ít nhất 15 phút trước giờ chiếu</li>
+                  <li style={{ marginBottom: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>Mang theo CMND/CCCD để xác minh</li>
+                  <li style={{ marginBottom: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>Không hoàn tiền khi không đến</li>
+                  <li style={{ marginBottom: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>Liên hệ hỗ trợ nếu có vấn đề</li>
                 </ul>
               </Card>
             </Col>

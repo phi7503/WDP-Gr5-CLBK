@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Button, Row, Col, Card, Space, message, Modal, Input, Select, Steps, Badge } from 'antd';
+import { Layout, Typography, Button, Row, Col, Card, Space, message, notification, Modal, Input, Select, Steps, Badge } from 'antd';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CheckCircleOutlined, ClockCircleOutlined, UserOutlined, CreditCardOutlined, CheckOutlined } from '@ant-design/icons';
 import Header from './Header';
@@ -257,7 +257,39 @@ const BookingPageModern = () => {
       }
     } catch (error) {
       console.error('Error creating booking:', error);
-      message.error('Failed to create booking. Please try again.');
+      
+      // Hiển thị message lỗi cụ thể từ server
+      const errorMessage = error.message || 'Failed to create booking. Please try again.';
+      
+      // Kiểm tra các loại lỗi cụ thể - sử dụng notification thay vì message
+      if (errorMessage.includes('đã bắt đầu') || errorMessage.includes('đã kết thúc') || errorMessage.includes('has started') || errorMessage.includes('has ended')) {
+        // Chỉ reload khi suất chiếu đã bắt đầu/kết thúc - cho người dùng thời gian đọc
+        notification.error({
+          message: 'Lỗi',
+          description: errorMessage,
+          placement: 'topRight',
+          duration: 6,
+          onClose: () => {
+            // Reload sau khi notification đóng
+            window.location.reload();
+          }
+        });
+        setBookingModalVisible(false);
+      } else if (errorMessage.includes('no longer available') || errorMessage.includes('không còn khả dụng')) {
+        notification.warning({
+          message: 'Cảnh báo',
+          description: 'Một số ghế đã được đặt bởi người khác. Vui lòng chọn ghế khác.',
+          placement: 'topRight',
+          duration: 5,
+        });
+      } else {
+        notification.error({
+          message: 'Lỗi',
+          description: errorMessage,
+          placement: 'topRight',
+          duration: 5,
+        });
+      }
     }
   };
 

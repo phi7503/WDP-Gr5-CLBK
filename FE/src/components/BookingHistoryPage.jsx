@@ -37,7 +37,7 @@ const BookingHistoryPage = () => {
       }
     } catch (error) {
       console.error('Error loading bookings:', error);
-      message.error('Không thể tải lịch sử đặt vé');
+      // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
       setBookings([]);
     } finally {
       setLoading(false);

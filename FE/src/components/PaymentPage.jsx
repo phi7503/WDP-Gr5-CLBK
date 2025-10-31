@@ -95,7 +95,7 @@ const PaymentPage = () => {
       });
     } catch (error) {
       console.error('Payment error:', error);
-      message.error('Thanh toán thất bại. Vui lòng thử lại!');
+      // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
     } finally {
       setLoading(false);
     }
