@@ -8,9 +8,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
  * @param {string} userMessage - User's message
  * @param {Array} moviesContext - Array of movies from database
  * @param {Array} chatHistory - Previous chat messages
+ * @param {Object} userContext - User context (booking history, preferences, etc.)
  * @returns {Promise<Object>} AI response with message and recommended movie IDs
  */
-export const getAIResponse = async (userMessage, moviesContext, chatHistory) => {
+export const getAIResponse = async (userMessage, moviesContext, chatHistory, userContext = {}) => {
   try {
     // Use gemini-2.5-flash model (free tier, latest version)
     // Available models: gemini-2.5-flash, gemini-2.5-pro, gemini-2.0-flash
@@ -73,16 +74,96 @@ export const getAIResponse = async (userMessage, moviesContext, chatHistory) => 
       }
     }
 
+    // ✅ PHÂN TÍCH NGỮ CẢNH THỜI GIAN
+    const now = new Date();
+    const hour = now.getHours();
+    const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const timeOfDay = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+    
+    // ✅ PHÂN TÍCH TÂM TRẠNG VÀ NGỮ CẢNH
+    const moodKeywords = {
+      'buồn': 'sad',
+      'sad': 'sad',
+      'vui': 'happy',
+      'happy': 'happy',
+      'căng thẳng': 'stressed',
+      'stressed': 'stressed',
+      'thư giãn': 'relaxed',
+      'relaxed': 'relaxed',
+      'mệt mỏi': 'tired',
+      'tired': 'tired',
+      'hứng thú': 'excited',
+      'excited': 'excited',
+    };
+    
+    let detectedMood = null;
+    for (const [keyword, mood] of Object.entries(moodKeywords)) {
+      if (userMessageLower.includes(keyword)) {
+        detectedMood = mood;
+        break;
+      }
+    }
+    
+    // ✅ PHÂN TÍCH SỐ NGƯỜI XEM
+    const viewerKeywords = {
+      '1 người': 1,
+      'một mình': 1,
+      'cặp đôi': 2,
+      'đôi bạn': 2,
+      'gia đình': 4,
+      'bạn bè': 3,
+    };
+    
+    let numberOfViewers = null;
+    for (const [keyword, count] of Object.entries(viewerKeywords)) {
+      if (userMessageLower.includes(keyword)) {
+        numberOfViewers = count;
+        break;
+      }
+    }
+    
+    // ✅ LẤY THÔNG TIN TỪ USER CONTEXT
+    const userBookingHistory = userContext.bookingHistory || [];
+    const userPreferences = userContext.preferences || {};
+    const userFavoriteGenres = userPreferences.genres || [];
+    const userFavoriteMovies = userContext.favoriteMovies || [];
+    const hasShowtimes = userContext.hasShowtimes || {}; // { movieId: true/false }
+    
+    // ✅ PHÂN TÍCH PHIM ĐÃ XEM (từ booking history)
+    const watchedMovieIds = userBookingHistory.map(booking => 
+      booking.showtime?.movie?._id?.toString()
+    ).filter(Boolean);
+    
+    // ✅ PHÂN TÍCH GENRE YÊU THÍCH (từ booking history)
+    const watchedGenres = [];
+    userBookingHistory.forEach(booking => {
+      if (booking.showtime?.movie?.genre) {
+        watchedGenres.push(...booking.showtime.movie.genre);
+      }
+    });
+    const favoriteGenresFromHistory = [...new Set(watchedGenres)];
+    
+    // ✅ KẾT HỢP GENRE: từ user preferences + booking history + chat preferences
+    const combinedFavoriteGenres = [
+      ...new Set([
+        ...userFavoriteGenres,
+        ...favoriteGenresFromHistory,
+        ...(userContext.chatPreferences?.genres || [])
+      ])
+    ];
+
     const systemPrompt = `
-Bạn là CineMate - một chuyên gia tư vấn phim thân thiện của hệ thống CineLink.
+Bạn là CineMate - một chuyên gia tư vấn phim thân thiện và thông minh của hệ thống CineLink.
 
 NHIỆM VỤ CHÍNH:
 1. PHÂN TÍCH KỸ message của người dùng trước khi quyết định hành động
 2. Nếu user chỉ chào hỏi ("hello", "hi", "xin chào") → CHỈ chào lại, KHÔNG gợi ý phim
-3. Nếu user YÊU CẦU gợi ý phim → mới gợi ý phim PHÙ HỢP
+3. Nếu user YÊU CẦU gợi ý phim → mới gợi ý phim PHÙ HỢP dựa trên NGỮ CẢNH
 4. CHỈ gợi ý phim PHÙ HỢP với yêu cầu cụ thể, KHÔNG gợi ý linh tinh
 5. Nếu user hỏi chung chung về phim → gợi ý phim hot nhất + hỏi thêm sở thích
 6. QUAN TRỌNG: Nếu user KHÔNG yêu cầu gợi ý phim → recommendedMovieIds có thể để trống []
+7. SỬ DỤNG NGỮ CẢNH: thời gian trong ngày, tâm trạng, số người xem, lịch sử xem phim
 
 QUY TẮC NGHIÊM NGẶT:
 - PHÂN TÍCH message: User đang làm gì? Chào hỏi? Yêu cầu gợi ý phim? Hỏi về phim?
@@ -98,11 +179,28 @@ QUY TẮC NGHIÊM NGẶT:
 - Nếu user hỏi chung chung "có phim gì", "gợi ý phim", "thời tiết như này" → gợi ý phim hot nhất CHƯA gợi ý + hỏi thêm sở thích
 - QUAN TRỌNG: KHÔNG BAO GIỜ gợi ý lại phim đã gợi ý trong session này
 
-VÍ DỤ MESSAGE:
+QUY TẮC THÔNG MINH (NGỮ CẢNH):
+- Nếu user đã xem nhiều phim cùng genre → ƯU TIÊN gợi ý phim cùng genre (nhưng KHÔNG trùng với phim đã xem)
+- Nếu user có favorite genres → ƯU TIÊN gợi ý phim thuộc genres đó
+- Nếu user buồn/tired → Gợi ý phim Comedy hoặc Romance để giải trí
+- Nếu user stressed/căng thẳng → Gợi ý phim Action hoặc Adventure để giải tỏa
+- Nếu user vui/excited → Gợi ý phim Adventure, Action, hoặc Comedy
+- Nếu user muốn thư giãn → Gợi ý phim Drama, Romance, hoặc Comedy nhẹ nhàng
+- Nếu buổi sáng → Gợi ý phim nhẹ nhàng, không quá căng thẳng
+- Nếu buổi tối/cuối tuần → Gợi ý phim hành động, kinh dị, hoặc phim dài
+- Nếu cặp đôi (2 người) → ƯU TIÊN phim Romance, Drama, hoặc Comedy lãng mạn
+- Nếu gia đình (4+ người) → ƯU TIÊN phim Animation, Comedy, Adventure (phù hợp mọi lứa tuổi)
+- Nếu 1 người → Gợi ý phim theo sở thích cá nhân
+
+VÍ DỤ MESSAGE (THÔNG MINH):
 - User: "hello" → "Xin chào! Tôi là CineMate...", recommendedMovieIds = []
 - User: "phim hành động" → "Dựa trên sở thích của bạn, tôi đã tìm thấy một số phim hành động đang hot trong hệ thống. Đây là những lựa chọn phù hợp:", recommendedMovieIds = [5-8 phim Action]
-- User: "phim tình cảm" → "Tôi đã tìm thấy một số phim tình cảm lãng mạn cho bạn. Đây là những gợi ý:", recommendedMovieIds = [5-8 phim Romance/Drama]
+- User: "tôi buồn" → "Tôi hiểu bạn đang buồn. Để giải trí, tôi gợi ý một số phim hài hoặc tình cảm nhẹ nhàng:", recommendedMovieIds = [5-8 phim Comedy/Romance]
+- User: "cặp đôi xem phim gì" → "Với cặp đôi, tôi gợi ý một số phim lãng mạn hoặc tình cảm phù hợp:", recommendedMovieIds = [5-8 phim Romance/Drama]
+- User: "gia đình xem phim" → "Để cả gia đình cùng xem, tôi gợi ý một số phim hoạt hình hoặc hài phù hợp mọi lứa tuổi:", recommendedMovieIds = [5-8 phim Animation/Comedy]
+- User: "tôi căng thẳng" → "Để giải tỏa căng thẳng, tôi gợi ý một số phim hành động hoặc phiêu lưu:", recommendedMovieIds = [5-8 phim Action/Adventure]
 - User: "hôm nay có phim gì" → "Hôm nay có rất nhiều phim hay đang chiếu! Đây là một số phim đang hot:", recommendedMovieIds = [5-8 phim hot nhất]
+- User (đã xem nhiều phim Action): "gợi ý phim" → "Dựa trên lịch sử xem phim của bạn, tôi thấy bạn thích phim hành động. Đây là một số phim hành động mới:", recommendedMovieIds = [5-8 phim Action chưa xem]
 
 LƯU Ý:
 - Message phải NGẮN GỌN, tự nhiên, KHÔNG liệt kê từng phim
@@ -178,11 +276,21 @@ LƯU Ý QUAN TRỌNG:
     const prompt = `${systemPrompt}
 
 ═══════════════════════════════════════════════════════════
+NGỮ CẢNH HIỆN TẠI:
+═══════════════════════════════════════════════════════════
+- Thời gian: ${timeOfDay === 'morning' ? 'Buổi sáng' : timeOfDay === 'afternoon' ? 'Buổi chiều' : 'Buổi tối'}${isWeekend ? ' (Cuối tuần)' : ' (Ngày thường)'}
+${detectedMood ? `- Tâm trạng user: ${detectedMood}` : ''}
+${numberOfViewers ? `- Số người xem: ${numberOfViewers} ${numberOfViewers === 1 ? 'người' : numberOfViewers === 2 ? 'người (cặp đôi)' : 'người (nhóm)'}` : ''}
+${combinedFavoriteGenres.length > 0 ? `- Thể loại yêu thích (từ lịch sử): ${combinedFavoriteGenres.join(', ')}` : ''}
+${watchedMovieIds.length > 0 ? `- Số phim đã xem: ${watchedMovieIds.length} phim` : ''}
+
+═══════════════════════════════════════════════════════════
 DANH SÁCH PHIM CÓ SẴN TRONG HỆ THỐNG CINELINK:
 ═══════════════════════════════════════════════════════════
 ${moviesList}
 
 ${previouslyRecommendedIds.length > 0 ? `\n⚠️ LƯU Ý: Các phim đã được gợi ý trước đó (KHÔNG gợi ý lại): ${previouslyRecommendedIds.slice(0, 10).join(", ")}` : ""}
+${watchedMovieIds.length > 0 ? `\n📽️ LƯU Ý: User đã xem các phim sau (có thể gợi ý phim TƯƠNG TỰ): ${watchedMovieIds.slice(0, 5).join(", ")}` : ""}
 
 ═══════════════════════════════════════════════════════════
 LỊCH SỬ TRÒ CHUYỆN (5 tin nhắn gần nhất):

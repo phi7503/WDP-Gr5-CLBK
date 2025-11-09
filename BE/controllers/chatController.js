@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import ChatHistory from "../models/chatHistoryModel.js";
 import Movie from "../models/movieModel.js";
 import User from "../models/userModel.js";
+import Booking from "../models/bookingModel.js";
+import Showtime from "../models/showtimeModel.js";
 import { getAIResponse } from "../services/aiService.js";
 
 /**
@@ -47,6 +49,60 @@ export const sendMessage = asyncHandler(async (req, res) => {
       message: "Hiện tại không có phim nào trong hệ thống",
       sessionId: chatSession.sessionId 
     });
+  }
+
+  // ✅ LẤY USER CONTEXT (nếu user đã đăng nhập)
+  let userContext = {
+    bookingHistory: [],
+    preferences: {},
+    favoriteMovies: [],
+    hasShowtimes: {},
+    chatPreferences: chatSession.preferences || {},
+  };
+
+  if (userId) {
+    try {
+      // Lấy user preferences
+      const user = await User.findById(userId).select("preferences");
+      if (user) {
+        userContext.preferences = user.preferences || {};
+        userContext.favoriteMovies = user.preferences?.favoriteMovies || [];
+      }
+
+      // ✅ Lấy booking history (phim đã xem)
+      const bookings = await Booking.find({
+        user: userId,
+        bookingStatus: { $in: ["confirmed", "completed"] },
+      })
+        .populate({
+          path: "showtime",
+          populate: {
+            path: "movie",
+            select: "title genre _id",
+          },
+        })
+        .sort({ createdAt: -1 })
+        .limit(20); // Lấy 20 booking gần nhất
+
+      userContext.bookingHistory = bookings;
+
+      // ✅ Lấy showtimes hiện có (để biết phim nào đang có suất chiếu)
+      const now = new Date();
+      const futureShowtimes = await Showtime.find({
+        startTime: { $gte: now },
+        status: "active",
+      })
+        .select("movie")
+        .distinct("movie");
+
+      // Tạo map: movieId -> hasShowtime
+      futureShowtimes.forEach(movieId => {
+        userContext.hasShowtimes[movieId.toString()] = true;
+      });
+    } catch (error) {
+      console.error("Error loading user context:", error);
+      // Không throw error, chỉ log - vẫn tiếp tục với userContext rỗng
+    }
   }
 
   // Format movies cho AI context

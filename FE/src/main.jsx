@@ -64,6 +64,7 @@ const BookingHistoryPage = lazy(() => import("./components/BookingHistoryPage"))
 const PaymentSuccessPage = lazy(() => import("./components/PaymentSuccessPage"));
 const PaymentCancelPage = lazy(() => import("./components/PaymentCancelPage"));
 const ConfirmationPage = lazy(() => import("./components/ConfirmationPage"));
+const SearchPage = lazy(() => import("./components/SearchPage"));
 
 // 🎬 Cinema Loading Component (Fallback khi lazy load)
 const CinemaPageLoader = () => (
@@ -253,6 +254,7 @@ ReactDOM.createRoot(document.getElementById("app")).render(
           <Route path="/booking-details/:bookingId" element={<BookingDetailsPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/bookings" element={<BookingHistoryPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/confirmation" element={<ConfirmationPage />} />
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/payment-cancel" element={<PaymentCancelPage />} />
