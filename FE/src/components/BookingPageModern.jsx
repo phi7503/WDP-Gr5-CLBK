@@ -1155,7 +1155,7 @@ const BookingPageModern = () => {
                       fontWeight: 'bold',
                       textShadow: '0 1px 2px rgba(0,0,0,0.5)'
                     }}>
-                      {(combo.price * 24000).toLocaleString('vi-VN')} VND
+                      {combo.price.toLocaleString('vi-VN')}₫
                     </Text>
                   </div>
                   <Select

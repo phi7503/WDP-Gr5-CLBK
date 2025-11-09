@@ -8,63 +8,63 @@
   position: fixed !important;
   top: 80px !important;
   right: 24px !important;
-  left: auto !important; /* Force right side */
+  left: auto !important;
   z-index: 9999 !important;
   pointer-events: none;
+  direction: ltr !important;
 }
 
-/* Đảm bảo notification container luôn ở bên phải */
+/* Force right placement */
 body > .ant-notification {
   right: 24px !important;
   left: auto !important;
 }
 
-/* Force right placement cho tất cả notification containers */
 .ant-notification.ant-notification-topRight {
   right: 24px !important;
   left: auto !important;
 }
 
-/* Notification Card */
+/* Notification Card - Đơn giản hơn */
 .ant-notification-notice {
   pointer-events: auto;
-  margin-bottom: 16px;
-  padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  border-left: 4px solid #dc2626;
-  color: #fff;
-  max-width: 400px;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-left: 3px solid #dc2626;
+  max-width: 380px;
   word-wrap: break-word;
-  overflow-wrap: break-word;
+  direction: ltr !important;
+  text-align: left !important;
 }
 
 /* Content */
 .ant-notification-notice-content {
-  color: #fff;
+  color: #333;
 }
 
-/* Message Title */
+/* Message Title - Đơn giản hơn */
 .ant-notification-notice-message {
-  color: #fff !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  margin-bottom: 4px;
+  color: #333 !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  margin-bottom: 2px;
 }
 
-/* Description */
+/* Description - Đơn giản hơn */
 .ant-notification-notice-description {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 14px !important;
-  line-height: 1.5;
+  color: #666 !important;
+  font-size: 13px !important;
+  line-height: 1.4;
+  margin-top: 4px;
 }
 
 /* Icon */
 .ant-notification-notice-icon {
-  font-size: 20px;
-  margin-right: 12px;
+  font-size: 18px;
+  margin-right: 10px;
 }
 
 /* ============================================
@@ -125,7 +125,7 @@ body > .ant-notification {
 }
 
 /* ============================================
-   Notification Types
+   Notification Types - Đơn giản
    ============================================ */
 
 /* Error - Red */
@@ -134,7 +134,7 @@ body > .ant-notification {
 }
 
 .ant-notification-notice-error .ant-notification-notice-icon {
-  color: #ef4444 !important;
+  color: #dc2626 !important;
 }
 
 /* Success - Green */
@@ -168,16 +168,6 @@ body > .ant-notification {
    Responsive
    ============================================ */
 
-/* Force right placement - Override any RTL or direction changes */
-.ant-notification {
-  direction: ltr !important; /* Force left-to-right */
-}
-
-.ant-notification-notice {
-  direction: ltr !important;
-  text-align: left !important;
-}
-
 @media (max-width: 768px) {
   .ant-notification {
     right: 12px !important;
@@ -187,6 +177,14 @@ body > .ant-notification {
   
   .ant-notification-notice {
     max-width: calc(100% - 24px);
-    padding: 12px 16px;
+    padding: 10px 14px;
+  }
+  
+  .ant-notification-notice-message {
+    font-size: 13px !important;
+  }
+  
+  .ant-notification-notice-description {
+    font-size: 12px !important;
   }
 }

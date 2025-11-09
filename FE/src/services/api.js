@@ -54,11 +54,10 @@ const apiCall = async (endpoint, options = {}) => {
         // Nếu không có token, để xử lý như lỗi thông thường (hiển thị notification)
       }
       
-      // Try to parse error message from response
+      // Try to parse error message from response - Parse tất cả các field có thể
       let errorMessage = `HTTP error! status: ${response.status}`;
       let errorData = null;
       
-      // Clone response để có thể đọc body nhiều lần nếu cần
       const contentType = response.headers.get('content-type');
       const isJson = contentType && contentType.includes('application/json');
       
@@ -68,10 +67,28 @@ const apiCall = async (endpoint, options = {}) => {
           const text = await response.text();
           if (text) {
             errorData = JSON.parse(text);
+            
+            // ✅ Parse tất cả các field có thể từ backend:
+            // - message (phổ biến nhất)
+            // - error
+            // - warning
+            // - desc (description từ PayOS)
+            // - errorMessage
+            // - msg
             if (errorData.message) {
               errorMessage = errorData.message;
             } else if (errorData.error) {
               errorMessage = errorData.error;
+            } else if (errorData.warning) {
+              errorMessage = errorData.warning;
+            } else if (errorData.desc) {
+              errorMessage = errorData.desc;
+            } else if (errorData.errorMessage) {
+              errorMessage = errorData.errorMessage;
+            } else if (errorData.msg) {
+              errorMessage = errorData.msg;
+            } else if (typeof errorData === 'string') {
+              errorMessage = errorData;
             }
           }
         } catch (parseError) {
@@ -116,14 +133,32 @@ const apiCall = async (endpoint, options = {}) => {
     if (!isUnauthorizedRedirect) {
       let errorMessage = 'Đã xảy ra lỗi. Vui lòng thử lại.';
       
-      // Lấy error message từ nhiều nguồn
-      if (error.message && error.message !== 'API call failed:' && error.message !== 'Unauthorized') {
+      // ✅ Parse tất cả các field có thể từ error object:
+      // 1. Từ error.message (đã được parse từ response)
+      if (error.message && 
+          error.message !== 'API call failed:' && 
+          error.message !== 'Unauthorized' &&
+          !error.message.includes('HTTP error!')) {
         errorMessage = error.message;
-      } else if (error.data && error.data.message) {
-        errorMessage = error.data.message;
-      } else if (error.data && error.data.error) {
-        errorMessage = error.data.error;
-      } else if (error.status === 401) {
+      } 
+      // 2. Từ error.data (response body từ backend)
+      else if (error.data) {
+        if (error.data.message) {
+          errorMessage = error.data.message;
+        } else if (error.data.error) {
+          errorMessage = error.data.error;
+        } else if (error.data.warning) {
+          errorMessage = error.data.warning;
+        } else if (error.data.desc) {
+          errorMessage = error.data.desc;
+        } else if (error.data.errorMessage) {
+          errorMessage = error.data.errorMessage;
+        } else if (error.data.msg) {
+          errorMessage = error.data.msg;
+        }
+      } 
+      // 3. Fallback cho 401 (login sai)
+      else if (error.status === 401) {
         errorMessage = 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra lại.';
       }
       
@@ -428,6 +463,23 @@ export const voucherAPI = {
   }),
 };
 
+// Chat API calls
+export const chatAPI = {
+  // Send message to chatbot
+  sendMessage: (data) => apiCall('/chat/message', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  // Get chat history by session ID
+  getHistory: (sessionId) => apiCall(`/chat/history/${sessionId}`),
+  
+  // Clear chat history
+  clearHistory: (sessionId) => apiCall(`/chat/history/${sessionId}`, {
+    method: 'DELETE',
+  }),
+};
+
 export default {
   movieAPI,
   showtimeAPI,
@@ -440,4 +492,5 @@ export default {
   bookingAPI,
   comboAPI,
   voucherAPI,
+  chatAPI,
 };

@@ -246,6 +246,7 @@ ReactDOM.createRoot(document.getElementById("app")).render(
           <Route path="/combos" element={<ComboPage />} />
           <Route path="/vouchers" element={<VoucherPage />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/movies/:id" element={<MovieDetail />} />
           <Route path="/booking/:showtimeId" element={<RealTimeBookingPage />} />
           <Route path="/realtime-booking/:showtimeId" element={<RealTimeBookingPage />} />
           <Route path="/socket-test" element={<SocketTestPage />} />

@@ -34,6 +34,7 @@ import theaterRoutes from "./routes/theaterRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import voucherRoutes from "./routes/voucherRoutes.js";
 import comboRoutes from "./routes/comboRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 //import debugRoutes from "./routes/debugRoutes.js";
 
 const app = express();
@@ -93,6 +94,7 @@ app.use("/api/theaters", theaterRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/combos", comboRoutes);
+app.use("/api/chat", chatRoutes);
 app.use("/api/admin-dashboard", adminDashboardRoutes);
 app.use("/api/payos", payosRoutes);
 

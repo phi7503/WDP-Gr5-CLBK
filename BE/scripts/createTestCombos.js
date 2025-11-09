@@ -21,58 +21,97 @@ const connectDB = async () => {
 
 const createTestCombos = async () => {
   try {
-    console.log('\n🍿 Creating test combos for payment testing...\n');
+    console.log('\n🍿 Creating simple combos...\n');
 
-    // ✅ Giảm số combo xuống chỉ còn 4 combo phổ biến
+    // ✅ Tạo 7 combo bỏng nước đa dạng với ảnh từ Unsplash
     const combos = [
       {
-        name: 'Combo Nhỏ',
-        description: '1 bắp rang bơ nhỏ + 1 nước ngọt nhỏ',
-        price: 50000,
-        category: 'combo',
-        items: [
-          { name: 'Bắp rang bơ nhỏ', quantity: 1 },
-          { name: 'Nước ngọt nhỏ', quantity: 1 }
-        ],
-        isActive: true,
-      },
-      {
-        name: 'Combo Vừa',
-        description: '1 bắp rang bơ vừa + 1 nước ngọt vừa',
+        name: '2 Popcorn',
+        description: '2 bắp rang lớn cho 2 người',
         price: 80000,
-        category: 'combo',
+        category: 'popcorn',
+        image: 'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=800&q=80',
         items: [
-          { name: 'Bắp rang bơ vừa', quantity: 1 },
-          { name: 'Nước ngọt vừa', quantity: 1 }
+          { name: 'Bắp rang lớn', quantity: 2 }
         ],
         isActive: true,
       },
       {
-        name: 'Combo Lớn',
-        description: '1 bắp rang bơ lớn + 1 nước ngọt lớn',
-        price: 120000,
-        category: 'combo',
+        name: 'Pepsi 500mL',
+        description: 'Pepsi 500ml',
+        price: 25000,
+        category: 'drinks',
+        image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800&q=80',
         items: [
-          { name: 'Bắp rang bơ lớn', quantity: 1 },
-          { name: 'Nước ngọt lớn', quantity: 1 }
+          { name: 'Pepsi 500mL', quantity: 1 }
         ],
         isActive: true,
       },
       {
         name: 'Combo Đôi',
-        description: '1 bắp lớn + 2 nước ngọt lớn',
+        description: '1 bắp rang lớn + 2 nước ngọt',
+        price: 95000,
+        category: 'combo',
+        image: 'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=800&q=80',
+        items: [
+          { name: 'Bắp rang lớn', quantity: 1 },
+          { name: 'Nước ngọt', quantity: 2 }
+        ],
+        isActive: true,
+      },
+      {
+        name: 'Combo Gia Đình',
+        description: '2 bắp rang lớn + 2 nước ngọt + 1 snack',
         price: 150000,
         category: 'combo',
+        image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800&q=80',
         items: [
-          { name: 'Bắp rang bơ lớn', quantity: 1 },
-          { name: 'Nước ngọt lớn', quantity: 2 }
+          { name: 'Bắp rang lớn', quantity: 2 },
+          { name: 'Nước ngọt', quantity: 2 },
+          { name: 'Snack', quantity: 1 }
+        ],
+        isActive: true,
+      },
+      {
+        name: 'Bắp Rang Bơ Nhỏ',
+        description: '1 bắp rang bơ nhỏ',
+        price: 45000,
+        category: 'popcorn',
+        image: 'https://images.unsplash.com/photo-1532939624-3af1308db9b5?w=800&q=80',
+        items: [
+          { name: 'Bắp rang bơ nhỏ', quantity: 1 }
+        ],
+        isActive: true,
+      },
+      {
+        name: 'Coca Cola 500mL',
+        description: 'Coca Cola 500ml',
+        price: 25000,
+        category: 'drinks',
+        image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=800&q=80',
+        items: [
+          { name: 'Coca Cola 500mL', quantity: 1 }
+        ],
+        isActive: true,
+      },
+      {
+        name: 'Combo Nhỏ',
+        description: '1 bắp rang nhỏ + 1 nước ngọt',
+        price: 60000,
+        category: 'combo',
+        image: 'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=800&q=80',
+        items: [
+          { name: 'Bắp rang nhỏ', quantity: 1 },
+          { name: 'Nước ngọt', quantity: 1 }
         ],
         isActive: true,
       },
     ];
 
-    // Delete existing test combos (optional - comment out if you want to keep existing ones)
-    // await Combo.deleteMany({ name: { $regex: /^(Combo|Bắp|Nước|Snack)/ } });
+    // ✅ Xóa tất cả combo cũ để tạo lại từ đầu
+    console.log('🗑️  Deleting existing combos...');
+    const deleteResult = await Combo.deleteMany({});
+    console.log(`   ✅ Deleted ${deleteResult.deletedCount} existing combos`);
 
     let createdCount = 0;
     let skippedCount = 0;
@@ -95,15 +134,10 @@ const createTestCombos = async () => {
     console.log('\n📊 Summary:');
     console.log(`   ✅ Created: ${createdCount} combos`);
     console.log(`   ⏭️  Skipped: ${skippedCount} combos (already exist)`);
-    console.log('\n💰 Price ranges for testing:');
-    console.log('   - Low: 40,000 - 60,000 VND (single items)');
-    console.log('   - Medium: 80,000 - 150,000 VND (small combos)');
-    console.log('   - High: 250,000+ VND (family combos)');
-    console.log('\n🎯 Test scenarios:');
-    console.log('   1. Single seat (50,000) + Combo 1 (50,000) = 100,000 VND');
-    console.log('   2. 2 seats (100,000) + Combo 2 (80,000) = 180,000 VND');
-    console.log('   3. 3 seats (150,000) + Combo 3 (120,000) = 270,000 VND');
-    console.log('   4. 4 seats (200,000) + Combo 4 (250,000) = 450,000 VND');
+    console.log('\n💰 Combo prices:');
+    combos.forEach(combo => {
+      console.log(`   - ${combo.name}: ${combo.price.toLocaleString('vi-VN')}₫`);
+    });
     console.log('\n🎉 Done!');
   } catch (error) {
     console.error('❌ Error creating combos:', error);

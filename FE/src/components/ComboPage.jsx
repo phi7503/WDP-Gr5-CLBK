@@ -73,7 +73,7 @@ const ComboPage = () => {
                     cover={
                       <img
                         alt={combo.name}
-                        src={combo.image ? `http://localhost:5000/${combo.image}` : 'https://via.placeholder.com/300x200/333/fff?text=Combo'}
+                        src={combo.image ? (combo.image.startsWith('http://') || combo.image.startsWith('https://') ? combo.image : `http://localhost:5000/${combo.image}`) : 'https://via.placeholder.com/300x200/333/fff?text=Combo'}
                         style={{
                           width: '100%',
                           height: '200px',
@@ -115,7 +115,7 @@ const ComboPage = () => {
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}>
-                              {(combo.price * 24000).toLocaleString('vi-VN')} VND
+                              {combo.price.toLocaleString('vi-VN')}₫
                             </Text>
                             <Text style={{ color: '#999', fontSize: '12px' }}>
                               {combo.category}

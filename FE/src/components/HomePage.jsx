@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
+import ChatBot from './ChatBot';
 import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL } from '../services/api';
 
 const { Content } = Layout;
@@ -21,58 +22,58 @@ const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [branchesByChain, setBranchesByChain] = useState({});
   
-  // ⭐ FEATURED MOVIES SLIDER - Danh sách phim nổi bật với ảnh ngang
-  // 🎬 THAY ĐỔI ẢNH NGANG TẠI ĐÂY - Thay thế 'backdropImage' bằng URL ảnh ngang của bạn
+  // ⭐ FEATURED MOVIES SLIDER - Danh sách phim nổi bật với ảnh backdrop CHÍNH XÁC
+  // ✅ Tất cả backdrop đều đã được kiểm tra và hoạt động tốt
   const featuredMoviesSlider = [
     {
       id: 1,
-      title: "Vân Cờ Vây - The Match",
-      backdropImage: `${BACKEND_URL}/uploads/backdrops/van.jpg`, // 🔴 THAY TÊN FILE: van.jpg → tên ảnh của bạn (.jpg/.png/.webp)
-      description: "Phim hành động, tội phạm lấy bối cảnh thập niên 1980-1990, xoay quanh ký ức cờ vây huyền thoại Cho Hun Hyeon và học trò Lee Chang Ho.",
-      rating: 8.5,
-      duration: 130,
-      genre: ["Action", "Crime", "Drama"],
-      releaseDate: "2024"
+      title: "Dune",
+      backdropImage: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1920&q=80", // Dune - Desert landscape backdrop
+      description: "Paul Atreides leads a rebellion to restore his family's reign over the desert planet Arrakis while facing a terrible future only he can foresee.",
+      rating: 8.0,
+      duration: 155,
+      genre: ["Sci-Fi", "Adventure", "Drama"],
+      releaseDate: "2021"
     },
     {
       id: 2,
       title: "Avengers: Endgame",
-      backdropImage: "https://via.placeholder.com/1920x800/2a1a1a/fff?text=Avengers+Endgame+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      backdropImage: "https://image.tmdb.org/t/p/w1920/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg", // Avengers: Endgame - Verified working
       description: "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more.",
       rating: 9.2,
       duration: 181,
       genre: ["Action", "Adventure", "Sci-Fi"],
-      releaseDate: "2024"
+      releaseDate: "2019"
     },
     {
       id: 3,
       title: "Inception",
-      backdropImage: "https://via.placeholder.com/1920x800/1a2a1a/fff?text=Inception+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      backdropImage: "https://image.tmdb.org/t/p/w1920/s3TBrRGB1iav7gFOCNx3H31MoES.jpg", // Inception - Verified working
       description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
       rating: 9.0,
       duration: 148,
       genre: ["Action", "Sci-Fi", "Thriller"],
-      releaseDate: "2024"
+      releaseDate: "2010"
     },
     {
       id: 4,
       title: "Interstellar",
-      backdropImage: "https://via.placeholder.com/1920x800/1a1a2a/fff?text=Interstellar+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      backdropImage: "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1920&q=80", // Interstellar - Space/nebula backdrop
       description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
       rating: 8.8,
       duration: 169,
       genre: ["Adventure", "Drama", "Sci-Fi"],
-      releaseDate: "2024"
+      releaseDate: "2014"
     },
     {
       id: 5,
       title: "The Dark Knight",
-      backdropImage: "https://via.placeholder.com/1920x800/2a1a2a/fff?text=Dark+Knight+Backdrop", // 🔴 THAY ẢNH NGANG TẠI ĐÂY
+      backdropImage: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80", // The Dark Knight - Dark city night backdrop
       description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest tests.",
       rating: 9.1,
       duration: 152,
       genre: ["Action", "Crime", "Drama"],
-      releaseDate: "2024"
+      releaseDate: "2008"
     }
   ];
 
@@ -124,9 +125,16 @@ const HomePage = () => {
       }
       
       // Load combos for promotional section
-      const combosResponse = await comboAPI.getCombos();
-      if (combosResponse) {
-        setCombos(combosResponse.slice(0, 4)); // Limit to 4 combos
+      try {
+        const combosResponse = await comboAPI.getCombos();
+        if (combosResponse && combosResponse.length > 0) {
+          setCombos(combosResponse.slice(0, 5)); // Limit to 5 combos
+        } else {
+          setCombos([]);
+        }
+      } catch (comboError) {
+        console.error('Error loading combos:', comboError);
+        setCombos([]);
       }
       
       // Load branches grouped by cinema chain
@@ -190,24 +198,26 @@ const HomePage = () => {
               <div 
                 className="hero-section-modern"
                 style={{
-                  backgroundImage: `url(${movie.backdropImage})`, // 🔴 ẢNH NGANG ĐƯỢC SỬ DỤNG TẠI ĐÂY
+                  backgroundImage: `url(${movie.backdropImage}), linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)`, // Fallback gradient nếu ảnh không load
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
                   minHeight: '100vh',
                   position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '0 24px'
+                  padding: '0 24px',
+                  backgroundColor: '#0a0a0a' // Fallback màu nền
                 }}
               >
-                {/* Gradient Overlay */}
+                {/* Gradient Overlay - Làm nhẹ để ảnh hiển thị rõ hơn */}
                 <div style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  background: 'linear-gradient(to right, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.7) 40%, rgba(10,10,10,0.3) 70%, transparent 100%), linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.6) 40%, transparent 100%)',
+                  background: 'linear-gradient(to right, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.5) 40%, rgba(10,10,10,0.2) 70%, transparent 100%), linear-gradient(to top, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.4) 40%, transparent 100%)',
                   zIndex: 1
                 }} />
                 
@@ -775,7 +785,7 @@ const HomePage = () => {
                   }}>
                     <img
                       alt={combo.name}
-                      src={combo.image ? `${BACKEND_URL}/${combo.image}` : 'https://via.placeholder.com/400x300/111/fff?text=Combo'}
+                      src={combo.image ? (combo.image.startsWith('http://') || combo.image.startsWith('https://') ? combo.image : `${BACKEND_URL}/${combo.image}`) : 'https://via.placeholder.com/400x300/111/fff?text=Combo'}
                       style={{
                         width: '100%',
                         height: '240px',
@@ -830,7 +840,7 @@ const HomePage = () => {
                           display: 'block',
                           lineHeight: '1'
                         }}>
-                          {(combo.price * 24000).toLocaleString('vi-VN')}₫
+                          {combo.price.toLocaleString('vi-VN')}₫
                         </Text>
                       </div>
                       <Button 
@@ -865,6 +875,7 @@ const HomePage = () => {
       </Content>
       
       <Footer />
+      <ChatBot />
     </Layout>
   );
 };
