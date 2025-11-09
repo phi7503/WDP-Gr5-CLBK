@@ -255,12 +255,12 @@ const Header = () => {
 
       {/* Search and Login */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative' }}>
-        <div ref={searchRef} style={{ position: 'relative', width: 300 }}>
-          <Search
-            placeholder="Tìm kiếm phim..."
-            className="cinema-search-bar"
+        <div ref={searchRef} style={{ position: 'relative', width: 350 }}>
+        <Search
+          placeholder="Tìm kiếm phim..."
+          className="cinema-search-bar"
             style={{ width: '100%' }}
-            prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
+          prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
             value={searchValue}
             onChange={handleSearchChange}
             onSearch={handleSearch}
@@ -280,25 +280,24 @@ const Header = () => {
             }}
           />
           
-          {/* Dropdown kết quả tìm kiếm - chỉ hiển thị khi có kết quả hoặc đang loading */}
+          {/* ✅ Dropdown kết quả tìm kiếm - Hiển thị thẳng dưới search bar, căn chỉnh với search bar */}
           {showDropdown && (searchValue.trim().length >= 1 || debouncedSearchValue.trim().length >= 1) && (
             <div
               ref={dropdownRef}
               style={{
                 position: 'absolute',
-                top: '100%',
+                top: 'calc(100% + 8px)',
                 left: 0,
-                right: 0,
-                marginTop: '8px',
+                width: '100%',
+                marginTop: 0,
                 background: '#1a1a1a',
                 border: '1px solid #333',
                 borderRadius: '12px',
                 boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-                zIndex: 1000,
-                maxHeight: '600px',
+                zIndex: 1001,
+                maxHeight: '70vh',
                 overflowY: 'auto',
                 overflowX: 'hidden',
-                minWidth: '400px',
               }}
             >
               {loading ? (
