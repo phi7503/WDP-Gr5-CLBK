@@ -61,7 +61,7 @@ app.use(morgan("dev"));
 
 // API Routes
 
-app.use("/api/branches", branchRoutes);
+app.use("/api/ ", branchRoutes);
 
 // Make io available globally
 global.io = io;

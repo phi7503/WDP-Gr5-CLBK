@@ -24,7 +24,6 @@ export const bookingService = {
       throw new Error("Failed to fetch bookings");
     }
   },
-
   // Get booking by ID
   async getBookingById(bookingId) {
     try {

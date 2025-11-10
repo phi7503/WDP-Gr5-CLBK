@@ -1,9 +1,10 @@
 import React from "react";
-import Header from "./components/header";
+import Header from "./components/Header";
 import AuthLayout from "./components/AuthLayout";
 import { Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import BranchForm from "./components/admin/BranchForm";
 
 export default function App() {
   return (

@@ -22,7 +22,7 @@ export const showtimeService = {
         isFirstShow: showtimeData.isFirstShow || false,
         isLastShow: showtimeData.isLastShow || false,
       }
-
+      
       const response = await api.post("/showtimes", transformedData)
       console.log("✅ Showtime created successfully:", response.data)
       return response.data

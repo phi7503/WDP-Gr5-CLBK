@@ -31,8 +31,7 @@ export default function Register() {
             <form className="space-y-3  ">
               {error && <p className="text-center text-destructive">{error}</p>}
               <div>
-                  <Input placeholder="Username" />
-                
+                  <Input placeholder="Username"/>
               </div>
               <div>
                 <div className="relative">
@@ -65,7 +64,6 @@ export default function Register() {
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   );
