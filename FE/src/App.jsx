@@ -7,6 +7,7 @@ import AuthLayout from "./components/AuthLayout";
 // dùng component trong components:
 import AdminMovies from "./components/admin/movies/AdminMovies";
 import AdminBranches from "./components/admin/branches/AdminBranches";
+import ShowtimeManagement from "./components/admin/ShowtimeManagement";
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
         {/* Admin: Movies (screen trong components) */}
         <Route path="/admin/movies" element={<AdminMovies />} />
         <Route path="/admin/branches" element={<AdminBranches />} />
+        <Route path="/admin/showtimes" element={<ShowtimeManagement />} />
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
