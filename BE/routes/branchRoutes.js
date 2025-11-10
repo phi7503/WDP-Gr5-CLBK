@@ -5,8 +5,8 @@ import {
     createBranch,
     updateBranch,
     deleteBranch,
-} from '../controllers/branch.controller.js'
-import {admin, protect} from "../middleware/auth.middleware.js";
+} from '../controllers/branchController.js';
+import {admin, protect} from "../middleware/authMiddleware.js";
 
 
 const router = express.Router();
