@@ -8,6 +8,10 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
+import startCleanupJob from "./jobs/cleanupExpiredReservations.js";
+import { initializeSocketHandlers } from "./socket/socketHandlers.js";
+import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 
 // Load env
 dotenv.config();
@@ -16,7 +20,19 @@ dotenv.config();
 connectDB();
 
 // Import routes
-import branchRoutes from "./routes/branch.route.js";
+import showtimeRoutes from "./routes/showtimeRoutes.js";
+import movieRoutes from "./routes/movieRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import seatRoutes from "./routes/seatRoutes.js";
+import seatStatusRoutes from "./routes/seatStatusRoutes.js";
+import branchRoutes from "./routes/branchRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import theaterRoutes from "./routes/theaterRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import voucherRoutes from "./routes/voucherRoutes.js";
+import comboRoutes from "./routes/comboRoutes.js";
+//import debugRoutes from "./routes/debugRoutes.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -60,11 +76,34 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 // API Routes
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/auth", authRoutes);
+app.use("/api/movies", movieRoutes);
+app.use("/api/showtimes", showtimeRoutes);
+app.use("/api/branches", branchRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/seats", seatRoutes);
+app.use("/api/seat-status", seatStatusRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/theaters", theaterRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/vouchers", voucherRoutes);
+app.use("/api/combos", comboRoutes);
+app.use("/api/admin-dashboard", adminDashboardRoutes);
 
-app.use("/api/ ", branchRoutes);
+//app.use("/api/debug", debugRoutes);
 
 // Make io available globally
 global.io = io;
+// Initialize Socket.IO handlers
+initializeSocketHandlers(io);
+
+// Error Middleware
+app.use(notFound);
+app.use(errorHandler);
+
+// ✅ Start cleanup job
+startCleanupJob();
 
 // Start server
 const PORT = process.env.PORT || 5000;
