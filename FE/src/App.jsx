@@ -8,6 +8,7 @@ import AuthLayout from "./components/AuthLayout";
 import AdminMovies from "./components/admin/movies/AdminMovies";
 import AdminBranches from "./components/admin/branches/AdminBranches";
 import ShowtimeManagement from "./components/admin/ShowtimeManagement";
+import SeatLayoutManagement from "./components/admin/SeatLayoutManagement";
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/admin/movies" element={<AdminMovies />} />
         <Route path="/admin/branches" element={<AdminBranches />} />
         <Route path="/admin/showtimes" element={<ShowtimeManagement />} />
+        <Route path="/admin/seat-layouts" element={<SeatLayoutManagement />} />
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
