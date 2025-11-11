@@ -11,7 +11,10 @@ import {
   Gift,
   Home,
 } from "lucide-react";
+import { useAuth } from "../context/app.context";
+
 export default function Header() {
+   const { user, reset } = useAuth();
   return (
     <header className="sticky top-0 z-10 bg-card shadow-sm">
       <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-5 px-2 py-3">
@@ -22,7 +25,7 @@ export default function Header() {
           <SearchField />
         </div>
         <NavBar />
-        <UserButton />
+        <UserButton user={user}  onLogout={reset}/>
       </div>
     </header>
   );
@@ -42,7 +45,7 @@ export const NavBar = () => {
               [
                 "flex flex-col items-center gap-2 px-3 py-2 transition",
                 "hover:bg-gray-100 dark:hover:bg-neutral-800 hover:text-blue-500",
-                isActive ? "text-blue-500": "",
+                isActive ? "text-blue-500" : "",
               ].join(" ")
             }
             aria-label={"Trang chủ"}
@@ -57,7 +60,7 @@ export const NavBar = () => {
               [
                 "flex flex-col items-center gap-2 px-3 py-2 transition",
                 "hover:bg-gray-100 dark:hover:bg-neutral-800 hover:text-blue-500",
-                isActive ? "text-blue-500": "",
+                isActive ? "text-blue-500" : "",
               ].join(" ")
             }
             aria-label={"Film"}
@@ -72,7 +75,7 @@ export const NavBar = () => {
               [
                 "flex flex-col items-center gap-2 px-3 py-2 transition",
                 "hover:bg-gray-100 dark:hover:bg-neutral-800 hover:text-blue-500",
-                isActive ? "text-blue-500": "",
+                isActive ? "text-blue-500" : "",
               ].join(" ")
             }
             aria-label={"CalendarClock"}
@@ -87,7 +90,7 @@ export const NavBar = () => {
               [
                 "flex flex-col items-center gap-2 px-3 py-2 transition",
                 "hover:bg-gray-100 dark:hover:bg-neutral-800 hover:text-blue-500",
-                isActive ? "text-blue-500": "",
+                isActive ? "text-blue-500" : "",
               ].join(" ")
             }
             aria-label={"MapPin"}
@@ -95,7 +98,6 @@ export const NavBar = () => {
             <MapPin className="size-7" />
           </NavLink>
         </li>
-       
       </ul>
     </nav>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Card, Avatar, Button } from '@mui/material';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/app.context';
 import { useNavigate } from 'react-router-dom';
 
 const EmployeeDashboardPage = () => {

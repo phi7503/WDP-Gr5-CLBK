@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Button, Card, CardContent } from '@mui/material';
-import { Payment } from '@mui/icons-material';
+import {  Payment as PaymentIcon} from '@mui/icons-material';
 
 const Payment = ({ 
   paymentMethod, 
@@ -25,7 +25,7 @@ const Payment = ({
     >
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <Payment sx={{ color: '#dc2626', mr: 1, fontSize: 28 }} />
+        <PaymentIcon sx={{ color: '#dc2626', mr: 1, fontSize: 28 }} />
         <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold' }}>
           Thanh toán
         </Typography>
@@ -155,7 +155,7 @@ const Payment = ({
                     mr: 2
                   }}
                 >
-                  <Payment sx={{ color: 'white', fontSize: 20 }} />
+                  <PaymentIcon sx={{ color: 'white', fontSize: 20 }} />
                 </Box>
                 <Box>
                   <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>

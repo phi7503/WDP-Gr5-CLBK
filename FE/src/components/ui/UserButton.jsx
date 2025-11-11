@@ -5,7 +5,7 @@ import { cn } from "../../lib/utils";
 import avatarPlaceholder from "../../assets/avatar-placeholder.png";
 export default function UserButton({
   className,
-  user = { username: "user", avatarUrl: "" },
+  user = { name: "user", avatarUrl: "" },
   onLogout,
 }) {
   const [open, setOpen] = useState(false);
@@ -47,13 +47,13 @@ export default function UserButton({
           )}
         >
           <div className="px-3 py-2 text-sm font-semibold">
-            @{user?.username}
+            @{user?.name}
           </div>
 
           <div className="my-1 h-px bg-gray-200 dark:bg-neutral-800" />
 
           <Link
-            to={`/users/${user?.username}`}
+            to={`/profile`}
             role="menuitem"
             className="block focus:outline-none"
           >
