@@ -164,7 +164,7 @@ const HomePage = () => {
   if (loading) {
     return (
       <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
-        <Header />
+        
         <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
           <Text style={{ color: '#fff', fontSize: '18px' }}>Đang tải phim...</Text>
         </Content>
@@ -175,7 +175,6 @@ const HomePage = () => {
 
   return (
     <Layout style={{ background: '#0a0a0a', minHeight: '100vh', paddingTop: '64px' }}>
-      <Header />
       
       <Content>
         {/* 🎬 HERO CAROUSEL - Featured Movies Slider với ảnh ngang */}

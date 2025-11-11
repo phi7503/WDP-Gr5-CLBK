@@ -1,5 +1,5 @@
 @import 'antd/dist/reset.css';
-
+@import "tailwindcss";
 /* Custom styles for QuickShow */
 body {
   margin: 0;
@@ -739,7 +739,7 @@ html {
     display: none !important;
   }
 }
-@import "tailwindcss";
+
 
 @custom-variant dark (&:is(.dark *));
 

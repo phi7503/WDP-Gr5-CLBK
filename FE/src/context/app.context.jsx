@@ -56,6 +56,12 @@ export const AppProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("user");
   };
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  };
 
   return (
     <AppContext.Provider
@@ -69,6 +75,7 @@ export const AppProvider = ({ children }) => {
         isAdmin,
         isEmployee,
         isUser,
+        logout,
       }}
     >
       {children}

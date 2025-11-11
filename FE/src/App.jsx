@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from "react";
 import Header from "./components/Header";
 import AuthLayout from "./components/AuthLayout";
@@ -7,35 +8,31 @@ import Register from "./components/Register";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import { useAuth } from "./context/app.context";
+
 import EmployeeDashboardPage from "./components/pages/EmployeeDashboardPage";
-import EmployeeDashoboardPage from "./components/pages/EmployeeDashoboardPage";
 import EmployeeBookTicket from "./components/pages/EmployeeBookTicket";
 import EmployeeBookingsPage from "./components/pages/EmployeeBookingsPage";
 import EmployeeProfilePage from "./components/pages/EmployeeProfilePage";
 import EmployeeQRCheckinPage from "./components/pages/EmployeeQRCheckinPage";
+
 import AdminUserManagementPage from "./components/pages/AdminUserManagementPage";
 import UserProfilePage from "./components/pages/UserProfilePage";
 import AdminDashboard from "./components/pages/AdminDashboard";
 import { Toaster } from "react-hot-toast";
 import EmployeeLayout from "./components/booking/EmployeeLayout";
 
-// dùng component trong components:
+// Admin feature pages
 import AdminMovies from "./components/admin/movies/AdminMovies";
 import AdminBranches from "./components/admin/branches/AdminBranches";
 import ShowtimeManagement from "./components/admin/ShowtimeManagement";
 import SeatLayoutManagement from "./components/admin/SeatLayoutManagement";
+
+// ✅ AppRouter: toàn bộ QuickShow client
 import AppRouter from "./router/AppRouter";
-const Home = () => (
-  <div className="p-6">
-    <Header />
-    <div className="mt-6">
-      Home page (User đã đăng nhập nhìn thấy trang này)
-    </div>
-  </div>
-);
-//const AdminDashboard = () => <div className="p-6">Admin Dashboard</div>;
+
 const StaffDashboard = () => <div className="p-6">Staff Dashboard</div>;
 const Forbidden = () => <div className="p-6">403 — Forbidden</div>;
+
 const roleHome = (role) => {
   switch (role) {
     case "admin":
@@ -46,6 +43,7 @@ const roleHome = (role) => {
       return "/";
   }
 };
+
 function GuestRoute() {
   const { isAuthenticated, role } = useAuth();
   if (isAuthenticated) return <Navigate to={roleHome(role)} replace />;
@@ -64,11 +62,16 @@ function RoleRoute({ allow = [] }) {
   if (!allow.includes(role)) return <Navigate to="/403" replace />;
   return <Outlet />;
 }
+
 export default function App() {
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <Routes>
-        {/* Auth-only for Guests */}
+        {/* ✅ Toàn bộ site QuickShow cho user (Home, Movies, Showtimes, ...) */}
+        {/* AppRouter tự lo Header + MainLayout + Routes bên trong */}
+        <Route path="/*" element={<AppRouter />} />
+
+        {/* Auth chỉ dành cho khách (chưa login) */}
         <Route element={<GuestRoute />}>
           <Route
             path="/login"
@@ -88,12 +91,11 @@ export default function App() {
           />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <AppRouter />
         </Route>
 
-        {/* Common protected */}
+        {/* Protected chung (cần đăng nhập) */}
         <Route element={<ProtectedRoute />}>
-          {/* <Route path="/" element={<Home />} /> */}
+          {/* Profile user – tuỳ bạn có muốn cho vào AppRouter hay không */}
           <Route path="/profile" element={<UserProfilePage />} />
         </Route>
 
@@ -101,7 +103,6 @@ export default function App() {
         <Route element={<RoleRoute allow={["admin"]} />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUserManagementPage />} />
-          {/* Admin: Movies (screen trong components) */}
           <Route path="/admin/movies" element={<AdminMovies />} />
           <Route path="/admin/branches" element={<AdminBranches />} />
           <Route path="/admin/showtimes" element={<ShowtimeManagement />} />
@@ -109,10 +110,9 @@ export default function App() {
             path="/admin/seat-layouts"
             element={<SeatLayoutManagement />}
           />
-          {/* Fallback */}
         </Route>
 
-        {/* Employee or Admin */}
+        {/* Employee hoặc Admin */}
         <Route element={<RoleRoute allow={["employee", "admin"]} />}>
           <Route element={<EmployeeLayout />}>
             <Route
@@ -131,9 +131,8 @@ export default function App() {
 
         {/* Misc */}
         <Route path="/403" element={<Forbidden />} />
-
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
       <Toaster />
     </div>
   );

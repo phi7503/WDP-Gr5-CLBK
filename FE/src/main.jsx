@@ -3,8 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ConfigProvider, theme as antdTheme } from "antd";
 import "antd/dist/reset.css";
-import "./style.css";
-import "./app/cinema-theme.css"; 
+import "./app/cinema-theme.css";
 import App from "./App.jsx";
 import { AppProvider } from "./context/app.context.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,7 +23,6 @@ import "./animations.css";
 import "./showtimes-colors.css";
 import "./styles/message.css";
 import "./styles/notification.css";
-import AppRouter from "./router/AppRouter";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
