@@ -49,5 +49,4 @@ const sendNewUserCredentials = async (to, name, password) => {
   await sendEmail({ to, subject, html });
 };
 
-
 export { sendEmail, sendNewUserCredentials };

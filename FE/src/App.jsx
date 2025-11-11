@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./components/header";
+import Header from "./components/Header";
 import AuthLayout from "./components/AuthLayout";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
@@ -18,6 +18,12 @@ import UserProfilePage from "./components/pages/UserProfilePage";
 import AdminDashboard from "./components/pages/AdminDashboard";
 import { Toaster } from "react-hot-toast";
 import EmployeeLayout from "./components/booking/EmployeeLayout";
+
+// dùng component trong components:
+import AdminMovies from "./components/admin/movies/AdminMovies";
+import AdminBranches from "./components/admin/branches/AdminBranches";
+import ShowtimeManagement from "./components/admin/ShowtimeManagement";
+import SeatLayoutManagement from "./components/admin/SeatLayoutManagement";
 
 const Home = () => (
   <div className="p-6">
@@ -60,7 +66,7 @@ function RoleRoute({ allow = [] }) {
 }
 export default function App() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <Routes>
         {/* Auth-only for Guests */}
         <Route element={<GuestRoute />}>
@@ -94,6 +100,15 @@ export default function App() {
         <Route element={<RoleRoute allow={["admin"]} />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUserManagementPage />} />
+          {/* Admin: Movies (screen trong components) */}
+          <Route path="/admin/movies" element={<AdminMovies />} />
+          <Route path="/admin/branches" element={<AdminBranches />} />
+          <Route path="/admin/showtimes" element={<ShowtimeManagement />} />
+          <Route
+            path="/admin/seat-layouts"
+            element={<SeatLayoutManagement />}
+          />
+          {/* Fallback */}
         </Route>
 
         {/* Employee or Admin */}
@@ -115,6 +130,7 @@ export default function App() {
 
         {/* Misc */}
         <Route path="/403" element={<Forbidden />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />

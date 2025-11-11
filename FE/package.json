@@ -21,6 +21,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@ant-design/icons": "^6.1.0",
     "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
@@ -29,7 +30,9 @@
     "@yudiel/react-qr-scanner": "^2.4.1",
     "antd": "^5.28.1",
     "axios": "^1.12.2",
+
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.19",
     "framer-motion": "^12.23.22",
     "lucide-react": "^0.544.0",
     "prop-types": "^15.8.1",
