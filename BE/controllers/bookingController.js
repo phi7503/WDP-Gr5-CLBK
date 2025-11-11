@@ -344,60 +344,60 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
 });
 
 
-// // Cancel booking - PUT /api/bookings/:id/cancel - Private
-// const cancelBooking = asyncHandler(async (req, res) => {
-//   const booking = await Booking.findById(req.params.id);
+// Cancel booking - PUT /api/bookings/:id/cancel - Private
+const cancelBooking = asyncHandler(async (req, res) => {
+  const booking = await Booking.findById(req.params.id);
 
-//   if (!booking) {
-//     res.status(404);
-//     throw new Error("Booking not found");
-//   }
+  if (!booking) {
+    res.status(404);
+    throw new Error("Booking not found");
+  }
 
-//   if (booking.user.toString() !== req.user._id.toString()) {
-//     res.status(403);
-//     throw new Error("Not authorized to cancel this booking");
-//   }
+  if (booking.user.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("Not authorized to cancel this booking");
+  }
 
-//   if (booking.bookingStatus === "cancelled") {
-//     res.status(400);
-//     throw new Error("Booking is already cancelled");
-//   }
+  if (booking.bookingStatus === "cancelled") {
+    res.status(400);
+    throw new Error("Booking is already cancelled");
+  }
 
-//   if (booking.bookingStatus === "completed") {
-//     res.status(400);
-//     throw new Error("Cannot cancel completed booking");
-//   }
+  if (booking.bookingStatus === "completed") {
+    res.status(400);
+    throw new Error("Cannot cancel completed booking");
+  }
 
-//   booking.bookingStatus = "cancelled";
-//   await booking.save();
+  booking.bookingStatus = "cancelled";
+  await booking.save();
 
-//   const seatIds = booking.seats.map((seat) => seat._id);
-//   await SeatStatus.updateMany(
-//       { booking: booking._id },
-//       {
-//         $set: {
-//           status: "available",
-//           booking: null,
-//           reservedBy: null,
-//           reservedAt: null,
-//           reservationExpires: null,
-//         },
-//       }
-//   );
+  const seatIds = booking.seats.map((seat) => seat._id);
+  await SeatStatus.updateMany(
+      { booking: booking._id },
+      {
+        $set: {
+          status: "available",
+          booking: null,
+          reservedBy: null,
+          reservedAt: null,
+          reservationExpires: null,
+        },
+      }
+  );
 
-//   broadcastSeatUpdate(booking.showtime, {
-//     type: "seats-released",
-//     seatIds,
-//     userId: req.user._id,
-//     reason: "booking-cancelled",
-//     timestamp: new Date(),
-//   });
+  broadcastSeatUpdate(booking.showtime, {
+    type: "seats-released",
+    seatIds,
+    userId: req.user._id,
+    reason: "booking-cancelled",
+    timestamp: new Date(),
+  });
 
-//   res.json({
-//     success: true,
-//     message: "Booking cancelled successfully",
-//   });
-// });
+  res.json({
+    success: true,
+    message: "Booking cancelled successfully",
+  });
+});
 
 // Xác thực vé từ mã QR
 const verifyTicket = asyncHandler(async (req, res) => {

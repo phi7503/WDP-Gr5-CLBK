@@ -1,9 +1,16 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/userModel.js");
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
+import expressAsyncHandler from "express-async-handler";
 
+function getAccessToken(req) {
+  if (req.cookies?.accessToken) return req.cookies.accessToken;
+  const h = req.headers?.authorization || "";
+  if (h.startsWith("Bearer ")) return h.split(" ")[1];
+  return null;
+}
 const protectRoute = async (req, res, next) => {
   try {
-    const accessToken = req.cookies?.accessToken;
+    const accessToken = getAccessToken(req);
 
     if (!accessToken) {
       return res
@@ -37,15 +44,51 @@ const protectRoute = async (req, res, next) => {
   }
 };
 
-const sellerRoute = (req, res, next) => {
-  if (req.user && req.user.role === "seller") {
-    next();
-  } else {
-    return res.status(403).json({ message: "Access denied - Seller only" });
+// Chỉ cho phép role === 'employee'
+const isEmployee = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  if (req.user.role !== "employee") {
+    return res.status(403).json({ message: "Access denied - Employee only" });
   }
+  next();
 };
 
-module.exports = {
-  protectRoute,
-  sellerRoute,
+// Chỉ cho phép role === 'admin'
+const isAdmin = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied - Admin only" });
+  }
+  next();
 };
+const protect = expressAsyncHandler(async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(" ")[1];
+
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Get user from the token
+      req.user = await User.findById(decoded.id).select("-password");
+
+      next();
+    } catch (error) {
+      console.error(error);
+      res.status(401);
+      throw new Error("Not authorized, token failed");
+    }
+  }
+
+  if (!token) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+});
+export {protect, protectRoute, isEmployee, isAdmin };

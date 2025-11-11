@@ -6,9 +6,13 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
+import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
-
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import bookingRoutes from "./routes/booking.route.js";
 // Load env
 dotenv.config();
 
@@ -16,6 +20,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.use(cookieParser());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const server = createServer(app);
@@ -55,7 +60,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
-
+app.use("/api/auth", authRoutes);
+app.use("/api", userRoutes);
+app.use("/api", dashboardRoutes);
+app.use("/api/bookings", bookingRoutes);
 // Make io available globally
 global.io = io;
 
