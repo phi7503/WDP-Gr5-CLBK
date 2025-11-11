@@ -8,9 +8,9 @@ import {
   StepLabel,
   Grid,
 } from "@mui/material";
-import { movieService } from "../services/movieService";
+import { movieService } from "../services/MovieService";
 import { showtimeService } from "../services/showtimeService";
-import { bookingService } from "../services/bookingService";
+import { bookingService } from "../services/BookingService";
 import CheckPayment from "../booking/CheckPayment";
 import { Modal } from "antd";
 
