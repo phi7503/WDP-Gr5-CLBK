@@ -1,0 +1,216 @@
+/* ========================================
+   SHOWTIME PAGE - COLOR SYSTEM & ANIMATIONS
+   ======================================== */
+
+:root {
+  /* === BASE COLORS === */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-elevated: #1a1a1a;
+  --bg-card: #141414;
+  --bg-modal: rgba(0, 0, 0, 0.95);
+  
+  --surface-1: #1a1a1a;
+  --surface-2: #262626;
+  --surface-3: #333333;
+  
+  --overlay-light: rgba(255, 255, 255, 0.05);
+  --overlay-medium: rgba(255, 255, 255, 0.1);
+  --overlay-heavy: rgba(255, 255, 255, 0.15);
+  
+  /* === TEXT COLORS === */
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --text-tertiary: #9ca3af;
+  --text-disabled: rgba(255, 255, 255, 0.3);
+  
+  /* === PRIMARY COLORS === */
+  --primary-600: #dc2626;
+  --primary-500: #ef4444;
+  --primary-400: #f87171;
+  --gradient-primary: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%);
+  
+  /* === CINEMA CHAIN COLORS === */
+  --cgv-primary: #E71A0F;
+  --cgv-gradient: linear-gradient(135deg, #E71A0F 0%, #FF4136 100%);
+  --cgv-light: rgba(231, 26, 15, 0.1);
+  
+  --lotte-primary: #ED1C24;
+  --lotte-gradient: linear-gradient(135deg, #ED1C24 0%, #FF3B41 100%);
+  --lotte-light: rgba(237, 28, 36, 0.1);
+  
+  --bhd-primary: #FFD700;
+  --bhd-gradient: linear-gradient(135deg, #FFD700 0%, #FFED4E 100%);
+  --bhd-light: rgba(255, 215, 0, 0.1);
+  
+  --galaxy-primary: #FF6B00;
+  --galaxy-gradient: linear-gradient(135deg, #FF6B00 0%, #FF8533 100%);
+  --galaxy-light: rgba(255, 107, 0, 0.1);
+  
+  --cinestar-primary: #0066CC;
+  --cinestar-gradient: linear-gradient(135deg, #0066CC 0%, #3385D6 100%);
+  --cinestar-light: rgba(0, 102, 204, 0.1);
+  
+  --megags-primary: #FF6600;
+  --megags-gradient: linear-gradient(135deg, #FF6600 0%, #FF8533 100%);
+  --megags-light: rgba(255, 102, 0, 0.1);
+  
+  /* === SEAT AVAILABILITY COLORS === */
+  --seat-available-bg: rgba(16, 185, 129, 0.1);
+  --seat-available-border: rgba(16, 185, 129, 0.3);
+  --seat-available-text: #10b981;
+  --seat-available-glow: rgba(16, 185, 129, 0.4);
+  
+  --seat-filling-bg: rgba(245, 158, 11, 0.1);
+  --seat-filling-border: rgba(245, 158, 11, 0.3);
+  --seat-filling-text: #f59e0b;
+  --seat-filling-glow: rgba(245, 158, 11, 0.4);
+  
+  --seat-almost-bg: rgba(239, 68, 68, 0.1);
+  --seat-almost-border: rgba(239, 68, 68, 0.3);
+  --seat-almost-text: #ef4444;
+  --seat-almost-glow: rgba(239, 68, 68, 0.4);
+  
+  --seat-soldout-bg: rgba(255, 255, 255, 0.05);
+  --seat-soldout-border: rgba(255, 255, 255, 0.1);
+  --seat-soldout-text: rgba(255, 255, 255, 0.3);
+  
+  /* === BADGE COLORS === */
+  --badge-first-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+  --badge-last-bg: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  --badge-prime-bg: linear-gradient(135deg, #f59e0b, #d97706);
+  --badge-hot-bg: linear-gradient(135deg, #ef4444, #dc2626);
+  
+  /* === TIMING === */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-moderate: 300ms;
+  --duration-slow: 400ms;
+  --duration-slower: 500ms;
+  
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* === SHADOWS === */
+  --shadow-primary: 0 8px 24px rgba(220, 38, 38, 0.3);
+  --shadow-success: 0 8px 24px rgba(16, 185, 129, 0.3);
+  --shadow-warning: 0 8px 24px rgba(245, 158, 11, 0.3);
+  --shadow-error: 0 8px 24px rgba(239, 68, 68, 0.3);
+}
+
+/* ========================================
+   KEYFRAME ANIMATIONS
+   ======================================== */
+
+/* Slide Down Fade In */
+@keyframes slideDownFadeIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade In Up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--seat-filling-glow);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+  }
+}
+
+/* Blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Glow Pulse */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--seat-almost-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--seat-almost-glow);
+  }
+}
+
+/* Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Shine */
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Rotate */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Ripple */
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Gradient Flow */
+@keyframes gradientFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Skeleton Loading */
+@keyframes skeletonLoading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+

@@ -1,0 +1,207 @@
+/* Enhanced search animations */
+.search-container {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-container.focused {
+  transform: scale(1.02);
+}
+
+.search-input {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.search-input .ant-input {
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.search-input .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+  transition: color 0.2s ease;
+}
+
+.search-input .ant-input-search-button {
+  background: transparent !important;
+  border: none !important;
+  color: #666 !important;
+  transition: all 0.2s ease;
+}
+
+.search-input .ant-input-search-button:hover {
+  color: #dc2626 !important;
+  transform: scale(1.1);
+}
+
+.search-input:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-input:focus-within {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  transform: translateY(-2px);
+}
+
+.search-loading {
+  position: relative;
+}
+
+.search-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+  animation: search-shimmer 1.5s infinite;
+  border-radius: inherit;
+}
+
+@keyframes search-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.search-results {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-result-item {
+  transition: all 0.3s ease;
+}
+
+.search-result-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.search-empty {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Search suggestions dropdown */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  animation: slideDown 0.2s ease-out;
+  backdrop-filter: blur(10px);
+  margin-top: 4px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.search-suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  color: #fff;
+}
+
+.search-suggestion-item:hover {
+  background: rgba(220, 38, 38, 0.1);
+  transform: translateX(4px);
+  border-left: 3px solid #dc2626;
+}
+
+.search-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+/* Search history */
+.search-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.search-history-tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-history-tag:hover {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: #dc2626;
+  transform: scale(1.05);
+}
+
+/* Responsive search */
+@media (max-width: 768px) {
+  .search-container.focused {
+    transform: scale(1.01);
+  }
+  
+  .search-input:hover {
+    transform: none;
+  }
+  
+  .search-input:focus {
+    transform: translateY(-1px);
+  }
+}

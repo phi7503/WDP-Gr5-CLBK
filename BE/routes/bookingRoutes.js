@@ -9,6 +9,7 @@ import {
   checkInTicket,
   getAllBookingsForEmployee,
   getBookingsByUserId,
+  resendEmailQRCode,
 } from "../controllers/bookingController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -21,6 +22,7 @@ router.get("/user/:userId", protect, getBookingsByUserId);
 router.get("/:id", protect, getBookingById);
 router.put("/:id/payment", protect, updatePaymentStatus);
 router.put("/:id/cancel", protect, cancelBooking);
+router.post("/:id/resend-email", protect, resendEmailQRCode);
 router.post("/verify-ticket", verifyTicket);
 router.post("/check-in", checkInTicket);
 

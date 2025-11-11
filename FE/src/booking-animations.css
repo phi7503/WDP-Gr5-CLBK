@@ -1,0 +1,351 @@
+/* Booking Page Modern Animations */
+@keyframes seatSelect {
+  0% { 
+    transform: scale(1); 
+  }
+  50% { 
+    transform: scale(1.2); 
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.6);
+  }
+  100% { 
+    transform: scale(1.05); 
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.6);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Seat hover effects */
+.seat-available:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(245, 222, 179, 0.4) !important;
+  border-color: #DC2626 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.seat-selected {
+  animation: seatSelect 0.4s ease-out forwards;
+}
+
+.seat-selected:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.6) !important;
+}
+
+/* Row animations */
+.seat-row {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.seat-row:nth-child(1) { animation-delay: 0.1s; }
+.seat-row:nth-child(2) { animation-delay: 0.2s; }
+.seat-row:nth-child(3) { animation-delay: 0.3s; }
+.seat-row:nth-child(4) { animation-delay: 0.4s; }
+.seat-row:nth-child(5) { animation-delay: 0.5s; }
+.seat-row:nth-child(6) { animation-delay: 0.6s; }
+.seat-row:nth-child(7) { animation-delay: 0.7s; }
+
+/* Summary panel animation */
+.summary-panel {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* Screen animation */
+.screen-3d {
+  animation: pulse 2s infinite;
+}
+
+/* Enhanced Progress Steps */
+.enhanced-steps .ant-steps-item-title {
+  font-size: 16px !important;
+  font-weight: bold !important;
+  line-height: 1.4 !important;
+}
+
+.enhanced-steps .ant-steps-item-process .ant-steps-item-icon {
+  background: linear-gradient(135deg, #DC2626, #991B1B) !important;
+  border: 3px solid #fff !important;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.6) !important;
+  animation: pulse 2s infinite !important;
+}
+
+.enhanced-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background: linear-gradient(135deg, #DC2626, #991B1B) !important;
+  border: 2px solid #fff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+}
+
+.enhanced-steps .ant-steps-item-wait .ant-steps-item-icon {
+  background: #333 !important;
+  border: 2px solid #666 !important;
+  opacity: 0.7 !important;
+}
+
+.enhanced-steps .ant-steps-item-process .ant-steps-item-title {
+  color: #DC2626 !important;
+  font-weight: bold !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+
+.enhanced-steps .ant-steps-item-finish .ant-steps-item-title {
+  color: #DC2626 !important;
+  font-weight: bold !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+
+.enhanced-steps .ant-steps-item-wait .ant-steps-item-title {
+  color: #999 !important;
+  font-weight: 600 !important;
+}
+
+.enhanced-steps .ant-steps-item-tail::after {
+  background: linear-gradient(90deg, #DC2626, #666) !important;
+  height: 3px !important;
+  border-radius: 2px !important;
+}
+
+.enhanced-steps .ant-steps-item-finish .ant-steps-item-tail::after {
+  background: #DC2626 !important;
+}
+
+.enhanced-steps .ant-steps-item-process .ant-steps-item-tail::after {
+  background: linear-gradient(90deg, #DC2626, #666) !important;
+}
+
+.enhanced-steps .ant-steps-item-wait .ant-steps-item-tail::after {
+  background: #666 !important;
+}
+
+/* Progress steps animation */
+.progress-step {
+  transition: all 0.3s ease;
+}
+
+.progress-step:hover {
+  transform: translateY(-2px);
+}
+
+/* Enhanced step icons */
+.step-icon-completed {
+  background: linear-gradient(135deg, #DC2626, #991B1B) !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+  border: 2px solid #fff !important;
+}
+
+.step-icon-current {
+  background: linear-gradient(135deg, #DC2626, #991B1B) !important;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.6) !important;
+  border: 3px solid #fff !important;
+  animation: pulse 2s infinite !important;
+}
+
+.step-icon-pending {
+  background: #333 !important;
+  border: 2px solid #666 !important;
+  opacity: 0.7 !important;
+}
+
+/* Button animations */
+.btn-primary-modern {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary-modern:hover::before {
+  left: 100%;
+}
+
+.btn-primary-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+}
+
+/* Loading shimmer effect */
+.loading-shimmer {
+  background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Responsive animations */
+@media (max-width: 768px) {
+  .seat-available:hover {
+    transform: scale(1.05) !important;
+  }
+  
+  .seat-selected:hover {
+    transform: scale(1.02) !important;
+  }
+  
+  .btn-primary-modern:hover {
+    transform: none;
+  }
+}
+
+/* Focus states for accessibility */
+.seat-available:focus {
+  outline: 2px solid #DC2626;
+  outline-offset: 2px;
+}
+
+.seat-selected:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for all interactive elements */
+.seat-available,
+.seat-selected,
+.btn-primary-modern,
+.progress-step {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modal animations */
+.booking-modal {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.booking-modal .ant-modal-content {
+  animation: slideInRight 0.4s ease-out;
+}
+
+/* Legend animation */
+.legend-item {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.legend-item:nth-child(1) { animation-delay: 0.1s; }
+.legend-item:nth-child(2) { animation-delay: 0.2s; }
+.legend-item:nth-child(3) { animation-delay: 0.3s; }
+
+/* Badge animations */
+.seat-badge {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Summary panel sticky effect */
+.summary-panel-sticky {
+  transition: all 0.3s ease;
+}
+
+.summary-panel-sticky.sticky {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* Error state animations */
+.error-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Success animations */
+.success-bounce {
+  animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+  40%, 43% { transform: translateY(-10px); }
+  70% { transform: translateY(-5px); }
+  90% { transform: translateY(-2px); }
+}
+
+/* Timer animations */
+@keyframes paymentPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 77, 79, 0.3);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes timerBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.7; }
+}
+
+@keyframes countdownShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Timer styles */
+.timer-critical {
+  animation: countdownShake 0.5s ease-in-out infinite;
+}
+
+.timer-warning {
+  animation: timerBlink 1s ease-in-out infinite;
+}
+
+.timer-normal {
+  animation: none;
+}

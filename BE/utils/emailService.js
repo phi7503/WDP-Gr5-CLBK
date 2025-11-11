@@ -1,6 +1,9 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async (options) => {
+  // Log gửi mail bắt đầu
+  console.log('➡️ BẮT ĐẦU gọi sendEmail với options:', options);
+
   // Create a transporter
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -21,8 +24,16 @@ const sendEmail = async (options) => {
     attachments: options.attachments,
   };
 
-  // Send email
-  await transporter.sendMail(mailOptions);
+
+  try {
+    // Send email
+    let result = await transporter.sendMail(mailOptions);
+    console.log('✅ GỬI EMAIL THÀNH CÔNG! Info:', result);
+    return result;
+  } catch (err) {
+    console.error('❌ LỖI GỬI EMAIL:', err);
+    throw err;
+  }
 };
 
 const sendNewUserCredentials = async (to, name, password) => {
@@ -50,3 +61,4 @@ const sendNewUserCredentials = async (to, name, password) => {
 };
 
 export { sendEmail, sendNewUserCredentials };
+

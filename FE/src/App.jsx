@@ -24,7 +24,7 @@ import AdminMovies from "./components/admin/movies/AdminMovies";
 import AdminBranches from "./components/admin/branches/AdminBranches";
 import ShowtimeManagement from "./components/admin/ShowtimeManagement";
 import SeatLayoutManagement from "./components/admin/SeatLayoutManagement";
-
+import AppRouter from "./router/AppRouter";
 const Home = () => (
   <div className="p-6">
     <Header />
@@ -88,11 +88,12 @@ export default function App() {
           />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <AppRouter />
         </Route>
 
         {/* Common protected */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/profile" element={<UserProfilePage />} />
         </Route>
 
