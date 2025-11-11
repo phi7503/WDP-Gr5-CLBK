@@ -693,7 +693,6 @@ export const resendEmailQRCode = asyncHandler(async (req, res) => {
     throw new Error("Không thể gửi email. Vui lòng thử lại sau.");
   }
 });
-ucManh
 export {
   createBooking,
   getMyBookings,

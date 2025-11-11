@@ -10,7 +10,6 @@ import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
-import bookingRoutes from "./routes/booking.route.js";
 
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import startCleanupJob from "./jobs/cleanupExpiredReservations.js";
@@ -87,11 +86,10 @@ app.use(morgan("dev"));
 
 app.use("/api", userRoutes);
 app.use("/api", dashboardRoutes);
-app.use("/api/bookings", bookingRoutes);
 
 // API Routes
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-ucManh
+
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/showtimes", showtimeRoutes);
