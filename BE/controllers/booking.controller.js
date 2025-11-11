@@ -3,6 +3,8 @@ import Booking from "../models/bookingModel.js";
 import SeatStatus from "../models/seatStatusModel.js";
 import Showtime from "../models/showtimeModel.js";
 import Movie from "../models/movieModel.js";
+import Theater from "../models/theaterModel.js";
+import Branch from "../models/branchModel.js";
 import { broadcastSeatUpdate } from "../socket/socketHandlers.js";
 import mongoose from "mongoose";
 import Combo from "../models/comboModel.js";

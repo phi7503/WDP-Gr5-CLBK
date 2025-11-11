@@ -3,13 +3,14 @@ import Booking from "../models/bookingModel.js";
 import SeatStatus from "../models/seatStatusModel.js";
 import Showtime from "../models/showtimeModel.js";
 import Movie from "../models/movieModel.js";
+import Branch from "../models/branchModel.js";
 import { broadcastSeatUpdate } from "../socket/socketHandlers.js";
 import mongoose from "mongoose";
 import Combo from "../models/comboModel.js";
 import Voucher from "../models/voucherModel.js";
 import QRCode from "qrcode";
 import { sendEmail } from "../utils/emailService.js";
-
+import Theater from "../models/theaterModel.js";
 // Create a PENDING booking - POST /api/bookings - Private
 const createBooking = asyncHandler(async (req, res) => {
   const {
