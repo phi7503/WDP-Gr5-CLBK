@@ -6,6 +6,7 @@ import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
 import ChatBot from './ChatBot';
+import TrailerModal from './TrailerModal';
 import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL, getImageUrl } from '../services/api';
 
 const { Content } = Layout;
@@ -21,6 +22,8 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [branchesByChain, setBranchesByChain] = useState({});
+  const [trailerModalVisible, setTrailerModalVisible] = useState(false);
+  const [selectedTrailerUrl, setSelectedTrailerUrl] = useState(null);
 
   // Auto-slide effect - Tự động chuyển slide sau mỗi 5 giây
   useEffect(() => {
@@ -172,10 +175,13 @@ const HomePage = () => {
                   display: 'flex',
                   alignItems: 'center',
                   padding: '0 24px',
-                  backgroundColor: '#0a0a0a' // Fallback màu nền
+                  backgroundColor: '#0a0a0a', // Fallback màu nền
+                  animation: index === currentSlide ? 'heroBackdropZoom 20s ease-in-out infinite alternate' : 'none',
+                  transform: index === currentSlide ? 'scale(1.05)' : 'scale(1)',
+                  transition: 'transform 1s ease-in-out'
                 }}
               >
-                {/* Gradient Overlay - Làm nhẹ để ảnh hiển thị rõ hơn */}
+                {/* Animated Gradient Overlay */}
                 <div style={{
                   position: 'absolute',
                   top: 0,
@@ -186,47 +192,61 @@ const HomePage = () => {
                   zIndex: 1
                 }} />
                 
+                
+                {/* Floating Particles Effect - Subtle white particles */}
+                {index === currentSlide && (
+                  <>
+                    {[...Array(15)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="hero-particle"
+                        style={{
+                          position: 'absolute',
+                          width: `${Math.random() * 3 + 1}px`,
+                          height: `${Math.random() * 3 + 1}px`,
+                          background: 'rgba(255, 255, 255, 0.3)',
+                          borderRadius: '50%',
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          animation: `particleFloat ${Math.random() * 10 + 10}s ease-in-out infinite`,
+                          animationDelay: `${Math.random() * 5}s`,
+                          zIndex: 1,
+                          boxShadow: '0 0 5px rgba(255, 255, 255, 0.5)'
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+                
                 {/* Content */}
-                <div style={{ 
-                  maxWidth: '1400px', 
-                  width: '100%', 
-                  margin: '0 auto',
-                  position: 'relative',
-                  zIndex: 2,
-                  marginTop: '10vh'
-                }}>
+                <div 
+                  className="hero-content"
+                  style={{ 
+                    maxWidth: '1400px', 
+                    width: '100%', 
+                    margin: '0 auto',
+                    position: 'relative',
+                    zIndex: 2,
+                    marginTop: '10vh',
+                    opacity: index === currentSlide ? 1 : 0,
+                    transform: index === currentSlide ? 'translateX(0)' : 'translateX(50px)',
+                    transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+                    transitionDelay: index === currentSlide ? '0.2s' : '0s'
+                  }}
+                >
                   <div style={{ maxWidth: '700px' }}>
-                    {/* Featured Badge */}
-                    <div style={{
-                      display: 'inline-block',
-                      background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-                      padding: '8px 20px',
-                      borderRadius: '8px',
-                      marginBottom: '24px',
-                      animation: 'fadeInUp 0.6s ease-out'
-                    }}>
-                      <Text style={{ 
-                        color: '#fff', 
-                        fontSize: '13px', 
-                        fontWeight: '700',
-                        textTransform: 'uppercase',
-                        letterSpacing: '2px'
-                      }}>
-                        ⭐ PHIM NỔI BẬT {index + 1}/{featuredMovies.length}
-                      </Text>
-                    </div>
-                    
-                    {/* Title with Gradient */}
-                    <Title level={1} style={{ 
-                      background: 'linear-gradient(135deg, #ffffff 0%, #ef4444 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      fontSize: 'clamp(36px, 6vw, 76px)',
-                      fontWeight: '800',
-                      margin: '0 0 28px 0',
-                      lineHeight: '1.1',
-                      animation: 'fadeInUp 0.6s ease-out 0.1s both'
-                    }}>
+                    {/* Title - Simple white text */}
+                    <Title 
+                      level={1}
+                      style={{ 
+                        color: '#ffffff',
+                        fontSize: 'clamp(36px, 6vw, 76px)',
+                        fontWeight: '800',
+                        margin: '0 0 28px 0',
+                        lineHeight: '1.1',
+                        textShadow: '2px 2px 8px rgba(0,0,0,0.8)'
+                      }}
+                    >
                       {movie.title}
                     </Title>
                     
@@ -236,14 +256,10 @@ const HomePage = () => {
                       animation: 'fadeInUp 0.6s ease-out 0.2s both'
                     }}>
                       <Space size="large" wrap>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <StarFilled style={{ color: '#fadb14', fontSize: '20px' }} />
-                          <Text style={{ color: '#fff', fontSize: '18px', fontWeight: '700' }}>
-                            {movie.rating}/10
-                          </Text>
-                        </div>
+                        <Text style={{ color: '#fff', fontSize: '18px', fontWeight: '700' }}>
+                          {movie.rating}/10
+                        </Text>
                         <Text style={{ color: '#d1d5db', fontSize: '16px' }}>
-                          <ClockCircleOutlined style={{ marginRight: '6px' }} />
                           {movie.duration ? `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m` : 'N/A'}
                         </Text>
                         <Text style={{ color: '#d1d5db', fontSize: '16px' }}>
@@ -264,28 +280,38 @@ const HomePage = () => {
                       {movie.description}
                     </Paragraph>
                     
-                    {/* Action Buttons */}
+                    {/* Action Buttons with enhanced animations */}
                     <div style={{ 
                       display: 'flex', 
                       gap: '16px', 
                       flexWrap: 'wrap',
-                      animation: 'fadeInUp 0.6s ease-out 0.4s both'
+                      animation: index === currentSlide ? 'fadeInUp 0.6s ease-out 0.4s both' : 'none'
                     }}>
                       <Link to={`/movie/${movie._id}`}>
                         <Button 
                           type="primary" 
                           size="large"
                           className="hero-button-primary"
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.5)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
                           style={{ 
                             fontSize: '16px', 
                             height: '56px', 
                             padding: '0 40px',
                             fontWeight: '700',
                             borderRadius: '28px',
-                            border: 'none'
+                            border: 'none',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            position: 'relative',
+                            overflow: 'hidden'
                           }}
                         >
-                          <span style={{ marginRight: '8px' }}>🎟️</span>
                           Đặt vé ngay
                         </Button>
                       </Link>
@@ -294,7 +320,20 @@ const HomePage = () => {
                         <Button 
                           size="large"
                           className="hero-button-secondary"
-                          onClick={() => window.open(movie.trailer, '_blank')}
+                          onClick={() => {
+                            setSelectedTrailerUrl(movie.trailer);
+                            setTrailerModalVisible(true);
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)';
+                          }}
                           style={{ 
                             fontSize: '16px', 
                             height: '56px', 
@@ -304,10 +343,10 @@ const HomePage = () => {
                             background: 'rgba(255,255,255,0.1)',
                             backdropFilter: 'blur(10px)',
                             border: '2px solid rgba(255,255,255,0.3)',
-                            color: '#fff'
+                            color: '#fff',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                           }}
                         >
-                          <PlayCircleOutlined style={{ fontSize: '20px', marginRight: '8px' }} />
                           Xem trailer
                         </Button>
                       )}
@@ -349,9 +388,19 @@ const HomePage = () => {
             ))}
           </div>
           
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows with hover effects */}
           <button
             onClick={() => setCurrentSlide((prev) => (prev - 1 + featuredMovies.length) % featuredMovies.length)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+              e.currentTarget.style.background = 'rgba(10,10,10,0.5)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)';
+            }}
             style={{
               position: 'absolute',
               left: '24px',
@@ -364,13 +413,14 @@ const HomePage = () => {
               background: 'rgba(10,10,10,0.5)',
               backdropFilter: 'blur(10px)',
               color: '#fff',
-              fontSize: '24px',
+              fontSize: '28px',
               cursor: 'pointer',
               zIndex: 10,
-              transition: 'all 0.3s ease',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
             }}
             className="carousel-arrow-btn"
           >
@@ -379,6 +429,16 @@ const HomePage = () => {
           
           <button
             onClick={() => setCurrentSlide((prev) => (prev + 1) % featuredMovies.length)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+              e.currentTarget.style.background = 'rgba(10,10,10,0.5)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)';
+            }}
             style={{
               position: 'absolute',
               right: '24px',
@@ -391,13 +451,14 @@ const HomePage = () => {
               background: 'rgba(10,10,10,0.5)',
               backdropFilter: 'blur(10px)',
               color: '#fff',
-              fontSize: '24px',
+              fontSize: '28px',
               cursor: 'pointer',
               zIndex: 10,
-              transition: 'all 0.3s ease',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
             }}
             className="carousel-arrow-btn"
           >
@@ -612,12 +673,18 @@ const HomePage = () => {
                 <Col xs={24} sm={12} md={12} lg={8} key={trailer._id}>
                   <div 
                     className="trailer-card"
+                    onClick={() => {
+                      if (trailer.trailer) {
+                        setSelectedTrailerUrl(trailer.trailer);
+                        setTrailerModalVisible(true);
+                      }
+                    }}
                   style={{ 
                       position: 'relative',
                       borderRadius: '16px',
                       overflow: 'hidden',
                       background: '#1a1a1a',
-                      cursor: 'pointer',
+                      cursor: trailer.trailer ? 'pointer' : 'default',
                       animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
                     }}
                   >
@@ -664,11 +731,16 @@ const HomePage = () => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.4)'
+                          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.4)',
+                          position: 'relative'
                         }}>
-                          <PlayCircleOutlined style={{ 
-                            fontSize: '48px', 
-                            color: '#fff'
+                          <div style={{
+                            width: 0,
+                            height: 0,
+                            borderLeft: '20px solid #fff',
+                            borderTop: '12px solid transparent',
+                            borderBottom: '12px solid transparent',
+                            marginLeft: '4px'
                           }} />
                         </div>
                       </div>
@@ -711,7 +783,7 @@ const HomePage = () => {
                 fontWeight: '800',
                 letterSpacing: '-0.5px'
               }}>
-                🍿 Combo & Đồ ăn vặt
+                 Combo & Đồ ăn vặt
               </Title>
               <Text style={{ color: '#9ca3af', fontSize: '16px', marginTop: '8px', display: 'block' }}>
                 Hoàn thiện trải nghiệm xem phim của bạn
@@ -846,6 +918,16 @@ const HomePage = () => {
       
       <Footer />
       <ChatBot />
+      
+      {/* Trailer Modal */}
+      <TrailerModal
+        visible={trailerModalVisible}
+        trailerUrl={selectedTrailerUrl}
+        onClose={() => {
+          setTrailerModalVisible(false);
+          setSelectedTrailerUrl(null);
+        }}
+      />
     </Layout>
   );
 };

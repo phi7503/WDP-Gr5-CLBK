@@ -146,7 +146,7 @@ const PaymentModal = ({
       {selectedCombos.length > 0 && (
         <Card style={{ marginBottom: '16px', background: '#2a2a2a', border: '1px solid #444' }}>
           <Title level={5} style={{ color: '#fff', marginBottom: '16px' }}>
-            🍿 Combo & Đồ ăn vặt
+             Combo & Đồ ăn vặt
           </Title>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {selectedCombos.map(combo => (
@@ -409,7 +409,7 @@ const PaymentModal = ({
                 Chủ tài khoản
               </Text>
               <Text strong style={{ color: '#fff', fontSize: '16px' }}>
-                CÔNG TY TNHH QUICKSHOW
+                CÔNG TY TNHH CLBK
               </Text>
             </div>
             

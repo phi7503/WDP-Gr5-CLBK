@@ -204,19 +204,50 @@
   overflow: hidden;
 }
 
-/* Backdrop zoom effect */
-.hero-slide.active .hero-section-modern {
-  animation: heroBackdropZoom 1s cubic-bezier(0.4, 0, 0.2, 1);
+/* Backdrop zoom effect - Ken Burns style */
+@keyframes heroBackdropZoom {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate(-2%, -1%);
+  }
+  100% {
+    transform: scale(1.05) translate(2%, 1%);
+  }
 }
 
-@keyframes heroBackdropZoom {
-  from {
-    transform: scale(1.1);
+/* Color shift animation */
+@keyframes colorShift {
+  0% {
+    opacity: 0.3;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.5;
+    filter: hue-rotate(10deg);
+  }
+  100% {
+    opacity: 0.3;
+    filter: hue-rotate(-10deg);
+  }
+}
+
+/* Floating particles */
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
     opacity: 0;
   }
-  to {
-    transform: scale(1);
+  10% {
     opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px) scale(0);
+    opacity: 0;
   }
 }
 
@@ -234,6 +265,47 @@
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+/* Badge glow animation */
+@keyframes badgeGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5), 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 6px 20px rgba(220, 38, 38, 0.5);
+  }
+}
+
+/* Badge shine effect */
+@keyframes badgeShine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Title gradient animation */
+@keyframes titleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hero title - simple white text */
+.hero-title {
+  color: #ffffff !important;
 }
 
 /* ========== MOVIE CARDS - ENHANCED ========== */

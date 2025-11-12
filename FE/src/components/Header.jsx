@@ -47,7 +47,6 @@ const Header = () => {
     {
       key: 'profile',
       label: 'Tài khoản',
-      icon: <UserOutlined />,
       onClick: () => {
         // Navigate to profile page or show profile modal
         console.log('Navigate to profile');
@@ -56,7 +55,6 @@ const Header = () => {
     {
       key: 'bookings',
       label: 'Lịch sử đặt vé',
-      icon: <BookOutlined />,
       onClick: () => navigate('/bookings'),
     },
     {
@@ -65,7 +63,6 @@ const Header = () => {
     {
       key: 'logout',
       label: 'Đăng xuất',
-      icon: <LogoutOutlined />,
       onClick: handleLogout,
     },
   ];
@@ -354,7 +351,9 @@ const Header = () => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'space-between',
-      padding: '0 24px',
+      padding: '0 32px',
+      height: '64px',
+      lineHeight: '64px',
       position: 'fixed',
       top: 0,
       left: 0,
@@ -370,42 +369,25 @@ const Header = () => {
       boxShadow: isScrolled 
         ? '0 4px 20px rgba(0, 0, 0, 0.5)' 
         : 'none',
-      overflow: 'visible', // ✅ Cho phép dropdown hiển thị ra ngoài
+      overflow: 'visible',
     }}>
-      {/* Logo - Redesigned */}
+      {/* Logo */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center',
-        minWidth: '200px'
+        flex: '0 0 auto'
       }}>
-        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
-            transition: 'all 0.3s ease'
-          }}>
-            <span style={{ fontSize: '24px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🎬</span>
-          </div>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <span className="cinema-logo" style={{ fontSize: '28px', fontWeight: '800' }}>
             <span style={{ 
               color: '#ef4444',
               textShadow: '0 0 20px rgba(239, 68, 68, 0.5)'
-            }}>Quick</span>
-            <span style={{ 
-              color: '#fff',
-              marginLeft: '2px'
-            }}>Show</span>
+            }}>CLBK</span>
           </span>
         </Link>
       </div>
 
-      {/* Navigation Menu - Desktop - Redesigned */}
+      {/* Navigation Menu - Desktop */}
       <Menu
         theme="dark"
         mode="horizontal"
@@ -419,15 +401,17 @@ const Header = () => {
           color: '#fff',
           fontSize: '15px',
           fontWeight: '500',
+          minWidth: 0,
+          lineHeight: '64px',
+          margin: 0,
+          padding: 0
         }}
-        // ✅ Hiển thị dropdown khi hover vào "Phim"
         triggerSubMenuAction="hover"
       />
 
-      {/* ✅ Hamburger Menu - Mobile */}
+      {/* Hamburger Menu - Mobile */}
       <Button
         type="text"
-        icon={<MenuOutlined />}
         onClick={() => setMobileMenuOpen(true)}
         style={{
           display: 'none',
@@ -436,16 +420,17 @@ const Header = () => {
           padding: '8px',
         }}
         className="mobile-menu-btn"
-      />
+      >
+        ☰
+      </Button>
 
       {/* Search and Login */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 10001 }}>
-        <div ref={searchRef} style={{ position: 'relative', width: 350, zIndex: 10001 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 10001, flex: '0 0 auto' }}>
+        <div ref={searchRef} style={{ position: 'relative', width: 320, zIndex: 10001 }}>
         <Search
           placeholder="Tìm kiếm phim..."
           className="cinema-search-bar"
             style={{ width: '100%' }}
-          prefix={<SearchOutlined style={{ color: 'var(--text-muted)' }} />}
             value={searchValue}
             onChange={handleSearchChange}
             onSearch={handleSearch}
@@ -492,7 +477,6 @@ const Header = () => {
             >
               {loading ? (
                 <div style={{ padding: '20px', textAlign: 'center', color: '#fff' }}>
-                  <div style={{ marginBottom: '8px', fontSize: '24px' }}>🔍</div>
                   <div style={{ fontSize: '14px', color: '#999' }}>Đang tìm kiếm "{debouncedSearchValue}"...</div>
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
                     Vui lòng đợi trong giây lát
@@ -500,7 +484,6 @@ const Header = () => {
                 </div>
               ) : searchValue.trim() !== debouncedSearchValue.trim() && searchValue.trim().length >= 1 && !loading ? (
                 <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontSize: '14px' }}>
-                  <div style={{ marginBottom: '8px', fontSize: '24px' }}>⌨️</div>
                   <div style={{ marginBottom: '4px' }}>Đang chờ bạn dừng gõ...</div>
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
                     Kết quả sẽ hiển thị sau 2.5 giây khi bạn dừng gõ
@@ -553,17 +536,27 @@ const Header = () => {
                       }}
                     >
                       {/* Movie Poster */}
-                      <Avatar
-                        src={movie.poster ? getImageUrl(movie.poster) : null}
-                        icon={<PictureOutlined />}
-                        size={50}
-                        shape="square"
-                        style={{
-                          flexShrink: 0,
+                      {movie.poster ? (
+                        <img
+                          src={getImageUrl(movie.poster)}
+                          alt={movie.title}
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            borderRadius: '8px',
+                            objectFit: 'cover',
+                            flexShrink: 0
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '50px',
+                          height: '50px',
                           borderRadius: '8px',
-                          objectFit: 'cover',
-                        }}
-                      />
+                          background: '#333',
+                          flexShrink: 0
+                        }} />
+                      )}
                       
                       {/* Movie Info */}
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -598,7 +591,6 @@ const Header = () => {
                 </>
               ) : debouncedSearchValue.trim().length >= 1 && searchResults.length === 0 && !loading ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
                   <div style={{ color: '#fff', fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
                     Không tìm thấy phim nào
                   </div>
@@ -619,7 +611,6 @@ const Header = () => {
                 </div>
               ) : searchValue.trim().length >= 1 && searchValue.trim() !== debouncedSearchValue.trim() && !loading ? (
                 <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontSize: '14px' }}>
-                  <div style={{ marginBottom: '8px', fontSize: '24px' }}>⌨️</div>
                   <div style={{ marginBottom: '4px' }}>Đang chờ bạn dừng gõ...</div>
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
                     Kết quả sẽ hiển thị sau 2.5 giây khi bạn dừng gõ
@@ -627,7 +618,6 @@ const Header = () => {
                 </div>
               ) : searchValue.trim().length >= 1 ? (
                 <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontSize: '14px' }}>
-                  <div style={{ marginBottom: '8px', fontSize: '24px' }}>🔍</div>
                   <div style={{ marginBottom: '4px' }}>Đang tìm kiếm...</div>
                 </div>
               ) : null}
@@ -643,15 +633,13 @@ const Header = () => {
             <Button 
               type="primary" 
               className="cinema-primary-button"
-              icon={<UserOutlined />}
               style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '10px',
                 background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                 border: 'none',
-                borderRadius: '12px',
-                height: '44px',
+                borderRadius: '8px',
+                height: '40px',
                 padding: '0 20px',
                 fontWeight: '600',
                 fontSize: '15px',
@@ -667,14 +655,6 @@ const Header = () => {
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)';
               }}
             >
-              <Avatar 
-                size="small" 
-                icon={<UserOutlined />}
-                style={{ 
-                  background: 'rgba(255,255,255,0.2)',
-                  marginRight: '4px'
-                }}
-              />
               {user.name}
             </Button>
           </Dropdown>
@@ -682,14 +662,13 @@ const Header = () => {
           <Button 
             type="primary" 
             className="cinema-primary-button"
-            icon={<UserOutlined />}
             onClick={() => navigate('/auth')}
             style={{
               background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
               border: 'none',
-              borderRadius: '12px',
-              height: '44px',
-              padding: '0 24px',
+              borderRadius: '8px',
+              height: '40px',
+              padding: '0 20px',
               fontWeight: '600',
               fontSize: '15px',
               boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
@@ -730,7 +709,7 @@ const Header = () => {
         background: '#0a0a0a',
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
       }}
-      closeIcon={<CloseOutlined style={{ color: '#fff' }} />}
+      closeIcon={<span style={{ color: '#fff', fontSize: '24px' }}>×</span>}
     >
       <Menu
         mode="vertical"

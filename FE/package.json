@@ -19,9 +19,9 @@
     "vite": "^7.1.6"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@ant-design/icons": "^6.1.0",
     "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
@@ -35,9 +35,9 @@
     "framer-motion": "^12.23.22",
     "lucide-react": "^0.544.0",
     "prop-types": "^15.8.1",
-    "react": "^19.2.0",
+    "react": "^18.3.1",
     "react-confetti": "^6.4.0",
-    "react-dom": "^19.2.0",
+    "react-dom": "^18.3.1",
     "react-hook-form": "^7.63.0",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.9.3",

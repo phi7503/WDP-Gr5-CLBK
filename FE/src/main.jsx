@@ -54,13 +54,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           },
         }}
       >
-        <AuthProvider>
+    <AuthProvider>
           <AppProvider>
             <BrowserRouter>
               <App />
             </BrowserRouter>
           </AppProvider>
-        </AuthProvider>
+    </AuthProvider>
       </ConfigProvider>
     </QueryClientProvider>
   </React.StrictMode>

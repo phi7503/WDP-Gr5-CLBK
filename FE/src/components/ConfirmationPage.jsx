@@ -80,7 +80,7 @@ const ConfirmationPage = () => {
               Đặt vé thành công!
             </Title>
             <Text style={{ color: '#999', fontSize: '16px' }}>
-              Cảm ơn bạn đã sử dụng dịch vụ của QuickShow
+              Cảm ơn bạn đã sử dụng dịch vụ của CLBK
             </Text>
           </Card>
 

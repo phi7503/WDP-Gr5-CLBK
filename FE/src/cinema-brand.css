@@ -97,14 +97,16 @@ body {
 .cinema-nav-menu {
   background: transparent;
   border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .cinema-nav-menu .ant-menu-item {
   border-radius: 8px;
   margin: 0 4px;
   transition: all 0.3s ease;
-  height: 44px;
-  line-height: 44px;
+  height: 64px;
+  line-height: 64px;
   color: var(--text-secondary);
   position: relative;
 }
@@ -125,8 +127,8 @@ body {
   border-radius: 8px;
   margin: 0 4px;
   transition: all 0.3s ease;
-  height: 44px;
-  line-height: 44px;
+  height: 64px;
+  line-height: 64px;
 }
 
 .cinema-nav-menu .ant-menu-submenu-title:hover {
