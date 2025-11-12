@@ -23,6 +23,17 @@ import "./animations.css";
 import "./showtimes-colors.css";
 import "./styles/message.css";
 import "./styles/notification.css";
+import { AuthProvider } from "./contexts/AuthContext";
+
+// ✅ Cấu hình Ant Design Message
+message.config({
+  top: 80,
+  duration: 4,
+  maxCount: 3,
+  rtl: false,
+  prefixCls: 'ant-message',
+  getContainer: () => document.body,
+});
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -43,11 +54,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           },
         }}
       >
-        <AppProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AppProvider>
+        </AuthProvider>
       </ConfigProvider>
     </QueryClientProvider>
   </React.StrictMode>

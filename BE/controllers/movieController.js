@@ -62,11 +62,16 @@ const getMovies = asyncHandler(async (req, res) => {
     filter.genre = { $in: [genre] };
   }
 
-  // Search by title or description
+  // Search by title, description, cast, director, or genre
   if (search) {
+    // Escape special regex characters
+    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
+      { title: { $regex: escapedSearch, $options: "i" } },
+      { description: { $regex: escapedSearch, $options: "i" } },
+      { director: { $regex: escapedSearch, $options: "i" } },
+      { cast: { $regex: escapedSearch, $options: "i" } },
+      { genre: { $regex: escapedSearch, $options: "i" } },
     ];
   }
 

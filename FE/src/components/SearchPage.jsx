@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Row, Col, Card, Input, Tabs, Empty, Spin } from 'antd';
+import { Layout, Typography, Row, Col, Card, Input, Tabs, Empty, Spin, Button } from 'antd';
 import { SearchOutlined, ClockCircleOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Header from './Header';
@@ -21,6 +21,76 @@ const SearchPage = () => {
   const [showtimes, setShowtimes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('movies');
+
+  // Define handleSearch function first
+  const handleSearch = async (term) => {
+    if (!term || !term.trim()) {
+      setMovies([]);
+      setShowtimes([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Search movies
+      const moviesResponse = await movieAPI.getMovies({ 
+        search: term,
+        limit: 50 
+      });
+      
+      if (moviesResponse && moviesResponse.movies) {
+        setMovies(moviesResponse.movies);
+      } else {
+        setMovies([]);
+      }
+      
+      // Search showtimes
+      try {
+        const showtimesResponse = await showtimeAPI.getShowtimes({ 
+          search: term 
+        });
+        
+        if (showtimesResponse && Array.isArray(showtimesResponse)) {
+          setShowtimes(showtimesResponse);
+        } else if (showtimesResponse && showtimesResponse.showtimes) {
+          setShowtimes(showtimesResponse.showtimes);
+        } else {
+          setShowtimes([]);
+        }
+      } catch (showtimeError) {
+        console.error('Error searching showtimes:', showtimeError);
+        setShowtimes([]);
+      }
+    } catch (error) {
+      console.error('Error searching:', error);
+      setMovies([]);
+      setShowtimes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (value) => {
+    setSearchTerm(value);
+    // Update URL without reloading
+    const url = new URL(window.location);
+    url.searchParams.set('q', value);
+    window.history.pushState({}, '', url);
+  };
+
+  // Load search term from URL query parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+    if (query) {
+      setSearchTerm(query);
+    }
+  }, []);
 
   // Trigger search when debounced term changes
   useEffect(() => {
