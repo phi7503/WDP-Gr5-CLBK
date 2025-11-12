@@ -35,3 +35,9 @@ yarn-error.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Database exports
+BE/exports/
+BE/scripts/exports/
+**/exports/
+*.json.bak

@@ -93,50 +93,105 @@ body {
   z-index: -1;
 }
 
-/* 5. NAVIGATION MENU */
+/* 5. NAVIGATION MENU - Redesigned */
 .cinema-nav-menu {
   background: transparent;
   border: none;
 }
 
 .cinema-nav-menu .ant-menu-item {
-  color: var(--text-secondary);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
   border-radius: 8px;
   margin: 0 4px;
+  transition: all 0.3s ease;
+  height: 44px;
+  line-height: 44px;
+  color: var(--text-secondary);
+  position: relative;
 }
 
 .cinema-nav-menu .ant-menu-item:hover {
-  color: var(--text-primary);
-  background: rgba(255, 77, 79, 0.1);
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
   transform: translateY(-1px);
 }
 
 .cinema-nav-menu .ant-menu-item-selected {
-  background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-light) 100%);
-  color: var(--text-primary);
-  box-shadow: 0 4px 12px var(--shadow-accent);
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* 6. SEARCH BAR DESIGN */
+.cinema-nav-menu .ant-menu-submenu-title {
+  border-radius: 8px;
+  margin: 0 4px;
+  transition: all 0.3s ease;
+  height: 44px;
+  line-height: 44px;
+}
+
+.cinema-nav-menu .ant-menu-submenu-title:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+}
+
+.cinema-nav-menu .ant-menu-submenu-popup {
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.cinema-nav-menu .ant-menu-submenu-popup .ant-menu-item {
+  border-radius: 8px;
+  margin: 4px 8px;
+}
+
+.cinema-nav-menu .ant-menu-submenu-popup .ant-menu-item:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+}
+
+/* 6. SEARCH BAR DESIGN - Redesigned */
 .cinema-search-bar {
-  background: var(--bg-card);
+  background: rgba(26, 26, 26, 0.8);
   backdrop-filter: blur(10px);
-  border: 1px solid var(--border-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   transition: all 0.3s ease;
 }
 
 .cinema-search-bar:hover {
-  border-color: var(--border-accent);
-  box-shadow: 0 4px 16px var(--shadow-glow);
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
+  background: rgba(26, 26, 26, 0.9);
 }
 
 .cinema-search-bar:focus-within {
-  border-color: var(--primary-red);
-  box-shadow: 0 0 0 3px var(--shadow-glow);
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
   transform: translateY(-1px);
+  background: rgba(26, 26, 26, 0.95);
+}
+
+.cinema-search-bar .ant-input {
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+}
+
+.cinema-search-bar .ant-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cinema-search-bar .ant-input-search-button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cinema-search-bar .ant-input-search-button:hover {
+  color: #ef4444;
 }
 
 /* 7. BUTTON DESIGNS */

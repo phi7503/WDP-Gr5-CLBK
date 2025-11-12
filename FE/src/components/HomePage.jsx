@@ -6,13 +6,13 @@ import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
 import ChatBot from './ChatBot';
-import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL } from '../services/api';
+import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL, getImageUrl } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
 
 const HomePage = () => {
-  const [featuredMovie, setFeaturedMovie] = useState(null);
+  const [featuredMovies, setFeaturedMovies] = useState([]); // ✅ Load từ database
   const [nowShowingMovies, setNowShowingMovies] = useState([]);
   const [comingSoonMovies, setComingSoonMovies] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
@@ -21,70 +21,17 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [branchesByChain, setBranchesByChain] = useState({});
-  
-  // ⭐ FEATURED MOVIES SLIDER - Danh sách phim nổi bật với ảnh backdrop CHÍNH XÁC
-  // ✅ Tất cả backdrop đều đã được kiểm tra và hoạt động tốt
-  const featuredMoviesSlider = [
-    {
-      id: 1,
-      title: "Dune",
-      backdropImage: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1920&q=80", // Dune - Desert landscape backdrop
-      description: "Paul Atreides leads a rebellion to restore his family's reign over the desert planet Arrakis while facing a terrible future only he can foresee.",
-      rating: 8.0,
-      duration: 155,
-      genre: ["Sci-Fi", "Adventure", "Drama"],
-      releaseDate: "2021"
-    },
-    {
-      id: 2,
-      title: "Avengers: Endgame",
-      backdropImage: "https://image.tmdb.org/t/p/w1920/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg", // Avengers: Endgame - Verified working
-      description: "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more.",
-      rating: 9.2,
-      duration: 181,
-      genre: ["Action", "Adventure", "Sci-Fi"],
-      releaseDate: "2019"
-    },
-    {
-      id: 3,
-      title: "Inception",
-      backdropImage: "https://image.tmdb.org/t/p/w1920/s3TBrRGB1iav7gFOCNx3H31MoES.jpg", // Inception - Verified working
-      description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-      rating: 9.0,
-      duration: 148,
-      genre: ["Action", "Sci-Fi", "Thriller"],
-      releaseDate: "2010"
-    },
-    {
-      id: 4,
-      title: "Interstellar",
-      backdropImage: "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1920&q=80", // Interstellar - Space/nebula backdrop
-      description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
-      rating: 8.8,
-      duration: 169,
-      genre: ["Adventure", "Drama", "Sci-Fi"],
-      releaseDate: "2014"
-    },
-    {
-      id: 5,
-      title: "The Dark Knight",
-      backdropImage: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80", // The Dark Knight - Dark city night backdrop
-      description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest tests.",
-      rating: 9.1,
-      duration: 152,
-      genre: ["Action", "Crime", "Drama"],
-      releaseDate: "2008"
-    }
-  ];
 
   // Auto-slide effect - Tự động chuyển slide sau mỗi 5 giây
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % featuredMoviesSlider.length);
-    }, 5000); // Thay đổi mỗi 5 giây
-    
-    return () => clearInterval(interval);
-  }, [featuredMoviesSlider.length]);
+    if (featuredMovies.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % featuredMovies.length);
+      }, 5000); // Thay đổi mỗi 5 giây
+      
+      return () => clearInterval(interval);
+    }
+  }, [featuredMovies.length]);
 
   useEffect(() => {
     loadMovies();
@@ -94,10 +41,24 @@ const HomePage = () => {
     try {
       setLoading(true);
       
-      // Load trending movies for featured movie
-      const trendingResponse = await movieAPI.getTrendingMovies();
-      if (trendingResponse && trendingResponse.length > 0) {
-        setFeaturedMovie(trendingResponse[0]);
+      // ✅ Load featured movies từ database (top 5 phim có hotness cao nhất và có backdrop)
+      try {
+        const featuredResponse = await movieAPI.getMovies({ 
+          limit: 20, 
+          status: 'now-showing',
+          sortBy: 'hotness' 
+        });
+        
+        if (featuredResponse && featuredResponse.movies) {
+          // Lọc các phim có backdropImage và lấy top 5
+          const moviesWithBackdrop = featuredResponse.movies
+            .filter(movie => movie.backdropImage)
+            .slice(0, 5);
+          
+          setFeaturedMovies(moviesWithBackdrop);
+        }
+      } catch (featuredError) {
+        console.error('Error loading featured movies:', featuredError);
       }
       
       // Load all movies for different sections
@@ -151,7 +112,7 @@ const HomePage = () => {
       // ✅ Lỗi sẽ tự động được hiển thị bởi api.js
       
       // Don't use fallback data - show empty state instead
-      setFeaturedMovie(null);
+      setFeaturedMovies([]);
       setNowShowingMovies([]);
       setTrailers([]);
       setCombos([]);
@@ -178,11 +139,14 @@ const HomePage = () => {
       <Header />
       
       <Content>
-        {/* 🎬 HERO CAROUSEL - Featured Movies Slider với ảnh ngang */}
+        {/* 🎬 HERO CAROUSEL - Featured Movies Slider với ảnh từ database */}
+        {featuredMovies.length > 0 && (
         <div className="hero-carousel-container" style={{ position: 'relative', overflow: 'hidden' }}>
-          {featuredMoviesSlider.map((movie, index) => (
+          {featuredMovies.map((movie, index) => {
+            const backdropUrl = getImageUrl(movie.backdropImage);
+            return (
             <div
-              key={movie.id}
+              key={movie._id || index}
               className="hero-slide"
               style={{
                 position: index === currentSlide ? 'relative' : 'absolute',
@@ -198,7 +162,9 @@ const HomePage = () => {
               <div 
                 className="hero-section-modern"
                 style={{
-                  backgroundImage: `url(${movie.backdropImage}), linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)`, // Fallback gradient nếu ảnh không load
+                  backgroundImage: backdropUrl 
+                    ? `url(${backdropUrl}), linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)` 
+                    : 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
@@ -247,7 +213,7 @@ const HomePage = () => {
                         textTransform: 'uppercase',
                         letterSpacing: '2px'
                       }}>
-                        ⭐ PHIM NỔI BẬT {index + 1}/{featuredMoviesSlider.length}
+                        ⭐ PHIM NỔI BẬT {index + 1}/{featuredMovies.length}
                       </Text>
                     </div>
                     
@@ -279,10 +245,10 @@ const HomePage = () => {
                         </div>
                         <Text style={{ color: '#d1d5db', fontSize: '16px' }}>
                           <ClockCircleOutlined style={{ marginRight: '6px' }} />
-                          {Math.floor(movie.duration / 60)}h {movie.duration % 60}m
+                          {movie.duration ? `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m` : 'N/A'}
                         </Text>
                         <Text style={{ color: '#d1d5db', fontSize: '16px' }}>
-                          {movie.genre.join(' • ')}
+                          {movie.genre && movie.genre.length > 0 ? movie.genre.join(' • ') : 'N/A'}
                         </Text>
                       </Space>
                     </div>
@@ -306,7 +272,7 @@ const HomePage = () => {
                       flexWrap: 'wrap',
                       animation: 'fadeInUp 0.6s ease-out 0.4s both'
                     }}>
-                      <Link to="/movies">
+                      <Link to={`/movie/${movie._id}`}>
                         <Button 
                           type="primary" 
                           size="large"
@@ -325,30 +291,34 @@ const HomePage = () => {
                         </Button>
                       </Link>
                       
-                      <Button 
-                        size="large"
-                        className="hero-button-secondary"
-                        style={{ 
-                          fontSize: '16px', 
-                          height: '56px', 
-                          padding: '0 40px',
-                          fontWeight: '600',
-                          borderRadius: '28px',
-                          background: 'rgba(255,255,255,0.1)',
-                          backdropFilter: 'blur(10px)',
-                          border: '2px solid rgba(255,255,255,0.3)',
-                          color: '#fff'
-                        }}
-                      >
-                        <PlayCircleOutlined style={{ fontSize: '20px', marginRight: '8px' }} />
-                        Xem trailer
-                      </Button>
+                      {movie.trailer && (
+                        <Button 
+                          size="large"
+                          className="hero-button-secondary"
+                          onClick={() => window.open(movie.trailer, '_blank')}
+                          style={{ 
+                            fontSize: '16px', 
+                            height: '56px', 
+                            padding: '0 40px',
+                            fontWeight: '600',
+                            borderRadius: '28px',
+                            background: 'rgba(255,255,255,0.1)',
+                            backdropFilter: 'blur(10px)',
+                            border: '2px solid rgba(255,255,255,0.3)',
+                            color: '#fff'
+                          }}
+                        >
+                          <PlayCircleOutlined style={{ fontSize: '20px', marginRight: '8px' }} />
+                          Xem trailer
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
           
           {/* Slide Indicators (Dots) */}
           <div style={{
@@ -360,7 +330,7 @@ const HomePage = () => {
             gap: '12px',
             zIndex: 10
           }}>
-            {featuredMoviesSlider.map((_, index) => (
+            {featuredMovies.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
@@ -382,7 +352,7 @@ const HomePage = () => {
           
           {/* Navigation Arrows */}
           <button
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + featuredMoviesSlider.length) % featuredMoviesSlider.length)}
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + featuredMovies.length) % featuredMovies.length)}
             style={{
               position: 'absolute',
               left: '24px',
@@ -409,7 +379,7 @@ const HomePage = () => {
           </button>
           
           <button
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % featuredMoviesSlider.length)}
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % featuredMovies.length)}
             style={{
               position: 'absolute',
               right: '24px',
@@ -435,6 +405,7 @@ const HomePage = () => {
             ›
           </button>
         </div>
+        )}
 
         {/* Now Showing Section - 12 Movies Grid */}
         <div className="section-container" style={{ padding: '100px 24px', maxWidth: '1400px', margin: '0 auto' }}>

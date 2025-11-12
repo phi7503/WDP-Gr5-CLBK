@@ -10,11 +10,19 @@ const useDebounce = (value, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
+    console.log('⏱️ useDebounce: value changed to:', value, '- will update after', delay, 'ms');
+    
+    // Set timer để update debouncedValue sau delay
     const timer = setTimeout(() => {
+      console.log('✅ useDebounce: timer fired - updating debouncedValue to:', value);
       setDebouncedValue(value);
     }, delay);
 
-    return () => clearTimeout(timer);
+    // Clear timer nếu value thay đổi trước khi delay kết thúc
+    return () => {
+      console.log('🧹 useDebounce: clearing timer');
+      clearTimeout(timer);
+    };
   }, [value, delay]);
 
   return debouncedValue;
