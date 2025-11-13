@@ -6,12 +6,18 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
+import cookieParser from "cookie-parser";
 import { fileURLToPath } from "url";
 import connectDB from "./config/db.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import startCleanupJob from "./jobs/cleanupExpiredReservations.js";
 import { initializeSocketHandlers } from "./socket/socketHandlers.js";
 import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
+import { scheduleCleanupOldShowtimes } from "./jobs/cleanupOldShowtimes.js";
+import payosRoutes from "./routes/payOSRoutes.js";
+
 
 // Load env
 dotenv.config();
@@ -23,18 +29,21 @@ connectDB();
 import showtimeRoutes from "./routes/showtimeRoutes.js";
 import movieRoutes from "./routes/movieRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
+import authRoutes from "./routes/auth.route.js";
 import seatRoutes from "./routes/seatRoutes.js";
 import seatStatusRoutes from "./routes/seatStatusRoutes.js";
 import branchRoutes from "./routes/branchRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+import userRoutes from "./routes/user.route.js";
 import theaterRoutes from "./routes/theaterRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import voucherRoutes from "./routes/voucherRoutes.js";
 import comboRoutes from "./routes/comboRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
+
 //import debugRoutes from "./routes/debugRoutes.js";
 
 const app = express();
+app.use(cookieParser());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const server = createServer(app);
@@ -75,8 +84,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+app.use("/api", userRoutes);
+app.use("/api", dashboardRoutes);
+
 // API Routes
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/showtimes", showtimeRoutes);
@@ -89,7 +102,11 @@ app.use("/api/theaters", theaterRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/combos", comboRoutes);
+
+app.use("/api/chat", chatRoutes);
 app.use("/api/admin-dashboard", adminDashboardRoutes);
+app.use("/api/payos", payosRoutes);
+
 
 //app.use("/api/debug", debugRoutes);
 
@@ -102,11 +119,13 @@ initializeSocketHandlers(io);
 app.use(notFound);
 app.use(errorHandler);
 
-// ✅ Start cleanup job
-startCleanupJob();
+// ✅ Start cleanup jobs
+startCleanupJob(); // Cleanup expired seat reservations
+scheduleCleanupOldShowtimes(); // Cleanup old showtimes (runs daily at 2 AM)
 
 // Start server
 const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 server.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`Server running in ${NODE_ENV} mode on port ${PORT}`);
 });

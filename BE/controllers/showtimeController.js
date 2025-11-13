@@ -18,13 +18,18 @@ export const getAllShowtimes = async (req, res) => {
   try {
     const { movie, branch, theater, date, status } = req.query;
     const page = Number.parseInt(req.query.page) || 1;
-    const limit = Number.parseInt(req.query.limit) || 10;
+
+    const limit = Number.parseInt(req.query.limit) || 100; // Increased default from 10 to 100
+
 
     // Build filter
     const filter = {};
     if (movie && isValidObjectId(movie)) filter.movie = movie;
     if (branch && isValidObjectId(branch)) filter.branch = branch;
     if (theater && isValidObjectId(theater)) filter.theater = theater;
+
+    if (status) filter.status = status;
+
 
     // Filter by date
     if (date) {
@@ -33,12 +38,19 @@ export const getAllShowtimes = async (req, res) => {
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
       filter.startTime = { $gte: startOfDay, $lte: endOfDay };
+
+    } else {
+      // Filter out past showtimes by default (unless explicitly requested)
+      if (!req.query.includePast) {
+        filter.startTime = { $gte: new Date() };
+      }
     }
 
     const count = await Showtime.countDocuments(filter);
     const showtimes = await Showtime.find(filter)
-        .populate("movie", "title duration poster hotness")
-        .populate("branch", "name location")
+
+        .populate("movie", "title duration poster hotness backdropImage")
+        .populate("branch", "name location cinemaChain")
         .populate("theater", "name")
         .sort({ createdAt: -1 }) // Explicitly sort by creation time, newest first
         .limit(limit)
@@ -48,8 +60,12 @@ export const getAllShowtimes = async (req, res) => {
     const showtimesWithSeats = await Promise.all(showtimes.map(async (s) => {
       // Tổng số ghế active của rạp này
       const totalSeats = await Seat.countDocuments({ theater: s.theater._id, branch: s.branch._id, isActive: true });
-      // Số ghế đã đặt
-      const bookedSeats = await SeatStatus.countDocuments({ showtime: s._id, status: "booked" });
+
+      // Số ghế đã đặt (chỉ đếm ghế có status "booked") HOẶC đã reserve (status "reserved")
+      const bookedSeats = await SeatStatus.countDocuments({ 
+        showtime: s._id, 
+        status: { $in: ["booked", "reserved"] } // ✅ Đếm cả booked và reserved
+      });
       return {
         ...s.toObject(),
         totalSeats,
@@ -79,8 +95,9 @@ export const getShowtimeById = async (req, res) => {
 
   try {
     const showtime = await Showtime.findById(id)
-      .populate("movie", "title duration poster description genre")
-      .populate("branch", "name location contact")
+
+      .populate("movie", "title duration poster description genre backdropImage")
+      .populate("branch", "name location contact cinemaChain")
       .populate("theater", "name seatLayout");
 
     if (!showtime)
@@ -165,6 +182,14 @@ export const createShowtime = async (req, res) => {
         .status(400)
         .json({ message: "endTime must be after startTime" });
 
+    // ✅ Prevent creating showtime in the past
+    const now = new Date();
+    if (start < now) {
+      return res
+        .status(400)
+        .json({ message: "Cannot create showtime in the past. startTime must be in the future." });
+    }
+
     // ✅ Check for scheduling conflicts
     const conflictingShowtime = await Showtime.findOne({
       theater: theater,
@@ -236,8 +261,8 @@ export const createShowtime = async (req, res) => {
     }
 
     const populated = await Showtime.findById(created._id)
-      .populate("movie", "title duration poster")
-      .populate("branch", "name location")
+      .populate("movie", "title duration poster backdropImage")
+      .populate("branch", "name location cinemaChain")
       .populate("theater", "name");
 
     res.status(201).json(populated);
@@ -361,8 +386,8 @@ export const updateShowtime = async (req, res) => {
 
     await showtime.save();
     const populated = await Showtime.findById(id)
-      .populate("movie", "title duration poster")
-      .populate("branch", "name location")
+      .populate("movie", "title duration poster backdropImage")
+      .populate("branch", "name location cinemaChain")
       .populate("theater", "name");
 
     return res.json(populated);
@@ -506,8 +531,9 @@ export const updateShowtimeStatus = async (req, res) => {
     showtime.status = status;
     await showtime.save();
     const populated = await Showtime.findById(id)
-      .populate("movie", "title duration")
-      .populate("branch", "name location")
+
+      .populate("movie", "title duration backdropImage")
+      .populate("branch", "name location cinemaChain")
       .populate("theater", "name");
     res.json(populated);
   } catch (err) {

@@ -51,7 +51,8 @@ const bookingSchema = mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["momo", "zalopay", "credit_card", "bank_transfer","cash"],
+      enum: ["momo", "zalopay", "credit_card", "bank_transfer", "cash", "e_wallet", "payos"],
+
     },
     paymentStatus: {
       type: String,
@@ -75,6 +76,9 @@ const bookingSchema = mongoose.Schema(
     },
     transactionId: {
       type: String,
+    },
+    paidAt: {
+      type: Date,
     },
     employeeId: {
       type: mongoose.Schema.Types.ObjectId,

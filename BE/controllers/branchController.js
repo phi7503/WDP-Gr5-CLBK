@@ -9,7 +9,9 @@ const isValidObjectId = id => mongoose.Types.ObjectId.isValid(id);
 // @route   GET /api/branches
 // @access  Public
 export const getAllBranches = asyncHandler(async (req, res) => {
-    const { name, location_province } = req.query;
+
+    const { name, location_province, cinemaChain, groupByChain } = req.query;
+
     const filter = {};
 
     // Add name filter if provided
@@ -21,7 +23,25 @@ export const getAllBranches = asyncHandler(async (req, res) => {
         filter['location.province'] = location_province;
     }
 
-    const branches = await Branch.find(filter).sort({ name: 1 });
+    // Add cinema chain filter if provided
+    if (cinemaChain) {
+        filter.cinemaChain = cinemaChain;
+    }
+
+    const branches = await Branch.find(filter).sort({ cinemaChain: 1, name: 1 });
+    
+    // Group by chain if requested
+    if (groupByChain === 'true') {
+        const grouped = {};
+        branches.forEach(branch => {
+            const chain = branch.cinemaChain || 'Other';
+            if (!grouped[chain]) {
+                grouped[chain] = [];
+            }
+            grouped[chain].push(branch);
+        });
+        return res.json({ groupedByChain: grouped, total: branches.length });
+    }
     res.json(branches);
 });
 

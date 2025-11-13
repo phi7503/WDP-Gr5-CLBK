@@ -1,0 +1,655 @@
+/* 
+ * ADVANCED ANIMATIONS & EFFECTS
+ * Cinema Booking System - Premium Netflix/Disney+ Style
+ * Implements all animations according to detailed specifications
+ */
+
+/* ========== KEYFRAMES ========== */
+
+/* Fade In Up - Universal enter animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Left */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade In Right */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Shimmer effect for loading and special effects */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Pulse animation for badges and alerts */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Fire flicker effect for hot badges */
+@keyframes fireFlicker {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    opacity: 0.8;
+    filter: brightness(1.2);
+    transform: translateY(-2px) scale(1.05);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(0.9);
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    opacity: 0.9;
+    filter: brightness(1.1);
+    transform: translateY(-1px) scale(1.03);
+  }
+}
+
+/* Glow pulse for trending items */
+@keyframes glowPulse {
+  from {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 20px 40px rgba(220, 38, 38, 0.3);
+  }
+  to {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.6), 0 20px 40px rgba(220, 38, 38, 0.5);
+  }
+}
+
+/* Blink for urgent states */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Shake for errors */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+/* Spin for loading */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Slide in from right for toasts */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide out to right for toasts */
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Progress bar animation */
+@keyframes progressBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Bounce effect */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* ========== HERO CAROUSEL ADVANCED ========== */
+
+.hero-carousel-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Backdrop zoom effect - Ken Burns style */
+@keyframes heroBackdropZoom {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate(-2%, -1%);
+  }
+  100% {
+    transform: scale(1.05) translate(2%, 1%);
+  }
+}
+
+/* Color shift animation */
+@keyframes colorShift {
+  0% {
+    opacity: 0.3;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.5;
+    filter: hue-rotate(10deg);
+  }
+  100% {
+    opacity: 0.3;
+    filter: hue-rotate(-10deg);
+  }
+}
+
+/* Floating particles */
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Content slide in */
+.hero-slide.active .hero-content {
+  animation: heroContentSlide 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+@keyframes heroContentSlide {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Badge glow animation */
+@keyframes badgeGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5), 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 6px 20px rgba(220, 38, 38, 0.5);
+  }
+}
+
+/* Badge shine effect */
+@keyframes badgeShine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Title gradient animation */
+@keyframes titleGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Hero title - simple white text */
+.hero-title {
+  color: #ffffff !important;
+}
+
+/* ========== MOVIE CARDS - ENHANCED ========== */
+
+/* Card entrance animation */
+.movie-card-wrapper {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Stagger delay for grid items */
+.movie-card-wrapper:nth-child(1) { animation-delay: 0s; }
+.movie-card-wrapper:nth-child(2) { animation-delay: 0.1s; }
+.movie-card-wrapper:nth-child(3) { animation-delay: 0.15s; }
+.movie-card-wrapper:nth-child(4) { animation-delay: 0.2s; }
+.movie-card-wrapper:nth-child(5) { animation-delay: 0.25s; }
+.movie-card-wrapper:nth-child(6) { animation-delay: 0.3s; }
+.movie-card-wrapper:nth-child(7) { animation-delay: 0.35s; }
+.movie-card-wrapper:nth-child(8) { animation-delay: 0.4s; }
+.movie-card-wrapper:nth-child(9) { animation-delay: 0.45s; }
+.movie-card-wrapper:nth-child(10) { animation-delay: 0.5s; }
+.movie-card-wrapper:nth-child(11) { animation-delay: 0.55s; }
+.movie-card-wrapper:nth-child(12) { animation-delay: 0.6s; }
+
+/* Glow effect before */
+.movie-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.movie-card:hover::before {
+  opacity: 1;
+  animation: glowPulse 1.5s ease-in-out infinite alternate;
+}
+
+/* ========== FIRE BADGE ANIMATION ========== */
+
+.trending-badge {
+  animation: fireFlicker 2s ease-in-out infinite;
+}
+
+.trending-badge .anticon {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* ========== COMBO SHIMMER EFFECT ========== */
+
+.combo-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.combo-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.combo-card:hover::before {
+  left: 150%;
+}
+
+/* ========== TRAILER CARDS ========== */
+
+.trailer-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.trailer-card .play-button {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.trailer-card:hover .play-button {
+  transform: scale(1.15);
+  box-shadow: 0 12px 48px rgba(239, 68, 68, 0.6);
+}
+
+/* Play button pulse */
+@keyframes playButtonPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.trailer-card .play-button {
+  animation: playButtonPulse 1.5s ease-in-out infinite;
+}
+
+/* ========== SECTION HEADERS ========== */
+
+.section-header {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  border-radius: 2px;
+  animation: expandWidth 0.6s ease-out 0.3s forwards;
+}
+
+@keyframes expandWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 80px;
+  }
+}
+
+/* ========== SCROLL REVEAL ========== */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========== BUTTON SHINE EFFECT ========== */
+
+.hero-button-primary,
+.movie-book-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-button-primary::before,
+.movie-book-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.hero-button-primary:hover::before,
+.movie-book-button:hover::before {
+  left: 100%;
+}
+
+/* ========== LOADING SKELETON ========== */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 25%,
+    #262626 50%,
+    #1a1a1a 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ========== TOAST NOTIFICATIONS ========== */
+
+.toast-notification {
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast-notification.closing {
+  animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Toast progress bar */
+.toast-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  animation: progressBar 5000ms linear forwards;
+}
+
+/* ========== MODAL ANIMATIONS ========== */
+
+.modal-backdrop {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========== FORM INPUTS ========== */
+
+.input-wrapper input:focus {
+  animation: inputFocus 0.3s ease;
+}
+
+@keyframes inputFocus {
+  from {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.3);
+  }
+  to {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+}
+
+.input-error {
+  animation: shake 0.4s ease;
+}
+
+/* ========== COUNTER ANIMATION ========== */
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.counter {
+  animation: countUp 0.5s ease-out;
+}
+
+/* ========== PARTICLE EFFECTS ========== */
+
+@keyframes particleBurst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0);
+  }
+}
+
+.particle {
+  animation: particleBurst 0.8s ease-out forwards;
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+
+@media (max-width: 768px) {
+  /* Reduce animation intensity on mobile */
+  .movie-card-wrapper {
+    animation-duration: 0.4s;
+  }
+  
+  .hero-slide.active .hero-section-modern {
+    animation-duration: 0.6s;
+  }
+  
+  /* Disable complex animations on mobile for performance */
+  .movie-card::before,
+  .combo-card::before {
+    display: none;
+  }
+}
+
+/* ========== REDUCED MOTION ========== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Keep essential feedback */
+  .hero-button-primary:hover,
+  .movie-book-button:hover {
+    transform: none;
+  }
+}
+
+/* ========== PERFORMANCE OPTIMIZATIONS ========== */
+
+/* GPU acceleration for animated elements */
+.movie-card,
+.trailer-card,
+.combo-card,
+.hero-section-modern {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Remove will-change after animation */
+.movie-card:not(:hover),
+.trailer-card:not(:hover),
+.combo-card:not(:hover) {
+  will-change: auto;
+}
+

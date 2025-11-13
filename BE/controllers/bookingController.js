@@ -2,6 +2,10 @@ import asyncHandler from "express-async-handler";
 import Booking from "../models/bookingModel.js";
 import SeatStatus from "../models/seatStatusModel.js";
 import Showtime from "../models/showtimeModel.js";
+import Movie from "../models/movieModel.js";
+import Theater from "../models/theaterModel.js";
+import Branch from "../models/branchModel.js";
+
 import { broadcastSeatUpdate } from "../socket/socketHandlers.js";
 import mongoose from "mongoose";
 import Combo from "../models/comboModel.js";
@@ -9,7 +13,7 @@ import Voucher from "../models/voucherModel.js";
 import QRCode from "qrcode";
 import { sendEmail } from "../utils/emailService.js";
 
-// Create a PENDING booking - POST /api/bookings - Private
+// Create a PENDING booking - POST /api/bookings - Private (or Public with customerInfo)
 const createBooking = asyncHandler(async (req, res) => {
   const {
     showtimeId,
@@ -19,10 +23,29 @@ const createBooking = asyncHandler(async (req, res) => {
     employeeMode,
     customerInfo,
   } = req.body;
-  let userId = req.user._id;
+  
+  // ✅ Cho phép booking không cần authentication nếu có customerInfo (guest booking)
+  let userId = req.user?._id || null;
   let employeeId = undefined;
   let customerInfoData = undefined;
+  
+  // Nếu không có user (guest) và không có customerInfo, báo lỗi
+  if (!userId && !customerInfo) {
+    res.status(400);
+    throw new Error("Vui lòng đăng nhập hoặc cung cấp thông tin khách hàng");
+  }
+  
+  // Nếu có customerInfo, sử dụng nó (guest booking)
+  if (customerInfo && customerInfo.name && customerInfo.email) {
+    customerInfoData = customerInfo;
+    // userId có thể null cho guest booking
+  }
+  
   if (employeeMode) {
+    if (!req.user) {
+      res.status(401);
+      throw new Error("Chế độ nhân viên yêu cầu đăng nhập");
+    }
     employeeId = req.user._id;
     userId = req.user._id; // Đặt vé cho khách, nhưng user là nhân viên
     if (customerInfo) customerInfoData = customerInfo;
@@ -34,10 +57,16 @@ const createBooking = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("Showtime not found");
     }
-    // Prevent booking if showtime has started
-    if (showtime.startTime <= new Date()) {
+
+    // Prevent booking if showtime has started or ended
+    const now = new Date();
+    if (showtime.startTime <= now) {
       res.status(400);
-      throw new Error("Showtime has already started. Cannot book tickets.");
+      throw new Error("Suất chiếu đã bắt đầu. Không thể đặt vé.");
+    }
+    if (showtime.endTime && showtime.endTime <= now) {
+      res.status(400);
+      throw new Error("Suất chiếu đã kết thúc. Không thể đặt vé.");
     }
 
     let seatStatuses;
@@ -49,14 +78,74 @@ const createBooking = asyncHandler(async (req, res) => {
         status: { $in: ["available", "reserved"] }
       }).populate("seat");
     } else {
-      // Khách hàng vẫn phải reserve trước
-      seatStatuses = await SeatStatus.find({
+
+      // Khách hàng có thể book ghế available, selecting, hoặc reserved (nếu đã reserve trước)
+      // Nếu userId là null (guest), chỉ cho phép ghế available
+      const seatQuery = {
         showtime: showtimeId,
         seat: { $in: seatIds },
-        status: "reserved",
-        reservedBy: userId,
-        reservationExpires: { $gt: new Date() },
-      }).populate("seat");
+      };
+      
+      if (userId) {
+        // User đã đăng nhập: có thể book available, selecting, hoặc reserved (nếu đã reserve)
+        // Convert userId to ObjectId để so sánh đúng
+        const userIdObj = mongoose.Types.ObjectId.isValid(userId) 
+          ? new mongoose.Types.ObjectId(userId) 
+          : userId;
+        
+        seatQuery.$or = [
+          { status: "available" },
+          { 
+            status: "selecting", 
+            reservedBy: userIdObj 
+          },
+          { 
+            status: "reserved", 
+            reservedBy: userIdObj, 
+            reservationExpires: { $gt: new Date() } 
+          }
+        ];
+      } else {
+        // Guest: chỉ có thể book available
+        // Nhưng nếu có customerInfo, có thể đã reserve qua socket (không có userId trong booking)
+        // Trong trường hợp này, vẫn chỉ cho phép available để đảm bảo an toàn
+        seatQuery.status = "available";
+      }
+      
+      seatStatuses = await SeatStatus.find(seatQuery).populate("seat");
+      
+      // ✅ Debug logging
+      console.log('🔍 Booking seat check:', {
+        seatIds: seatIds.length,
+        foundSeats: seatStatuses.length,
+        userId: userId,
+        reqUser: req.user ? { id: req.user._id?.toString(), name: req.user.name } : null,
+        query: JSON.stringify(seatQuery, null, 2)
+      });
+      
+      // Nếu không tìm đủ ghế, log chi tiết để debug
+      if (seatStatuses.length !== seatIds.length) {
+        const allSeats = await SeatStatus.find({
+          showtime: showtimeId,
+          seat: { $in: seatIds }
+        }).populate("seat");
+        
+        console.log('❌ Seat availability details:', {
+          requested: seatIds,
+          found: seatStatuses.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy?.toString(),
+            reservationExpires: s.reservationExpires
+          })),
+          allSeats: allSeats.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy?.toString(),
+            reservationExpires: s.reservationExpires
+          }))
+        });
+      }
     }
 
     if (seatStatuses.length !== seatIds.length) {
@@ -71,17 +160,31 @@ const createBooking = asyncHandler(async (req, res) => {
     let comboTotal = 0;
     let comboDetails = [];
     if (combos.length > 0) {
-      const comboIds = combos.map(c => c.combo);
+
+      console.log('📦 Received combos:', JSON.stringify(combos, null, 2)); // ✅ Debug
+      // ✅ Sửa: Frontend gửi combos với structure { _id, name, price, quantity }
+      // Cần map để lấy _id từ combo object
+      const comboIds = combos.map(c => c._id || c.combo); // Hỗ trợ cả 2 format
+      console.log('📦 Combo IDs:', comboIds); // ✅ Debug
+      
       const comboDocs = await Combo.find({ _id: { $in: comboIds }, isActive: true });
+      console.log('📦 Found combos in DB:', comboDocs.length, comboDocs.map(c => ({ id: c._id, name: c.name, price: c.price }))); // ✅ Debug
+      
       for (const c of combos) {
-        const comboDoc = comboDocs.find(cd => cd._id.toString() === c.combo);
+        const comboId = c._id || c.combo; // ✅ Sửa: Lấy _id hoặc combo
+        const comboDoc = comboDocs.find(cd => cd._id.toString() === comboId.toString());
         if (comboDoc) {
           const quantity = c.quantity || 1;
           const price = comboDoc.price * quantity;
           comboTotal += price;
           comboDetails.push({ combo: comboDoc._id, quantity, price: comboDoc.price });
+
+          console.log(`✅ Added combo: ${comboDoc.name} x${quantity} = ${price.toLocaleString('vi-VN')} VND`); // ✅ Debug
+        } else {
+          console.warn(`⚠️ Combo not found: ${comboId}`);
         }
       }
+      console.log(`💰 Total combo amount: ${comboTotal.toLocaleString('vi-VN')} VND`); // ✅ Debug
     }
 
     // 3. Kiểm tra và áp dụng voucher
@@ -127,7 +230,15 @@ const createBooking = asyncHandler(async (req, res) => {
     // 4. Tính tổng tiền cuối cùng
     const totalAmount = Math.max(seatTotal + comboTotal - discountAmount, 0);
 
-    // 5. Tạo booking
+    
+    console.log('💰 Payment Calculation:', { // ✅ Debug
+      seatTotal: seatTotal.toLocaleString('vi-VN') + ' VND',
+      comboTotal: comboTotal.toLocaleString('vi-VN') + ' VND',
+      discountAmount: discountAmount.toLocaleString('vi-VN') + ' VND',
+      totalAmount: totalAmount.toLocaleString('vi-VN') + ' VND'
+    });
+
+    // 5. Tạo booking với trạng thái pending (chờ thanh toán)
     const booking = await Booking.create({
       user: userId,
       employeeId,
@@ -144,8 +255,10 @@ const createBooking = asyncHandler(async (req, res) => {
       combos: comboDetails,
       voucher: appliedVoucher,
       discountAmount,
-      paymentStatus: "pending",
-      bookingStatus: "pending",
+
+      paymentStatus: "pending", // Chờ thanh toán qua PayOS
+      bookingStatus: "pending", // Chờ thanh toán
+
     });
 
     if (!booking) {
@@ -153,16 +266,22 @@ const createBooking = asyncHandler(async (req, res) => {
       throw new Error("Failed to create booking record");
     }
 
+
     // Tạo mã QR cho booking (dùng booking._id làm nội dung QR)
     const qrData = booking._id.toString();
     const qrCodeBase64 = await QRCode.toDataURL(qrData);
     booking.qrCode = qrCodeBase64;
     await booking.save();
 
-    // Link the seat statuses to this new pending booking
+    // Link the seat statuses to this booking (vẫn giữ status "reserved" cho đến khi thanh toán thành công)
     await SeatStatus.updateMany(
         { _id: { $in: seatStatuses.map(s => s._id) } },
-        { $set: { booking: booking._id } }
+        { 
+          $set: { 
+            booking: booking._id,
+            status: "reserved", // Giữ reserved cho đến khi thanh toán thành công
+          } 
+        }
     );
 
     const populatedBooking = await Booking.findById(booking._id)
@@ -172,7 +291,7 @@ const createBooking = asyncHandler(async (req, res) => {
     res.status(201).json({
       success: true,
       booking: populatedBooking,
-      message: "Pending booking created successfully. Please proceed to payment.",
+      message: "Booking created and payment completed successfully!",
     });
   } catch (error) {
     console.error("Error creating booking:", {
@@ -188,16 +307,40 @@ const createBooking = asyncHandler(async (req, res) => {
 
 // Get user bookings - GET /api/bookings/my-bookings - Private
 const getMyBookings = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   const bookings = await Booking.find({ user: req.user._id })
       .populate({
         path: "showtime",
-        populate: {
-          path: "movie",
-          select: "title poster duration",
-        },
+        populate: [
+          {
+            path: "movie",
+            select: "title poster duration genre",
+          },
+          {
+            path: "theater",
+            select: "name",
+          },
+          {
+            path: "branch",
+            select: "name location",
+          },
+        ],
       })
       .sort({ createdAt: -1 });
 
+  // Manual populate fallback for theater and branch if initial populate fails
+  for (let booking of bookings) {
+    if (booking.showtime && !booking.showtime.theater) {
+      await booking.showtime.populate('theater', 'name');
+    }
+    if (booking.showtime && !booking.showtime.branch) {
+      await booking.showtime.populate('branch', 'name location');
+    }
+  }
   res.json({
     success: true,
     bookings,
@@ -227,8 +370,13 @@ const getBookingById = asyncHandler(async (req, res) => {
     throw new Error("Booking not found");
   }
 
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   if (
-      booking.user._id.toString() !== req.user._id.toString() &&
+      booking.user && booking.user._id && booking.user._id.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
   ) {
     res.status(403);
@@ -256,6 +404,11 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
   if (!booking) {
     res.status(404);
     throw new Error("Booking not found");
+  }
+
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
   }
 
   if (
@@ -290,8 +443,18 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
     // Gửi email xác nhận vé cho user (chỉ gửi nếu không phải nhân viên đặt)
     if (!booking.employeeId && booking.user && booking.user.email) {
       // Tạo QR code buffer để đính kèm
-      const qrData = booking._id.toString();
-      const qrCodeBuffer = await QRCode.toBuffer(qrData, { type: 'png', width: 300 });
+
+      const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const qrData = `${baseUrl}/booking-details/${booking._id}`;
+      const qrCodeBuffer = await QRCode.toBuffer(qrData, { 
+        type: 'png', 
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
       const emailHtml = `
         <h2>Chúc mừng bạn đã đặt vé thành công!</h2>
         <p><b>Phim:</b> ${booking.showtime.movie.title}</p>
@@ -352,7 +515,12 @@ const cancelBooking = asyncHandler(async (req, res) => {
     throw new Error("Booking not found");
   }
 
-  if (booking.user.toString() !== req.user._id.toString()) {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
+  if (booking.user && booking.user.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error("Not authorized to cancel this booking");
   }
@@ -472,6 +640,11 @@ const checkInTicket = asyncHandler(async (req, res) => {
 
 // Lấy tất cả booking do employee tạo hoặc tất cả booking (cho admin)
 const getAllBookingsForEmployee = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   // Trả về tất cả booking cho employee và admin
   const bookings = await Booking.find({})
     .populate({
@@ -485,13 +658,18 @@ const getAllBookingsForEmployee = asyncHandler(async (req, res) => {
 
 // [ADMIN] Get all bookings for a specific user
 const getBookingsByUserId = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   const { userId } = req.params;
   if (!userId) {
     res.status(400);
     throw new Error("Missing userId parameter");
   }
   // Only allow admin to use this endpoint
-  if (!req.user || req.user.role !== 'admin') {
+  if (req.user.role !== 'admin') {
     res.status(403);
     throw new Error("Not authorized");
   }
@@ -511,6 +689,118 @@ const getBookingsByUserId = asyncHandler(async (req, res) => {
   res.json({ bookings });
 });
 
+// [POST] /api/bookings/:id/resend-email
+export const resendEmailQRCode = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  const booking = await Booking.findById(id)
+    .populate({
+      path: "showtime",
+      populate: [
+        { path: "movie", select: "title" },
+        { path: "theater", select: "name" },
+        { path: "branch", select: "name location" }
+      ]
+    })
+    .populate("user", "name email");
+
+  if (!booking) {
+    res.status(404);
+    throw new Error("Booking not found");
+  }
+
+  // Kiểm tra quyền truy cập
+  if (booking.user._id.toString() !== userId.toString() && req.user.role !== 'admin' && req.user.role !== 'employee') {
+    res.status(403);
+    throw new Error("Không có quyền truy cập booking này");
+  }
+
+  // Kiểm tra booking đã được thanh toán chưa
+  if (booking.paymentStatus !== "completed") {
+    res.status(400);
+    throw new Error("Booking chưa được thanh toán. QR code chỉ được gửi sau khi thanh toán thành công.");
+  }
+
+  // Kiểm tra có QR code chưa
+  if (!booking.qrCode) {
+    // Tạo QR code nếu chưa có
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const qrData = `${baseUrl}/booking-details/${booking._id}`;
+    const qrCodeBase64 = await QRCode.toDataURL(qrData, {
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+    booking.qrCode = qrCodeBase64;
+    await booking.save();
+  }
+
+  // Gửi email với QR code
+  const customerEmail = booking.customerInfo?.email || booking.user?.email;
+  if (!customerEmail) {
+    res.status(400);
+    throw new Error("Không tìm thấy email khách hàng");
+  }
+
+  try {
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const qrData = `${baseUrl}/booking-details/${booking._id}`;
+    const qrCodeBuffer = await QRCode.toBuffer(qrData, {
+      type: 'png',
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      }
+    });
+
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #D32F2F;">🎉 Xác nhận đặt vé thành công!</h2>
+        <p><b>Phim:</b> ${booking.showtime.movie.title}</p>
+        <p><b>Suất chiếu:</b> ${new Date(booking.showtime.startTime).toLocaleString('vi-VN')}</p>
+        <p><b>Rạp:</b> ${booking.showtime.branch?.name || ""} - ${booking.showtime.theater?.name || ""}</p>
+        <p><b>Ghế:</b> ${booking.seats.map(s => s.row + s.number).join(", ")}</p>
+        <p><b>Tổng tiền:</b> ${booking.totalAmount.toLocaleString('vi-VN')} VND</p>
+        <p><b>Trạng thái:</b> Đã thanh toán</p>
+        <p><b>Mã QR:</b> <i>(Vui lòng mở file đính kèm để check-in tại rạp)</i></p>
+        <p style="margin-top: 20px;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+      </div>
+    `;
+
+    await sendEmail({
+      to: customerEmail,
+      subject: "Xác nhận đặt vé thành công - QR Code",
+      html: emailHtml,
+      attachments: [
+        {
+          filename: 'qrcode.png',
+          content: qrCodeBuffer,
+          contentType: 'image/png',
+        },
+      ],
+    });
+
+    res.json({
+      success: true,
+      message: "Email đã được gửi thành công",
+    });
+  } catch (error) {
+    console.error("Lỗi gửi email:", error);
+    res.status(500);
+    throw new Error("Không thể gửi email. Vui lòng thử lại sau.");
+  }
+});
 export {
   createBooking,
   getMyBookings,

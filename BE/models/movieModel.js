@@ -42,6 +42,11 @@ const movieSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    backdropImage: {
+      type: String,
+      required: false,
+      default: null,
+    },
     trailer: {
       type: String,
     },

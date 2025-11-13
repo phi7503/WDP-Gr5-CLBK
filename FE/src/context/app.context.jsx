@@ -11,8 +11,6 @@ const initialAppContext = {
     ? JSON.parse(localStorage.getItem("user"))
     : null,
   setUser: () => {},
-  isSeller: false,
-  setIsSeller: () => {},
   reset: () => {},
 };
 
@@ -30,13 +28,11 @@ export const AppProvider = ({ children }) => {
     const userInfo = localStorage.getItem("user");
     return userInfo ? JSON.parse(userInfo) : null;
   });
+  const role = user?.role ?? "user";
 
-  const [isSeller, setIsSeller] = useState(() => {
-    const userInfo = localStorage.getItem("user");
-    if (!userInfo) return false;
-    const parsed = JSON.parse(userInfo);
-    return parsed.role === "seller";
-  });
+  const isAdmin = role === "admin";
+  const isEmployee = role === "employee";
+  const isUser = role === "user";
 
   useEffect(() => {
     const userInfo = localStorage.getItem("user");
@@ -44,23 +40,25 @@ export const AppProvider = ({ children }) => {
       const parsed = JSON.parse(userInfo);
       setUser(parsed);
       setIsAuthenticated(true);
-      setIsSeller(parsed.role === "seller");
     }
   }, []);
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
       setIsAuthenticated(true);
-      setIsSeller(user.role === "seller");
     } else {
       localStorage.removeItem("user");
       setIsAuthenticated(false);
-      setIsSeller(false);
     }
   }, [user]);
 
   const reset = () => {
     setUser(null);
+    localStorage.removeItem("user");
+  };
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
   };
 
@@ -71,9 +69,12 @@ export const AppProvider = ({ children }) => {
         setIsAuthenticated,
         user,
         setUser,
-        isSeller,
-        setIsSeller,
         reset,
+        role,
+        isAdmin,
+        isEmployee,
+        isUser,
+        logout,
       }}
     >
       {children}
