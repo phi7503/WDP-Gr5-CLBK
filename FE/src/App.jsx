@@ -26,6 +26,7 @@ import AdminMovies from "./components/admin/movies/AdminMovies";
 import AdminBranches from "./components/admin/branches/AdminBranches";
 import ShowtimeManagement from "./components/admin/ShowtimeManagement";
 import SeatLayoutManagement from "./components/admin/SeatLayoutManagement";
+import TheaterManagement from "./components/admin/TheaterManagement";
 
 // ✅ AppRouter: toàn bộ CLBK client
 import AppRouter from "./router/AppRouter";
@@ -110,6 +111,7 @@ export default function App() {
             path="/admin/seat-layouts"
             element={<SeatLayoutManagement />}
           />
+          <Route path="/admin/theaters" element={<TheaterManagement />} />
         </Route>
 
         {/* Employee hoặc Admin */}
