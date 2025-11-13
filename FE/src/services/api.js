@@ -122,7 +122,25 @@ const apiCall = async (endpoint, options = {}) => {
       throw error;
     }
     
-    return await response.json();
+    // Parse response JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const text = await response.text();
+      if (!text || text.trim() === '') {
+        // Empty response - return null or empty object
+        return null;
+      }
+      try {
+        return JSON.parse(text);
+      } catch (parseError) {
+        console.error('Error parsing JSON response:', parseError);
+        throw new Error('Không thể đọc phản hồi từ server');
+      }
+    } else {
+      // Non-JSON response
+      const text = await response.text();
+      return text || null;
+    }
   } catch (error) {
     console.error('API call failed:', error);
     

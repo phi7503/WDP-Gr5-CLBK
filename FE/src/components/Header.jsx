@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Menu, Button, Input, Dropdown, Avatar, Empty, Drawer } from 'antd';
+import { Layout, Menu, Button, Input, Dropdown, Avatar, Empty, Drawer, message } from 'antd';
 import { SearchOutlined, UserOutlined, LogoutOutlined, BookOutlined, PictureOutlined, MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/app.context';
@@ -40,7 +40,15 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    // Hiển thị thông báo đăng xuất
+    message.success({
+      content: 'Đã đăng xuất thành công!',
+      duration: 2,
+    });
+    // Đợi một chút để message hiển thị trước khi navigate
+    setTimeout(() => {
+      navigate('/');
+    }, 500);
   };
 
   const userMenuItems = [
@@ -662,7 +670,7 @@ const Header = () => {
           <Button 
             type="primary" 
             className="cinema-primary-button"
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/login')}
             style={{
               background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
               border: 'none',
@@ -694,20 +702,22 @@ const Header = () => {
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="cinema-logo" style={{ fontSize: '24px' }}>
-            <span style={{ color: 'var(--primary-red)' }}>Quick</span>Show
+            <span style={{ color: 'var(--primary-red)' }}>CLBK</span>
           </span>
         </div>
       }
       placement="right"
       onClose={() => setMobileMenuOpen(false)}
       open={mobileMenuOpen}
-      bodyStyle={{ 
-        background: '#0a0a0a',
-        padding: 0,
-      }}
-      headerStyle={{
-        background: '#0a0a0a',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+      styles={{
+        body: { 
+          background: '#0a0a0a',
+          padding: 0,
+        },
+        header: {
+          background: '#0a0a0a',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        }
       }}
       closeIcon={<span style={{ color: '#fff', fontSize: '24px' }}>×</span>}
     >

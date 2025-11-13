@@ -48,7 +48,7 @@ const TrailerModal = ({ visible, trailerUrl, onClose }) => {
           padding: 0
         }
       }}
-      destroyOnClose
+      destroyOnHidden
     >
       {embedUrl ? (
         <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>

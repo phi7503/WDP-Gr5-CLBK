@@ -119,21 +119,74 @@ const createShowtimesForExistingMovies = async () => {
       console.log(`   ${index + 1}. ${movie.title} (${movie.duration} phút)`);
     });
 
-    // Lấy tất cả các branch active
-    const branches = await Branch.find({ isActive: true }).select('_id name cinemaChain theaters');
+    // Lấy một vài branch đại diện ở mỗi miền (Bắc, Trung, Nam)
+    const allBranches = await Branch.find({ isActive: true }).select('_id name cinemaChain theaters location');
+    
+    // Chọn rạp đại diện: 2-3 rạp ở mỗi miền
+    const selectedBranches = [];
+    
+    // Miền Bắc (Hà Nội, Hải Phòng, Quảng Ninh)
+    const northBranches = allBranches.filter(b => {
+      const city = b.location?.city || '';
+      const province = b.location?.province || '';
+      return city === 'Hà Nội' || province === 'Hà Nội' || 
+             city === 'Hải Phòng' || province === 'Hải Phòng' ||
+             city === 'Hạ Long' || province === 'Quảng Ninh';
+    }).slice(0, 3);
+    selectedBranches.push(...northBranches);
+    
+    // Miền Trung (Đà Nẵng, Huế, Nha Trang)
+    const centralBranches = allBranches.filter(b => {
+      const city = b.location?.city || '';
+      const province = b.location?.province || '';
+      return city === 'Đà Nẵng' || province === 'Đà Nẵng' ||
+             city === 'Huế' || province === 'Thừa Thiên Huế' ||
+             city === 'Nha Trang' || province === 'Khánh Hòa';
+    }).slice(0, 3);
+    selectedBranches.push(...centralBranches);
+    
+    // Miền Nam (TP.HCM, Cần Thơ)
+    const southBranches = allBranches.filter(b => {
+      const city = b.location?.city || '';
+      const province = b.location?.province || '';
+      return city === 'Ho Chi Minh' || province === 'Ho Chi Minh' ||
+             city === 'TP.HCM' || province === 'TP.HCM' ||
+             city === 'Cần Thơ' || province === 'Cần Thơ';
+    }).slice(0, 3);
+    selectedBranches.push(...southBranches);
+    
+    const branches = selectedBranches;
+    
     if (branches.length === 0) {
       console.log('\n❌ Không tìm thấy chi nhánh nào.');
-      return;
+      // Fallback: lấy 9 rạp đầu tiên
+      const fallbackBranches = await Branch.find({ isActive: true }).select('_id name cinemaChain theaters').limit(9);
+      if (fallbackBranches.length > 0) {
+        console.log(`\n⚠️  Sử dụng ${fallbackBranches.length} rạp đầu tiên thay thế:`);
+        fallbackBranches.forEach((b, i) => console.log(`   ${i + 1}. ${b.name}`));
+        branches.push(...fallbackBranches);
+      } else {
+        return;
+      }
+    } else {
+      console.log(`\n🏢 Đã chọn ${branches.length} chi nhánh đại diện (mỗi miền 2-3 rạp):`);
+      branches.forEach((branch, index) => {
+        const city = branch.location?.city || '';
+        const province = branch.location?.province || '';
+        const region = city === 'Hà Nội' || province === 'Hà Nội' || city === 'Hải Phòng' || province === 'Hải Phòng' || city === 'Hạ Long' || province === 'Quảng Ninh'
+          ? 'Miền Bắc'
+          : city === 'Đà Nẵng' || province === 'Đà Nẵng' || city === 'Huế' || province === 'Thừa Thiên Huế' || city === 'Nha Trang' || province === 'Khánh Hòa'
+          ? 'Miền Trung'
+          : 'Miền Nam';
+        console.log(`   ${index + 1}. ${branch.name} (${region})`);
+      });
     }
 
-    console.log(`\n🏢 Tìm thấy ${branches.length} chi nhánh:`);
-    branches.forEach((branch, index) => {
-      console.log(`   ${index + 1}. ${branch.name}`);
-    });
-
-    // Lấy ngày hôm nay và tạo showtime cho 7 ngày tiếp theo
+    // Lấy ngày 7 ngày sau và tạo showtime cho 5 ngày tiếp theo (tránh conflict với showtime hiện có)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() + 7); // Bắt đầu từ 7 ngày sau
 
     // Các khung giờ trong ngày (9h, 12h, 15h, 18h, 21h)
     const timeSlots = [9, 12, 15, 18, 21];
@@ -142,16 +195,16 @@ const createShowtimesForExistingMovies = async () => {
     let skippedCount = 0;
     let totalProcessed = 0;
 
-    // Tạo showtime cho 7 ngày tiếp theo
-    const daysToCreate = 7;
+    // Tạo showtime cho 5 ngày bắt đầu từ ngày mai
+    const daysToCreate = 5;
 
-    console.log(`\n🎬 Bắt đầu tạo showtime cho ${daysToCreate} ngày...\n`);
+    console.log(`\n🎬 Bắt đầu tạo showtime cho ${daysToCreate} ngày (từ ${startDate.toLocaleDateString('vi-VN')})...\n`);
 
     for (const movie of movies) {
       console.log(`\n📽️  Phim: ${movie.title}`);
       
       for (let dayOffset = 0; dayOffset < daysToCreate; dayOffset++) {
-        const showDate = new Date(today);
+        const showDate = new Date(startDate);
         showDate.setDate(showDate.getDate() + dayOffset);
 
         for (const branch of branches) {
@@ -190,10 +243,11 @@ const createShowtimesForExistingMovies = async () => {
               const startTime = new Date(showDate);
               startTime.setHours(hour, 0, 0, 0);
 
-              // Chỉ tạo showtime trong tương lai (từ bây giờ trở đi)
+              // Đảm bảo startTime trong tương lai
               const now = new Date();
               if (startTime <= now) {
-                continue; // Bỏ qua nếu khung giờ đã qua
+                // Nếu khung giờ đã qua, bỏ qua
+                continue;
               }
 
               // Giá vé mặc định

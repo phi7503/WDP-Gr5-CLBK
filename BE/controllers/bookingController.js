@@ -13,7 +13,7 @@ import Voucher from "../models/voucherModel.js";
 import QRCode from "qrcode";
 import { sendEmail } from "../utils/emailService.js";
 
-// Create a PENDING booking - POST /api/bookings - Private
+// Create a PENDING booking - POST /api/bookings - Private (or Public with customerInfo)
 const createBooking = asyncHandler(async (req, res) => {
   const {
     showtimeId,
@@ -23,10 +23,29 @@ const createBooking = asyncHandler(async (req, res) => {
     employeeMode,
     customerInfo,
   } = req.body;
-  let userId = req.user._id;
+  
+  // ✅ Cho phép booking không cần authentication nếu có customerInfo (guest booking)
+  let userId = req.user?._id || null;
   let employeeId = undefined;
   let customerInfoData = undefined;
+  
+  // Nếu không có user (guest) và không có customerInfo, báo lỗi
+  if (!userId && !customerInfo) {
+    res.status(400);
+    throw new Error("Vui lòng đăng nhập hoặc cung cấp thông tin khách hàng");
+  }
+  
+  // Nếu có customerInfo, sử dụng nó (guest booking)
+  if (customerInfo && customerInfo.name && customerInfo.email) {
+    customerInfoData = customerInfo;
+    // userId có thể null cho guest booking
+  }
+  
   if (employeeMode) {
+    if (!req.user) {
+      res.status(401);
+      throw new Error("Chế độ nhân viên yêu cầu đăng nhập");
+    }
     employeeId = req.user._id;
     userId = req.user._id; // Đặt vé cho khách, nhưng user là nhân viên
     if (customerInfo) customerInfoData = customerInfo;
@@ -60,19 +79,73 @@ const createBooking = asyncHandler(async (req, res) => {
       }).populate("seat");
     } else {
 
-      // Khách hàng có thể book ghế available hoặc reserved (nếu đã reserve trước)
-      seatStatuses = await SeatStatus.find({
+      // Khách hàng có thể book ghế available, selecting, hoặc reserved (nếu đã reserve trước)
+      // Nếu userId là null (guest), chỉ cho phép ghế available
+      const seatQuery = {
         showtime: showtimeId,
         seat: { $in: seatIds },
-        $or: [
+      };
+      
+      if (userId) {
+        // User đã đăng nhập: có thể book available, selecting, hoặc reserved (nếu đã reserve)
+        // Convert userId to ObjectId để so sánh đúng
+        const userIdObj = mongoose.Types.ObjectId.isValid(userId) 
+          ? new mongoose.Types.ObjectId(userId) 
+          : userId;
+        
+        seatQuery.$or = [
           { status: "available" },
           { 
+            status: "selecting", 
+            reservedBy: userIdObj 
+          },
+          { 
             status: "reserved", 
-            reservedBy: userId, 
+            reservedBy: userIdObj, 
             reservationExpires: { $gt: new Date() } 
           }
-        ]
-      }).populate("seat");
+        ];
+      } else {
+        // Guest: chỉ có thể book available
+        // Nhưng nếu có customerInfo, có thể đã reserve qua socket (không có userId trong booking)
+        // Trong trường hợp này, vẫn chỉ cho phép available để đảm bảo an toàn
+        seatQuery.status = "available";
+      }
+      
+      seatStatuses = await SeatStatus.find(seatQuery).populate("seat");
+      
+      // ✅ Debug logging
+      console.log('🔍 Booking seat check:', {
+        seatIds: seatIds.length,
+        foundSeats: seatStatuses.length,
+        userId: userId,
+        reqUser: req.user ? { id: req.user._id?.toString(), name: req.user.name } : null,
+        query: JSON.stringify(seatQuery, null, 2)
+      });
+      
+      // Nếu không tìm đủ ghế, log chi tiết để debug
+      if (seatStatuses.length !== seatIds.length) {
+        const allSeats = await SeatStatus.find({
+          showtime: showtimeId,
+          seat: { $in: seatIds }
+        }).populate("seat");
+        
+        console.log('❌ Seat availability details:', {
+          requested: seatIds,
+          found: seatStatuses.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy?.toString(),
+            reservationExpires: s.reservationExpires
+          })),
+          allSeats: allSeats.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy?.toString(),
+            reservationExpires: s.reservationExpires
+          }))
+        });
+      }
     }
 
     if (seatStatuses.length !== seatIds.length) {
@@ -234,6 +307,11 @@ const createBooking = asyncHandler(async (req, res) => {
 
 // Get user bookings - GET /api/bookings/my-bookings - Private
 const getMyBookings = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   const bookings = await Booking.find({ user: req.user._id })
       .populate({
         path: "showtime",
@@ -292,8 +370,13 @@ const getBookingById = asyncHandler(async (req, res) => {
     throw new Error("Booking not found");
   }
 
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   if (
-      booking.user._id.toString() !== req.user._id.toString() &&
+      booking.user && booking.user._id && booking.user._id.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
   ) {
     res.status(403);
@@ -321,6 +404,11 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
   if (!booking) {
     res.status(404);
     throw new Error("Booking not found");
+  }
+
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
   }
 
   if (
@@ -427,7 +515,12 @@ const cancelBooking = asyncHandler(async (req, res) => {
     throw new Error("Booking not found");
   }
 
-  if (booking.user.toString() !== req.user._id.toString()) {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
+  if (booking.user && booking.user.toString() !== req.user._id.toString()) {
     res.status(403);
     throw new Error("Not authorized to cancel this booking");
   }
@@ -547,6 +640,11 @@ const checkInTicket = asyncHandler(async (req, res) => {
 
 // Lấy tất cả booking do employee tạo hoặc tất cả booking (cho admin)
 const getAllBookingsForEmployee = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   // Trả về tất cả booking cho employee và admin
   const bookings = await Booking.find({})
     .populate({
@@ -560,13 +658,18 @@ const getAllBookingsForEmployee = asyncHandler(async (req, res) => {
 
 // [ADMIN] Get all bookings for a specific user
 const getBookingsByUserId = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   const { userId } = req.params;
   if (!userId) {
     res.status(400);
     throw new Error("Missing userId parameter");
   }
   // Only allow admin to use this endpoint
-  if (!req.user || req.user.role !== 'admin') {
+  if (req.user.role !== 'admin') {
     res.status(403);
     throw new Error("Not authorized");
   }
@@ -588,6 +691,11 @@ const getBookingsByUserId = asyncHandler(async (req, res) => {
 
 // [POST] /api/bookings/:id/resend-email
 export const resendEmailQRCode = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error("User not authenticated");
+  }
+  
   const { id } = req.params;
   const userId = req.user._id;
 

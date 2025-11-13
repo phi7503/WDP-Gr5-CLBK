@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 
 export const issueAccess = (userId) =>
-  jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30m" });
+  jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "30m" });
 export const setAccessCookie = (res, token) => {
   const prod = process.env.NODE_ENV === "production";
   res.cookie("accessToken", token, {

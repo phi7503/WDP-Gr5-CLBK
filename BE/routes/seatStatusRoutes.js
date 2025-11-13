@@ -7,7 +7,7 @@ import {
   getSeatStatusByShowtime,
 } from "../controllers/seatStatusController.js";
 import cleanupExpiredReservations from "../jobs/cleanupExpiredReservations.js";
-import { protect, admin } from "../middleware/authMiddleware.js";
+import { protect, admin, optionalAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -16,6 +16,6 @@ router.post("/release", protect, releaseReservedSeats);
 router.post("/book", protect, bookSeats);
 router.post("/cleanup", protect, admin, cleanupExpiredReservations);
 router.put("/block", protect, admin, toggleSeatBlock);
-router.get("/:showtimeId", protect, getSeatStatusByShowtime);
+router.get("/:showtimeId", optionalAuth, getSeatStatusByShowtime);
 
 export default router;

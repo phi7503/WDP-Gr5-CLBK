@@ -11,11 +11,11 @@ import {
   getBookingsByUserId,
   resendEmailQRCode,
 } from "../controllers/bookingController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect, optionalAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", protect, createBooking);
+router.post("/", optionalAuth, createBooking);
 router.get("/my-bookings", protect, getMyBookings);
 router.get("/employee-all", protect, getAllBookingsForEmployee);
 router.get("/user/:userId", protect, getBookingsByUserId);

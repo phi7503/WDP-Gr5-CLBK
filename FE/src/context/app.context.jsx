@@ -58,7 +58,6 @@ export const AppProvider = ({ children }) => {
   };
   const logout = () => {
     setUser(null);
-    setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
   };

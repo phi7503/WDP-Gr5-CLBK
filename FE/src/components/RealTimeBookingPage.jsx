@@ -58,9 +58,9 @@ const RealTimeBookingPage = () => {
     }
   }, [user]);
 
-  // Initialize socket connection
+  // Initialize socket connection (không bắt buộc phải có token)
   useEffect(() => {
-    if (token && showtimeId) {
+    if (showtimeId) {
       initializeSocket();
     }
     
@@ -69,7 +69,7 @@ const RealTimeBookingPage = () => {
         socketRef.current.disconnect();
       }
     };
-  }, [token, showtimeId]);
+  }, [showtimeId]);
 
   // Load showtime data
   useEffect(() => {
@@ -80,11 +80,12 @@ const RealTimeBookingPage = () => {
   }, [showtimeId]);
 
   const initializeSocket = () => {
-    socketRef.current = io(BACKEND_URL, {
-      auth: {
-        token: token
-      }
-    });
+    const socketOptions = {};
+    if (token) {
+      socketOptions.auth = { token: token };
+    }
+    
+    socketRef.current = io(BACKEND_URL, socketOptions);
 
     socketRef.current.on('connect', () => {
       console.log('🔌 Connected to server');
@@ -343,18 +344,59 @@ const RealTimeBookingPage = () => {
       return;
     }
     
-    // ✅ Reserve ghế TRƯỚC KHI tạo booking - chỉ khi user thực sự confirm payment
-    if (socketRef.current && socketConnected) {
-      socketRef.current.emit('reserve-seats', {
-        showtimeId,
-        seatIds: selectedSeats
-      });
-      // Đợi một chút để reservation được xử lý
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-    
     try {
       setLoading(true);
+      
+      // ✅ Reserve ghế TRƯỚC KHI tạo booking - đợi confirm từ socket
+      if (socketRef.current && socketConnected) {
+        console.log('🔒 Reserving seats before booking...');
+        
+        // Tạo promise để đợi response từ socket
+        const reservePromise = new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            // Timeout sau 3 giây
+            reject(new Error('Reservation timeout. Vui lòng thử lại.'));
+          }, 3000);
+          
+          const successHandler = (data) => {
+            clearTimeout(timeout);
+            socketRef.current?.off('seat-reservation-success', successHandler);
+            socketRef.current?.off('seat-reservation-failed', failHandler);
+            console.log('✅ Reservation confirmed:', data);
+            resolve(data);
+          };
+          
+          const failHandler = (data) => {
+            clearTimeout(timeout);
+            socketRef.current?.off('seat-reservation-success', successHandler);
+            socketRef.current?.off('seat-reservation-failed', failHandler);
+            console.log('❌ Reservation failed:', data);
+            reject(new Error(data.message || 'Không thể giữ chỗ ghế. Vui lòng thử lại.'));
+          };
+          
+          socketRef.current.on('seat-reservation-success', successHandler);
+          socketRef.current.on('seat-reservation-failed', failHandler);
+          
+          // Emit reserve request
+          socketRef.current.emit('reserve-seats', {
+            showtimeId,
+            seatIds: selectedSeats
+          });
+        });
+        
+        try {
+          await reservePromise;
+          console.log('✅ Seats reserved successfully, proceeding with booking...');
+        } catch (reserveError) {
+          console.error('❌ Reservation failed:', reserveError);
+          message.error(reserveError.message || 'Không thể giữ chỗ ghế. Vui lòng thử lại.');
+          setLoading(false);
+          return;
+        }
+      } else {
+        console.log('⚠️ Socket not connected, proceeding without reservation...');
+      }
+      
       const bookingData = {
         showtimeId: showtimeId,
         seatIds: selectedSeats,
@@ -368,27 +410,53 @@ const RealTimeBookingPage = () => {
       // Tạo booking với trạng thái pending
       const response = await bookingAPI.createBooking(bookingData);
       
+      if (!response) {
+        throw new Error('Không nhận được phản hồi từ server');
+      }
+      
       if (response.success && response.booking) {
         const bookingId = response.booking._id;
         
+        if (!bookingId) {
+          throw new Error('Không nhận được ID booking từ server');
+        }
+        
         // Tạo PayOS payment link
         try {
+          console.log('🔄 Creating PayOS payment link for booking:', bookingId);
           const paymentResponse = await payOSAPI.createPaymentFromBooking(bookingId);
           
-          if (paymentResponse.checkoutUrl) {
+          console.log('📦 PayOS response:', paymentResponse);
+          
+          if (!paymentResponse) {
+            throw new Error('Không nhận được phản hồi từ PayOS');
+          }
+          
+          // Kiểm tra checkoutUrl trong response
+          const checkoutUrl = paymentResponse.checkoutUrl || paymentResponse.data?.checkoutUrl;
+          
+          if (checkoutUrl) {
+            console.log('✅ Redirecting to PayOS:', checkoutUrl);
             message.success('Đang chuyển đến trang thanh toán...');
             setBookingModalVisible(false);
             
             // Redirect đến PayOS payment page
-            window.location.href = paymentResponse.checkoutUrl;
+            window.location.href = checkoutUrl;
           } else {
-            throw new Error('Không thể tạo link thanh toán');
+            console.error('❌ No checkoutUrl in response:', paymentResponse);
+            throw new Error(paymentResponse?.message || paymentResponse?.error || 'Không thể tạo link thanh toán. Vui lòng kiểm tra cấu hình PayOS.');
           }
         } catch (paymentError) {
-          console.error('Error creating payment link:', paymentError);
-          const paymentErrorMsg = paymentError.message || 'Không thể tạo link thanh toán. Vui lòng thử lại.';
+          console.error('❌ Error creating payment link:', paymentError);
+          const paymentErrorMsg = paymentError?.message || paymentError?.data?.message || 'Không thể tạo link thanh toán. Vui lòng thử lại.';
           message.error(paymentErrorMsg);
+          setLoading(false);
+          // Không throw error để user có thể thử lại
         }
+      } else {
+        // Nếu response không có success hoặc booking
+        const errorMsg = response?.message || response?.error || 'Không thể tạo booking. Vui lòng thử lại.';
+        throw new Error(errorMsg);
       }
     } catch (error) {
       console.error('Error creating booking:', error);
@@ -897,7 +965,7 @@ const RealTimeBookingPage = () => {
                       size="large"
                       className="primary-button"
                       onClick={handleProceedToPayment}
-                      disabled={selectedSeats.length === 0 || !socketConnected}
+                      disabled={selectedSeats.length === 0}
                       style={{ 
                         height: '48px', 
                         padding: '0 32px',

@@ -70,6 +70,7 @@ const ShowtimesPageModern = () => {
   const [expandedChains, setExpandedChains] = useState([]);
   const [expandedBranches, setExpandedBranches] = useState([]);
   const sectionsRef = useRef([]);
+  const hasLoadedInitialShowtimes = useRef(false);
 
   // Cinema chains configuration
   const cinemaChains = [
@@ -124,9 +125,18 @@ const ShowtimesPageModern = () => {
     loadInitialData();
   }, []);
 
+  // ✅ Load showtimes khi movies và branches đã sẵn sàng (lần đầu tiên)
+  useEffect(() => {
+    if (movies.length > 0 && branches.length > 0 && !initialLoading && !hasLoadedInitialShowtimes.current) {
+      hasLoadedInitialShowtimes.current = true;
+      loadShowtimes();
+    }
+  }, [movies.length, branches.length, initialLoading]);
+
   // Load showtimes when filters change
   useEffect(() => {
-    if (movies.length > 0 && branches.length > 0) {
+    // Chỉ load nếu đã có movies và branches, và không phải đang initial loading
+    if (movies.length > 0 && branches.length > 0 && !initialLoading) {
       loadShowtimes();
     }
   }, [selectedDate, selectedCity, selectedCinemaChain, selectedBranch, selectedMovie, selectedTimeRange]);

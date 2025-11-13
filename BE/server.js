@@ -119,16 +119,6 @@ initializeSocketHandlers(io);
 app.use(notFound);
 app.use(errorHandler);
 
-// ✅ Start cleanup job
-startCleanupJob();
-
-// Initialize Socket.IO handlers
-initializeSocketHandlers(io);
-
-// Error Middleware
-app.use(notFound);
-app.use(errorHandler);
-
 // ✅ Start cleanup jobs
 startCleanupJob(); // Cleanup expired seat reservations
 scheduleCleanupOldShowtimes(); // Cleanup old showtimes (runs daily at 2 AM)
