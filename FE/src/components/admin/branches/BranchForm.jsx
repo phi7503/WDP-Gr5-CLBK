@@ -45,7 +45,7 @@ export default function BranchForm({
         name="name"
         rules={[{ required: true, message: "Nhập tên chi nhánh" }]}
       >
-        <Input placeholder="Ví dụ: OCBS – Cầu Giấy" />
+        <Input placeholder="Ví dụ: CLBK – Cầu Giấy" />
       </Form.Item>
 
       <Form.Item label="Địa chỉ" name="address">
