@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/app.context';
 import { useNavigate } from 'react-router-dom';
-import { bookingService } from '../services/bookingService';
+import { bookingService } from '../services/BookingService';
 
 const EmployeeBookingsPage = () => {
   const { user } = useAuth();
