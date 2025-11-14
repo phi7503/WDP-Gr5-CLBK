@@ -1,3 +1,4 @@
+// src/pages/admin/ShowtimeManagement.jsx
 import { useEffect, useMemo, useState } from "react";
 import {
   Button,
@@ -36,7 +37,7 @@ export default function ShowtimeManagement() {
   const [search, setSearch] = useState("");
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mode, setMode] = useState("create"); // 'create' | 'edit'
+  const [mode, setMode] = useState("create");
   const [editingId, setEditingId] = useState(null);
   const [initialValues, setInitialValues] = useState(null);
 
@@ -47,6 +48,7 @@ export default function ShowtimeManagement() {
         page: p,
         size: s,
         search: q,
+        includePast: true, // ✅ hiển thị cả suất đã qua nếu có
       });
       setRows(items);
       setTotal(total);
@@ -80,10 +82,21 @@ export default function ShowtimeManagement() {
     try {
       setLoading(true);
       const data = await getShowtimeById(id);
-      // KHÔNG đổi tên field: đưa nguyên data cho form (form tự map & convert date)
+      // map về initialValues cho form (ID + date + nhóm giá)
       setMode("edit");
       setEditingId(id);
-      setInitialValues(data || {});
+      setInitialValues({
+        movie: data.movie?._id || data.movie,
+        branch: data.branch?._id || data.branch,
+        theater: data.theater?._id || data.theater,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        price: data.price,
+        priceStandard: data.price?.standard,
+        priceVip: data.price?.vip,
+        priceCouple: data.price?.couple,
+        status: data.status || "active",
+      });
       setDrawerOpen(true);
     } catch (e) {
       console.error(e);
@@ -111,7 +124,7 @@ export default function ShowtimeManagement() {
     try {
       setLoading(true);
       if (mode === "create") {
-        await createShowtime(values); // giữ nguyên payload từ form
+        await createShowtime(values);
         message.success("Tạo suất chiếu thành công");
       } else if (editingId) {
         await updateShowtime(editingId, values);
@@ -128,51 +141,39 @@ export default function ShowtimeManagement() {
     }
   };
 
-  // Cột bảng hiển thị linh hoạt theo field cũ (movie.title / movieTitle ...)
   const columns = useMemo(
     () => [
       {
         title: "Phim",
         key: "movie",
-        render: (r) => r?.movie?.title || r?.movieTitle || r?.movie_name || "-",
+        render: (r) => r?.movie?.title || r?.movieTitle || "-",
       },
       {
         title: "Rạp/Phòng",
         key: "theater",
-        render: (r) =>
-          r?.theater?.name || r?.theaterName || r?.room_name || "-",
+        render: (r) => r?.theater?.name || r?.theaterName || "-",
       },
       {
         title: "Bắt đầu",
         dataIndex: "startTime",
         key: "startTime",
         width: 170,
-        render: (v, r) =>
-          v
-            ? dayjs(v).format("DD/MM/YYYY HH:mm")
-            : r?.start_at
-            ? dayjs(r.start_at).format("DD/MM/YYYY HH:mm")
-            : "-",
+        render: (v) => (v ? dayjs(v).format("DD/MM/YYYY HH:mm") : "-"),
       },
       {
         title: "Kết thúc",
         dataIndex: "endTime",
         key: "endTime",
         width: 170,
-        render: (v, r) =>
-          v
-            ? dayjs(v).format("DD/MM/YYYY HH:mm")
-            : r?.end_at
-            ? dayjs(r.end_at).format("DD/MM/YYYY HH:mm")
-            : "-",
+        render: (v) => (v ? dayjs(v).format("DD/MM/YYYY HH:mm") : "-"),
       },
       {
-        title: "Giá",
+        title: "Giá (Standard)",
         dataIndex: "price",
         key: "price",
-        width: 120,
+        width: 150,
         render: (v, r) =>
-          (v ?? r?.basePrice ?? r?.ticketPrice ?? 0).toLocaleString("vi-VN") +
+          (v?.standard ?? r?.price?.standard ?? 0).toLocaleString("vi-VN") +
           " đ",
       },
       {
@@ -267,10 +268,9 @@ export default function ShowtimeManagement() {
         title={mode === "create" ? "Thêm suất chiếu" : "Sửa suất chiếu"}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        width={640}
+        width={720}
         destroyOnClose
       >
-        {/* DÙNG NGUYÊN FORM CŨ */}
         <ShowtimeForm
           mode={mode}
           initialValues={initialValues}

@@ -2,8 +2,32 @@
 import api from "../lib/axios";
 
 export async function listBranches({ page = 1, size = 10, search = "" } = {}) {
-  const res = await api.get("/branches", { params: { page, size, search } });
+  const params = {};
+
+  // BE lọc theo name, không có "search"
+  if (search && search.trim()) {
+    params.name = search.trim();
+  }
+
+  const res = await api.get("/branches", { params });
   const data = res.data;
+
+  // Trường hợp BE trả thẳng array
+  if (Array.isArray(data)) {
+    return { items: data, total: data.length };
+  }
+
+  // Trường hợp BE groupByChain
+  if (data?.groupedByChain) {
+    const groups = Object.values(data.groupedByChain);
+    const flat = groups.flat();
+    return {
+      items: flat,
+      total: data.total ?? flat.length,
+    };
+  }
+
+  // Fallback cho các format khác (phòng khi sau này backend đổi)
   return {
     items: data?.items || data?.data || data?.results || [],
     total:
@@ -19,7 +43,6 @@ export async function getBranchById(id) {
 }
 
 export async function createBranch(payload) {
-  // payload tối thiểu: { name } ; các field khác tuỳ backend
   const res = await api.post("/branches", payload);
   return res.data;
 }

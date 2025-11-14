@@ -1,14 +1,28 @@
+// src/services/showtimes.service.js
 import api from "../lib/axios";
 
-export async function listShowtimes({ page = 1, size = 10, search = "" } = {}) {
-  const res = await api.get("/showtimes", { params: { page, size, search } });
-  const data = res.data;
+export async function listShowtimes({
+  page = 1,
+  size = 10,
+  search = "",
+  includePast = true,
+} = {}) {
+  const params = { page, limit: size };
+  // BE không có search text chung, tham số này nếu có sẽ bị bỏ qua
+  if (includePast) params.includePast = 1;
+
+  const res = await api.get("/showtimes", { params });
+  const data = res.data || {};
   return {
-    items: data?.items || data?.data || data?.results || [],
+    items:
+      data.showtimes ||
+      data.items ||
+      data.data ||
+      (Array.isArray(data) ? data : []),
     total:
-      data?.total ??
-      data?.count ??
-      (Array.isArray(data?.items) ? data.items.length : 0),
+      data.total ??
+      data.count ??
+      (Array.isArray(data.showtimes) ? data.showtimes.length : 0),
   };
 }
 

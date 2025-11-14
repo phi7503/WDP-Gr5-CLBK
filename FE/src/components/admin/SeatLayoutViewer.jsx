@@ -3,7 +3,8 @@ export default function SeatLayoutViewer({ layout }) {
     return <p className="text-neutral-300">Chưa có sơ đồ cho rạp/phòng này.</p>;
   }
   const rows = layout.rows || (layout.grid?.length ?? 0);
-  const cols = layout.cols || (layout.grid?.[0]?.length ?? 0);
+  const cols =
+    layout.cols || layout.seatsPerRow || (layout.grid?.[0]?.length ?? 0);
   const grid =
     layout.grid ||
     Array.from({ length: rows }, () => Array.from({ length: cols }, () => "S"));
@@ -26,7 +27,7 @@ export default function SeatLayoutViewer({ layout }) {
                     "w-9 h-9 rounded-md flex items-center justify-center border";
                   const byType =
                     cell === "S"
-                      ? "bg-[#1f1f1f] border-white/10"
+                      ? "bg-[#123c4a] border-[#1e5a6d]"
                       : cell === "V"
                       ? "bg-[#3a0f0f] border-[#6b1f1f]"
                       : cell === "C"

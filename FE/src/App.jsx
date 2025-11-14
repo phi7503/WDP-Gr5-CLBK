@@ -26,8 +26,9 @@ import AdminMovies from "./components/admin/movies/AdminMovies";
 import AdminBranches from "./components/admin/branches/AdminBranches";
 import ShowtimeManagement from "./components/admin/ShowtimeManagement";
 import SeatLayoutManagement from "./components/admin/SeatLayoutManagement";
+import TheaterManagement from "./components/admin/TheaterManagement";
 
-// ✅ AppRouter: toàn bộ QuickShow client
+// ✅ AppRouter: toàn bộ CLBK client
 import AppRouter from "./router/AppRouter";
 
 const StaffDashboard = () => <div className="p-6">Staff Dashboard</div>;
@@ -67,7 +68,7 @@ export default function App() {
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <Routes>
-        {/* ✅ Toàn bộ site QuickShow cho user (Home, Movies, Showtimes, ...) */}
+        {/* ✅ Toàn bộ site CLBK cho user (Home, Movies, Showtimes, ...) */}
         {/* AppRouter tự lo Header + MainLayout + Routes bên trong */}
         <Route path="/*" element={<AppRouter />} />
 
@@ -110,6 +111,7 @@ export default function App() {
             path="/admin/seat-layouts"
             element={<SeatLayoutManagement />}
           />
+          <Route path="/admin/theaters" element={<TheaterManagement />} />
         </Route>
 
         {/* Employee hoặc Admin */}
