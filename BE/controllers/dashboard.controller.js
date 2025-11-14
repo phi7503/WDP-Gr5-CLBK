@@ -15,7 +15,15 @@ const getPeriodDates = (period, date) => {
 
   if (period === "month") {
     startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    endDate = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999
+    );
   } else {
     const dayOfWeek = now.getDay(); // 0: CN
     startDate = new Date(now);
@@ -35,63 +43,112 @@ const getPeriodDates = (period, date) => {
  *  Private/Admin
  *  ========================= */
 export const getAdminDashboardStats = asyncHandler(async (req, res) => {
-  const { period = "week", date, from, to, movieId, branchId } = req.query;
+  let { period = "week", date, from, to, movieId, branchId } = req.query;
 
   let startDate, endDate;
+
+  // 1) Nếu FE truyền from/to → dùng range custom
   if (from && to) {
-    startDate = new Date(from); startDate.setHours(0, 0, 0, 0);
-    endDate = new Date(to);     endDate.setHours(23, 59, 59, 999);
-  } else {
+    startDate = new Date(from);
+    startDate.setHours(0, 0, 0, 0);
+
+    endDate = new Date(to);
+    endDate.setHours(23, 59, 59, 999);
+  } 
+  // 2) Nếu FE truyền date → dùng getPeriodDates
+  else if (date) {
     ({ startDate, endDate } = getPeriodDates(period, date));
+  } 
+  // 3) Không truyền gì → mặc định: THÁNG CÓ BOOKING MỚI NHẤT
+  else {
+    const lastBooking = await Booking.findOne().sort({ createdAt: -1 }).lean();
+    if (lastBooking) {
+      ({ startDate, endDate } = getPeriodDates(
+        "month",
+        lastBooking.createdAt
+      ));
+      period = "month";
+    } else {
+      // không có booking nào trong DB
+      ({ startDate, endDate } = getPeriodDates("week", new Date()));
+    }
+  }
+
+  console.log(
+    "ADMIN DASHBOARD RANGE:",
+    startDate.toISOString(),
+    "->",
+    endDate.toISOString()
+  );
+
+  const matchStage = {
+    createdAt: { $gte: startDate, $lte: endDate },
+    paymentStatus: "completed",
+    bookingStatus: { $in: ["confirmed", "completed"] },
+  };
+
+  // Áp dụng lọc movie / branch nếu FE gửi lên và id hợp lệ
+  if (movieId && mongoose.Types.ObjectId.isValid(movieId)) {
+    matchStage["showtimeInfo.movie"] = new mongoose.Types.ObjectId(movieId);
+  }
+  if (branchId && mongoose.Types.ObjectId.isValid(branchId)) {
+    matchStage["showtimeInfo.branch"] = new mongoose.Types.ObjectId(branchId);
   }
 
   const pipeline = [
-    { $match: {
-        createdAt: { $gte: startDate, $lte: endDate },
-        paymentStatus: "completed",
-        bookingStatus: { $in: ["confirmed", "completed"] },
-      }
+    {
+      $match: {
+        createdAt: matchStage.createdAt,
+        paymentStatus: matchStage.paymentStatus,
+        bookingStatus: matchStage.bookingStatus,
+      },
     },
-    { $lookup: {
+    {
+      $lookup: {
         from: "showtimes",
         localField: "showtime",
         foreignField: "_id",
         as: "showtimeInfo",
-      }
+      },
     },
     { $unwind: "$showtimeInfo" },
-    { $match: {
+    {
+      $match: {
         ...(movieId && mongoose.Types.ObjectId.isValid(movieId)
           ? { "showtimeInfo.movie": new mongoose.Types.ObjectId(movieId) }
           : {}),
         ...(branchId && mongoose.Types.ObjectId.isValid(branchId)
           ? { "showtimeInfo.branch": new mongoose.Types.ObjectId(branchId) }
           : {}),
-      }
+      },
     },
-    { $group: {
+    {
+      $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
         dailyRevenue: { $sum: "$totalAmount" },
         dailyTickets: { $sum: { $size: "$seats" } },
         dailyBookings: { $sum: 1 },
-      }
+      },
     },
     { $sort: { _id: 1 } },
-    { $project: {
+    {
+      $project: {
         _id: 0,
         date: "$_id",
         revenue: "$dailyRevenue",
         tickets: "$dailyTickets",
         bookings: "$dailyBookings",
-      }
+      },
     },
   ];
+
   const dailyStats = await Booking.aggregate(pipeline);
 
   // Lấp ngày trống
-  const map = new Map(dailyStats.map(i => [i.date, i]));
+  const map = new Map(dailyStats.map((i) => [i.date, i]));
   const full = [];
   let d = new Date(startDate);
+
   while (d <= endDate) {
     const key = d.toISOString().split("T")[0];
     const stat = map.get(key);
@@ -104,11 +161,14 @@ export const getAdminDashboardStats = asyncHandler(async (req, res) => {
     d.setDate(d.getDate() + 1);
   }
 
-  const totals = full.reduce((acc, i) => ({
-    totalRevenue: acc.totalRevenue + i.revenue,
-    totalTickets: acc.totalTickets + i.tickets,
-    totalBookings: acc.totalBookings + i.bookings,
-  }), { totalRevenue: 0, totalTickets: 0, totalBookings: 0 });
+  const totals = full.reduce(
+    (acc, i) => ({
+      totalRevenue: acc.totalRevenue + i.revenue,
+      totalTickets: acc.totalTickets + i.tickets,
+      totalBookings: acc.totalBookings + i.bookings,
+    }),
+    { totalRevenue: 0, totalTickets: 0, totalBookings: 0 }
+  );
 
   res.json({
     ...totals,
@@ -133,9 +193,14 @@ export const getEmployeeDashboardStats = asyncHandler(async (req, res) => {
   const { period = "week", date, from, to } = req.query;
 
   let startDate, endDate;
+
+  // Nếu FE truyền from–to thì ưu tiên dùng khoảng này
   if (from && to) {
-    startDate = new Date(from); startDate.setHours(0, 0, 0, 0);
-    endDate = new Date(to);     endDate.setHours(23, 59, 59, 999);
+    startDate = new Date(from);
+    startDate.setHours(0, 0, 0, 0);
+
+    endDate = new Date(to);
+    endDate.setHours(23, 59, 59, 999);
   } else {
     ({ startDate, endDate } = getPeriodDates(period, date));
   }
@@ -148,13 +213,11 @@ export const getEmployeeDashboardStats = asyncHandler(async (req, res) => {
         createdAt: { $gte: startDate, $lte: endDate },
         paymentStatus: "completed",
         bookingStatus: { $in: ["confirmed", "completed"] },
-        /** ĐỔI TRƯỜNG NÀY nếu DB của bạn đặt tên khác:
-         *  ví dụ: "soldBy", "cashier", "employee"
-         */
-        createdBy: new mongoose.Types.ObjectId(employeeId),
+        // LỌC THEO employeeId
+        employeeId: new mongoose.Types.ObjectId(employeeId),
       },
     },
-    // showtime -> lấy movieId để join movie title
+    // join showtime để lấy movie
     {
       $lookup: {
         from: "showtimes",
@@ -179,17 +242,22 @@ export const getEmployeeDashboardStats = asyncHandler(async (req, res) => {
         id: "$_id",
         date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
         movieTitle: { $ifNull: ["$movieInfo.title", "N/A"] },
-        // Vé bán = số ghế
+
+        // Vé = số ghế
         ticketsSold: { $size: "$seats" },
-        // Nếu hệ thống tách ticket/food, bạn có thể thay bằng trường tương ứng
-        // Ở đây tạm coi totalAmount là doanh thu vé (combo = 0) để không gãy UI
+
+        // Tạm coi totalAmount là doanh thu vé
         ticketRevenue: "$totalAmount",
 
-        // combosSold & comboRevenue: tính từ mảng combos nếu có
+        // combosSold & comboRevenue từ mảng combos
         combosSold: {
           $cond: [
             { $and: [{ $ne: ["$combos", null] }, { $isArray: "$combos" }] },
-            { $sum: { $map: { input: "$combos", as: "c", in: "$$c.quantity" } } },
+            {
+              $sum: {
+                $map: { input: "$combos", as: "c", in: "$$c.quantity" },
+              },
+            },
             0,
           ],
         },

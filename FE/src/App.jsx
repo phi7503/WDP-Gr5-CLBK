@@ -30,7 +30,7 @@ import TheaterManagement from "./components/admin/TheaterManagement";
 
 // ✅ AppRouter: toàn bộ CLBK client
 import AppRouter from "./router/AppRouter";
-
+import AdminLayout from "./components/admin/AdminLayout";
 const StaffDashboard = () => <div className="p-6">Staff Dashboard</div>;
 const Forbidden = () => <div className="p-6">403 — Forbidden</div>;
 
@@ -97,22 +97,23 @@ export default function App() {
 
         {/* Protected chung (cần đăng nhập) */}
         <Route element={<ProtectedRoute />}>
-          
           <Route path="/profile" element={<UserProfilePage />} />
         </Route>
 
         {/* Admin-only */}
         <Route element={<RoleRoute allow={["admin"]} />}>
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<AdminUserManagementPage />} />
-          <Route path="/admin/movies" element={<AdminMovies />} />
-          <Route path="/admin/branches" element={<AdminBranches />} />
-          <Route path="/admin/showtimes" element={<ShowtimeManagement />} />
-          <Route
-            path="/admin/seat-layouts"
-            element={<SeatLayoutManagement />}
-          />
-          <Route path="/admin/theaters" element={<TheaterManagement />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUserManagementPage />} />
+            <Route path="/admin/movies" element={<AdminMovies />} />
+            <Route path="/admin/branches" element={<AdminBranches />} />
+            <Route path="/admin/showtimes" element={<ShowtimeManagement />} />
+            <Route
+              path="/admin/seat-layouts"
+              element={<SeatLayoutManagement />}
+            />
+            <Route path="/admin/theaters" element={<TheaterManagement />} />
+          </Route>
         </Route>
 
         {/* Employee hoặc Admin */}
