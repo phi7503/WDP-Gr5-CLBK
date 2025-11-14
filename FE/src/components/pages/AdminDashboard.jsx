@@ -29,7 +29,10 @@ export default function AdminDashboard() {
   const [selectedBranch, setSelectedBranch] = useState("all");
   const [selectedMetric, setSelectedMetric] = useState("revenue");
   const [showFilters, setShowFilters] = useState(false);
-
+  const [movies, setMovies] = useState([{ id: "all", name: "Tất cả phim" }]);
+  const [branches, setBranches] = useState([
+    { id: "all", name: "Tất cả chi nhánh" },
+  ]);
   const [appliedFilters, setAppliedFilters] = useState({
     period: "week",
     selectedDate: "",
@@ -37,21 +40,6 @@ export default function AdminDashboard() {
     selectedMovie: "all",
     selectedBranch: "all",
   });
-
-  // Mock movies and branches
-  const movies = [
-    { id: "all", name: "Tất cả phim" },
-    { id: "movie1", name: "Avengers: Endgame" },
-    { id: "movie2", name: "Inception" },
-    { id: "movie3", name: "The Dark Knight" },
-  ];
-
-  const branches = [
-    { id: "all", name: "Tất cả chi nhánh" },
-    { id: "branch1", name: "CGV Vincom" },
-    { id: "branch2", name: "CGV Aeon Mall" },
-    { id: "branch3", name: "CGV Landmark" },
-  ];
 
   const handleApplyFilters = () => {
     setAppliedFilters({
@@ -70,7 +58,41 @@ export default function AdminDashboard() {
     setSelectedMovie("all");
     setSelectedBranch("all");
   };
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        // Movies
+        const resMovies = await api.get("/movies/all", {
+          withCredentials: true,
+        });
+        const mappedMovies = [
+          { id: "all", name: "Tất cả phim" },
+          ...resMovies.data.map((m) => ({
+            id: m._id,
+            name: m.title,
+          })),
+        ];
+        setMovies(mappedMovies);
 
+        // Branches
+        const resBranches = await api.get("/branches", {
+          withCredentials: true,
+        });
+        const mappedBranches = [
+          { id: "all", name: "Tất cả chi nhánh" },
+          ...resBranches.data.map((b) => ({
+            id: b._id,
+            name: b.name,
+          })),
+        ];
+        setBranches(mappedBranches);
+      } catch (err) {
+        console.error("Failed to load movies/branches", err);
+      }
+    };
+
+    fetchFilters();
+  }, []);
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["admin-dashboard-stats", appliedFilters],
     queryFn: async () => {
