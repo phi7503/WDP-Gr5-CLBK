@@ -40,6 +40,18 @@ export default function AdminMovies() {
   const [editingId, setEditingId] = useState(null);
   const [initialValues, setInitialValues] = useState(null);
 
+  const normalizeGenres = (movie) => {
+    if (Array.isArray(movie.genres)) return movie.genres;
+    if (Array.isArray(movie.genre)) return movie.genre;
+    if (typeof movie.genre === "string") {
+      return movie.genre
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+    }
+    return [];
+  };
+
   const fetchData = async (p = page, s = size, q = search) => {
     setLoading(true);
     try {
@@ -48,7 +60,13 @@ export default function AdminMovies() {
         size: s,
         search: q,
       });
-      setRows(items);
+
+      const normalized = (items || []).map((m) => ({
+        ...m,
+        genres: normalizeGenres(m),
+      }));
+
+      setRows(normalized);
       setTotal(total);
     } catch (e) {
       console.error(e);
@@ -64,9 +82,10 @@ export default function AdminMovies() {
   }, [page, size]);
 
   const onSearch = async (value) => {
-    setSearch(value);
+    const v = value?.trim() ?? "";
+    setSearch(v);
     setPage(1);
-    await fetchData(1, size, value);
+    await fetchData(1, size, v);
   };
 
   const openCreate = () => {
@@ -80,15 +99,18 @@ export default function AdminMovies() {
     try {
       setLoading(true);
       const data = await getMovieById(id);
+
+      const genres = normalizeGenres(data);
+
       setMode("edit");
       setEditingId(id);
       setInitialValues({
         title: data?.title ?? "",
         description: data?.description ?? "",
         duration: data?.duration ?? undefined,
-        genres: data?.genres ?? [],
+        genres,
         releaseDate: data?.releaseDate ? dayjs(data.releaseDate) : null,
-        status: data?.status ?? "active",
+        status: data?.status ?? "coming-soon",
       });
       setDrawerOpen(true);
     } catch (e) {
@@ -177,13 +199,24 @@ export default function AdminMovies() {
         title: "Trạng thái",
         dataIndex: "status",
         key: "status",
-        width: 130,
-        render: (s) =>
-          s === "inactive" ? (
-            <Tag color="default">Inactive</Tag>
-          ) : (
-            <Tag color="success">Active</Tag>
-          ),
+        width: 150,
+        render: (s) => {
+          let color = "default";
+          let label = s || "-";
+
+          if (s === "now-showing") {
+            color = "green";
+            label = "Đang chiếu";
+          } else if (s === "coming-soon") {
+            color = "blue";
+            label = "Sắp chiếu";
+          } else if (s === "ended") {
+            color = "default";
+            label = "Ngừng chiếu";
+          }
+
+          return <Tag color={color}>{label}</Tag>;
+        },
       },
       {
         title: "Thao tác",
@@ -217,6 +250,7 @@ export default function AdminMovies() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Header */}
       <div className="border-b border-white/10 bg-[#0b0b0b]">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -241,6 +275,7 @@ export default function AdminMovies() {
         </div>
       </div>
 
+      {/* Table */}
       <div className="container mx-auto px-4 py-6">
         <Table
           rowKey={(r) => r._id || r.id}
@@ -262,6 +297,7 @@ export default function AdminMovies() {
         />
       </div>
 
+      {/* Drawer form */}
       <Drawer
         title={mode === "create" ? "Thêm phim" : "Sửa phim"}
         open={drawerOpen}

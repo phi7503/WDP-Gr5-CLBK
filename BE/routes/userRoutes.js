@@ -4,16 +4,18 @@ import {
     getUsers,
     getUserById,
     createUser,
-    updateUserById
+    updateUserById,
+    deleteUserById
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
+import { isAdmin, protectRoute } from '../middleware/auth.middleware.js';
 
 router.route('/')
-    .get(protect, admin, getUsers)
-    .post(protect, admin, createUser);
+    .get(protectRoute, isAdmin, getUsers)
+    .post(protectRoute, isAdmin, createUser);
 
 router.route('/:id')
-    .get(protect, admin, getUserById)
-    .put(protect, admin, updateUserById);
-
+    .get(protectRoute, isAdmin, getUserById)
+    .put(protectRoute, isAdmin, updateUserById);
+router.delete("/:id", protectRoute, isAdmin, deleteUserById);
 export default router;

@@ -13,7 +13,7 @@ const EmployeeDashboardPage = () => {
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Welcome, {user?.name || 'Employee'}!
       </Typography>
-      <Card elevation={2} sx={{ display: 'flex', alignItems: 'center', p: 3, mb: 4, maxWidth: 400 }}>
+      <Card elevation={2} sx={{ display: 'flex', alignItems: 'center',textAlign:'center', p: 3, mb: 4, maxWidth: 400 }}>
         <Avatar sx={{ width: 64, height: 64, fontSize: 32, mr: 3 }}>
           {user?.name?.charAt(0).toUpperCase() || 'E'}
         </Avatar>
@@ -30,7 +30,7 @@ const EmployeeDashboardPage = () => {
           size="large"
           startIcon={<QrCodeScannerIcon fontSize="large" />}
           sx={{ px: 6, py: 3, fontSize: 20, borderRadius: 3 }}
-          onClick={() => navigate('/admin/qr-checkin')}
+          onClick={() => navigate('/staff/qr-checkin')}
         >
           Quét mã QR vé
         </Button>

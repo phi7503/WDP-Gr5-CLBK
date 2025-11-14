@@ -15,19 +15,18 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   SearchOutlined,
-  EnvironmentOutlined,
-  BranchesOutlined,
+  BankOutlined,
 } from "@ant-design/icons";
 import {
-  listBranches,
-  deleteBranch,
-  createBranch,
-  updateBranch,
-  getBranchById,
-} from "../../../services/branches.service";
-import BranchForm from "./BranchForm";
+  listTheaters,
+  deleteTheater,
+  createTheater,
+  updateTheater,
+  getTheaterById,
+} from "../../services/theaters.service";
+import TheaterForm from "./TheaterForm";
 
-export default function AdminBranches() {
+export default function TheaterManagement() {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
@@ -40,44 +39,19 @@ export default function AdminBranches() {
   const [editingId, setEditingId] = useState(null);
   const [initialValues, setInitialValues] = useState(null);
 
-  const normalizeBranch = (b) => {
-    const location = b.location || {};
-    const contact = b.contact || {};
-    const coords = location.coordinates || {};
-
-    return {
-      ...b,
-      address: location.address ?? "",
-      city: location.city ?? "",
-      phone: contact.phone ?? "",
-      lat:
-        typeof coords.latitude === "number"
-          ? coords.latitude
-          : coords.lat ?? null,
-      lng:
-        typeof coords.longitude === "number"
-          ? coords.longitude
-          : coords.lng ?? null,
-      status: b.isActive === false ? "inactive" : "active",
-    };
-  };
-
   const fetchData = async (p = page, s = size, q = search) => {
     setLoading(true);
     try {
-      const { items, total } = await listBranches({
+      const { items, total } = await listTheaters({
         page: p,
         size: s,
         search: q,
       });
-
-      const normalized = (items || []).map(normalizeBranch);
-
-      setRows(normalized);
+      setRows(items);
       setTotal(total);
     } catch (e) {
       console.error(e);
-      message.error("Tải danh sách chi nhánh thất bại");
+      message.error("Tải danh sách phòng chiếu thất bại");
     } finally {
       setLoading(false);
     }
@@ -89,10 +63,9 @@ export default function AdminBranches() {
   }, [page, size]);
 
   const onSearch = async (value) => {
-    const v = value?.trim() ?? "";
-    setSearch(v);
+    setSearch(value);
     setPage(1);
-    await fetchData(1, size, v);
+    await fetchData(1, size, value);
   };
 
   const openCreate = () => {
@@ -105,33 +78,24 @@ export default function AdminBranches() {
   const openEdit = async (id) => {
     try {
       setLoading(true);
-      const data = await getBranchById(id);
-
-      const location = data.location || {};
-      const contact = data.contact || {};
-      const coords = location.coordinates || {};
-
+      const data = await getTheaterById(id);
       setMode("edit");
       setEditingId(id);
       setInitialValues({
         name: data?.name ?? "",
-        address: location.address ?? "",
-        city: location.city ?? "",
-        phone: contact.phone ?? "",
-        lat:
-          typeof coords.latitude === "number"
-            ? coords.latitude
-            : coords.lat ?? null,
-        lng:
-          typeof coords.longitude === "number"
-            ? coords.longitude
-            : coords.lng ?? null,
-        status: data?.isActive === false ? "inactive" : "active",
+        branchId:
+          data?.branchId ??
+          data?.branch?.id ??
+          data?.branch?._id ??
+          (typeof data?.branch === "string" ? data.branch : undefined),
+        type: data?.type ?? "standard",
+        capacity: data?.capacity ?? undefined,
+        status: data?.status ?? "active",
       });
       setDrawerOpen(true);
     } catch (e) {
       console.error(e);
-      message.error("Không lấy được chi tiết chi nhánh");
+      message.error("Không lấy được chi tiết phòng chiếu");
     } finally {
       setLoading(false);
     }
@@ -140,8 +104,8 @@ export default function AdminBranches() {
   const onDelete = async (id) => {
     try {
       setLoading(true);
-      await deleteBranch(id);
-      message.success("Đã xoá chi nhánh");
+      await deleteTheater(id);
+      message.success("Đã xoá phòng chiếu");
       fetchData();
     } catch (e) {
       console.error(e);
@@ -155,18 +119,18 @@ export default function AdminBranches() {
     try {
       setLoading(true);
       if (mode === "create") {
-        await createBranch(values);
-        message.success("Tạo chi nhánh thành công");
+        await createTheater(values);
+        message.success("Tạo phòng chiếu thành công");
       } else if (editingId) {
-        await updateBranch(editingId, values);
-        message.success("Cập nhật chi nhánh thành công");
+        await updateTheater(editingId, values);
+        message.success("Cập nhật phòng chiếu thành công");
       }
       setDrawerOpen(false);
       setPage(1);
       await fetchData(1, size, search);
     } catch (e) {
       console.error(e);
-      message.error("Lưu chi nhánh thất bại");
+      message.error("Lưu phòng chiếu thất bại");
     } finally {
       setLoading(false);
     }
@@ -175,28 +139,29 @@ export default function AdminBranches() {
   const columns = useMemo(
     () => [
       {
-        title: "Tên chi nhánh",
+        title: "Phòng chiếu",
         dataIndex: "name",
         key: "name",
         render: (text) => <span className="font-medium">{text}</span>,
       },
       {
-        title: "Địa chỉ",
-        dataIndex: "address",
-        key: "address",
-        ellipsis: true,
+        title: "Thuộc chi nhánh",
+        key: "branch",
+        render: (r) => r?.branch?.name || r?.branchName || "-",
       },
       {
-        title: "Thành phố",
-        dataIndex: "city",
-        key: "city",
-        width: 160,
+        title: "Loại",
+        dataIndex: "type",
+        key: "type",
+        width: 140,
+        render: (t) => t || "standard",
       },
       {
-        title: "Điện thoại",
-        dataIndex: "phone",
-        key: "phone",
-        width: 150,
+        title: "Sức chứa",
+        dataIndex: "capacity",
+        key: "capacity",
+        width: 120,
+        render: (v) => v ?? "-",
       },
       {
         title: "Trạng thái",
@@ -211,20 +176,6 @@ export default function AdminBranches() {
           ),
       },
       {
-        title: "Toạ độ",
-        key: "coords",
-        width: 160,
-        render: (_, r) =>
-          r?.lat != null && r?.lng != null ? (
-            <span className="inline-flex items-center gap-1 text-neutral-300">
-              <EnvironmentOutlined />
-              {Number(r.lat).toFixed(4)}, {Number(r.lng).toFixed(4)}
-            </span>
-          ) : (
-            "-"
-          ),
-      },
-      {
         title: "Thao tác",
         key: "action",
         width: 170,
@@ -236,8 +187,7 @@ export default function AdminBranches() {
                 Sửa
               </Button>
               <Popconfirm
-                title="Xoá chi nhánh?"
-                description="Hành động này không thể hoàn tác."
+                title="Xoá phòng chiếu?"
                 okText="Xoá"
                 cancelText="Huỷ"
                 onConfirm={() => onDelete(id)}
@@ -259,19 +209,19 @@ export default function AdminBranches() {
       <div className="border-b border-white/10 bg-[#0b0b0b]">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <BranchesOutlined className="text-xl" />
-            <h1 className="text-xl font-semibold">Admin · Branches</h1>
+            <BankOutlined className="text-xl" />
+            <h1 className="text-xl font-semibold">Admin · Theaters</h1>
           </div>
           <div className="flex items-center gap-2">
             <Input.Search
               allowClear
-              placeholder="Tìm theo tên/địa chỉ..."
+              placeholder="Tìm theo tên phòng/chi nhánh..."
               onSearch={onSearch}
               enterButton={<SearchOutlined />}
               className="w-80"
             />
             <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-              Thêm chi nhánh
+              Thêm phòng
             </Button>
             <Button icon={<ReloadOutlined />} onClick={() => fetchData()}>
               Tải lại
@@ -302,13 +252,13 @@ export default function AdminBranches() {
       </div>
 
       <Drawer
-        title={mode === "create" ? "Thêm chi nhánh" : "Sửa chi nhánh"}
+        title={mode === "create" ? "Thêm phòng chiếu" : "Sửa phòng chiếu"}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         width={560}
         destroyOnClose
       >
-        <BranchForm
+        <TheaterForm
           mode={mode}
           initialValues={initialValues}
           onCancel={() => setDrawerOpen(false)}

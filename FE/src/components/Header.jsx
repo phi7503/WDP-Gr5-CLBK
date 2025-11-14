@@ -54,11 +54,9 @@ const Header = () => {
   const userMenuItems = [
     {
       key: 'profile',
-      label: 'Tài khoản',
-      onClick: () => {
-        // Navigate to profile page or show profile modal
-        console.log('Navigate to profile');
-      },
+      label: 'Hồ sơ',
+      icon: <UserOutlined />,
+      onClick: () => navigate('/profile'),
     },
     {
       key: 'bookings',

@@ -13,11 +13,11 @@ import {
   User,
   Shield,
 } from "lucide-react";
-import api from "../services/api"
-const API_BASE = "http://localhost:5000/api";
+import api from "../services/api";
 
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState([]);
+  const [branches, setBranches] = useState([]); // ✅ danh sách rạp
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -35,7 +35,7 @@ export default function AdminUserManagementPage() {
       setLoading(true);
       setLoadError("");
       try {
-        const res = await api.get("/users"); // axios
+        const res = await api.get("/admin/users"); // axios
         const rawUsers = res.data.users || res.data;
 
         const mapped = rawUsers.map((u) => ({
@@ -45,6 +45,9 @@ export default function AdminUserManagementPage() {
           phone: u.phone,
           role: u.role || "customer",
           createdAt: u.createdAt ? u.createdAt.slice(0, 10) : "",
+          // ✅ cố gắng map branch từ nhiều kiểu khác nhau
+          branchId: u.branchId || u.branch?._id || null,
+          branchName: u.branchName || u.branch?.name || "",
         }));
 
         setUsers(mapped);
@@ -61,12 +64,31 @@ export default function AdminUserManagementPage() {
     fetchUsers();
   }, []);
 
+  // ✅ Lấy danh sách rạp cho dropdown (dùng trong popup)
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const res = await api.get("/branches");
+        // tuỳ BE trả về, tạm chuẩn hoá về {id, name}
+        const raw = res.data.branches || res.data;
+        const mapped = raw.map((b) => ({
+          id: b._id,
+          name: b.name || b.branchName || "Rạp không tên",
+        }));
+        setBranches(mapped);
+      } catch (e) {
+        console.error("Fetch branches error:", e);
+      }
+    };
+    fetchBranches();
+  }, []);
+
   // Filter users
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.phone.includes(searchQuery);
+      (user.phone || "").includes(searchQuery);
 
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
 
@@ -84,12 +106,17 @@ export default function AdminUserManagementPage() {
   // Tạo user (gọi API)
   const handleCreateUser = async (newUser) => {
     try {
-      const res = await api.post("/users", {
+      const res = await api.post("/admin/users", {
         name: newUser.fullName,
         email: newUser.email,
         phone: newUser.phone,
         password: newUser.password,
         role: newUser.role,
+        // ✅ chỉ gửi branchId nếu là nhân viên
+        branchId:
+          newUser.role === "employee" && newUser.branchId
+            ? newUser.branchId
+            : undefined,
       });
 
       const data = res.data;
@@ -101,12 +128,17 @@ export default function AdminUserManagementPage() {
         phone: data.phone,
         role: data.role,
         createdAt: data.createdAt ? data.createdAt.slice(0, 10) : "",
+        branchId: data.branchId || data.branch?._id || newUser.branchId || null,
+        branchName:
+          data.branchName ||
+          data.branch?.name ||
+          branches.find((b) => b.id === newUser.branchId)?.name ||
+          "",
       };
 
       setUsers((prev) => [...prev, user]);
       setIsCreateModalOpen(false);
     } catch (err) {
-      // toast error đã được interceptor xử lý, ở đây fallback thêm alert nếu muốn
       alert(
         err.response?.data?.message || "Tạo tài khoản thất bại (client side)"
       );
@@ -116,12 +148,15 @@ export default function AdminUserManagementPage() {
   // Cập nhật user (gọi API)
   const handleUpdateUser = async (updatedUser) => {
     try {
-      const res = await api.put(`/users/${updatedUser.id}`, {
+      const res = await api.put(`/admin/users/${updatedUser.id}`, {
         name: updatedUser.fullName,
         email: updatedUser.email,
         phone: updatedUser.phone,
         role: updatedUser.role,
-        // nếu muốn cho admin đổi pass, có thể thêm password ở form update
+        branchId:
+          updatedUser.role === "employee" && updatedUser.branchId
+            ? updatedUser.branchId
+            : undefined,
       });
 
       const data = res.data;
@@ -135,6 +170,13 @@ export default function AdminUserManagementPage() {
         createdAt: data.createdAt
           ? data.createdAt.slice(0, 10)
           : updatedUser.createdAt,
+        branchId: data.branchId || data.branch?._id || updatedUser.branchId,
+        branchName:
+          data.branchName ||
+          data.branch?.name ||
+          branches.find((b) => b.id === updatedUser.branchId)?.name ||
+          updatedUser.branchName ||
+          "",
       };
 
       setUsers((prev) => prev.map((u) => (u.id === mapped.id ? mapped : u)));
@@ -149,7 +191,7 @@ export default function AdminUserManagementPage() {
   // Xóa user (gọi API)
   const handleDeleteUser = async (userId) => {
     try {
-      await api.delete(`/users/${userId}`);
+      await api.delete(`/admin/users/${userId}`);
 
       setUsers((prev) => prev.filter((u) => u.id !== userId));
       setDeletingUser(null);
@@ -159,6 +201,7 @@ export default function AdminUserManagementPage() {
       );
     }
   };
+
   return (
     <div className="min-h-screen bg-black py-8 px-4">
       <div className="max-w-7xl mx-auto">
@@ -267,6 +310,7 @@ export default function AdminUserManagementPage() {
           <CreateUserModal
             onClose={() => setIsCreateModalOpen(false)}
             onCreate={handleCreateUser}
+            branches={branches} // ✅ truyền rạp vào popup tạo
           />
         )}
 
@@ -275,6 +319,7 @@ export default function AdminUserManagementPage() {
             user={editingUser}
             onClose={() => setEditingUser(null)}
             onUpdate={handleUpdateUser}
+            branches={branches} // ✅ truyền rạp vào popup sửa
           />
         )}
 
@@ -333,6 +378,10 @@ function UserTable({ users, onEdit, onDelete }) {
               <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 Vai trò
               </th>
+              {/* ✅ thêm cột Rạp cho nhân viên */}
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                Rạp
+              </th>
               <th className="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 Ngày tạo
               </th>
@@ -362,6 +411,13 @@ function UserTable({ users, onEdit, onDelete }) {
                   {getRoleBadge(user.role)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-400">
+                    {user.role === "employee"
+                      ? user.branchName || "Chưa gán rạp"
+                      : "-"}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-400">{user.createdAt}</div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
@@ -387,7 +443,7 @@ function UserTable({ users, onEdit, onDelete }) {
             {users.length === 0 && (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-6 py-6 text-center text-gray-500 text-sm"
                 >
                   Không có tài khoản nào.
@@ -401,13 +457,14 @@ function UserTable({ users, onEdit, onDelete }) {
   );
 }
 
-function CreateUserModal({ onClose, onCreate }) {
+function CreateUserModal({ onClose, onCreate, branches }) {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
     password: "",
     role: "customer",
+    branchId: "", // ✅ thêm branchId
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -418,12 +475,19 @@ function CreateUserModal({ onClose, onCreate }) {
     if (!formData.email.trim()) newErrors.email = "Vui lòng nhập email";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email không hợp lệ";
-    if (!formData.phone.trim()) newErrors.phone = "Vui lòng nhập số điện thoại";
+    if (!formData.phone.trim())
+      newErrors.phone = "Vui lòng nhập số điện thoại";
     else if (!/^[0-9]{10}$/.test(formData.phone))
       newErrors.phone = "Số điện thoại phải có 10 chữ số";
     if (!formData.password) newErrors.password = "Vui lòng nhập mật khẩu";
     else if (formData.password.length < 6)
       newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+
+    // ✅ nếu là nhân viên thì bắt buộc chọn rạp
+    if (formData.role === "employee" && !formData.branchId) {
+      newErrors.branchId = "Vui lòng chọn rạp làm việc";
+    }
+
     return newErrors;
   };
 
@@ -434,6 +498,18 @@ function CreateUserModal({ onClose, onCreate }) {
       onCreate(formData);
     } else {
       setErrors(newErrors);
+    }
+  };
+
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+      // nếu đổi role từ employee sang khác thì clear branchId
+      ...(key === "role" && value !== "employee" ? { branchId: "" } : {}),
+    }));
+    if (errors[key]) {
+      setErrors((prev) => ({ ...prev, [key]: "" }));
     }
   };
 
@@ -459,9 +535,7 @@ function CreateUserModal({ onClose, onCreate }) {
             <input
               type="text"
               value={formData.fullName}
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
+              onChange={(e) => handleChange("fullName", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               placeholder="Nhập họ và tên"
             />
@@ -478,9 +552,7 @@ function CreateUserModal({ onClose, onCreate }) {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => handleChange("email", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               placeholder="example@email.com"
             />
@@ -497,9 +569,7 @@ function CreateUserModal({ onClose, onCreate }) {
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
+              onChange={(e) => handleChange("phone", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
               placeholder="0123456789"
             />
@@ -516,9 +586,7 @@ function CreateUserModal({ onClose, onCreate }) {
               <input
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                onChange={(e) => handleChange("password", e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
                 placeholder="Nhập mật khẩu"
               />
@@ -546,9 +614,7 @@ function CreateUserModal({ onClose, onCreate }) {
             </label>
             <select
               value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
+              onChange={(e) => handleChange("role", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
             >
               <option value="customer">Khách hàng</option>
@@ -556,6 +622,30 @@ function CreateUserModal({ onClose, onCreate }) {
               <option value="admin">Quản trị viên</option>
             </select>
           </div>
+
+          {/* ✅ Chọn rạp khi role = employee */}
+          {formData.role === "employee" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Rạp làm việc
+              </label>
+              <select
+                value={formData.branchId}
+                onChange={(e) => handleChange("branchId", e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+              >
+                <option value="">-- Chọn rạp --</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+              {errors.branchId && (
+                <p className="mt-1 text-sm text-red-400">{errors.branchId}</p>
+              )}
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <button
@@ -578,8 +668,11 @@ function CreateUserModal({ onClose, onCreate }) {
   );
 }
 
-function EditUserModal({ user, onClose, onUpdate }) {
-  const [formData, setFormData] = useState(user);
+function EditUserModal({ user, onClose, onUpdate, branches }) {
+  const [formData, setFormData] = useState({
+    ...user,
+    branchId: user.branchId || "",
+  });
   const [errors, setErrors] = useState({});
 
   const validate = () => {
@@ -588,9 +681,15 @@ function EditUserModal({ user, onClose, onUpdate }) {
     if (!formData.email.trim()) newErrors.email = "Vui lòng nhập email";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email không hợp lệ";
-    if (!formData.phone.trim()) newErrors.phone = "Vui lòng nhập số điện thoại";
+    if (!formData.phone.trim())
+      newErrors.phone = "Vui lòng nhập số điện thoại";
     else if (!/^[0-9]{10}$/.test(formData.phone))
       newErrors.phone = "Số điện thoại phải có 10 chữ số";
+
+    if (formData.role === "employee" && !formData.branchId) {
+      newErrors.branchId = "Vui lòng chọn rạp làm việc";
+    }
+
     return newErrors;
   };
 
@@ -601,6 +700,17 @@ function EditUserModal({ user, onClose, onUpdate }) {
       onUpdate(formData);
     } else {
       setErrors(newErrors);
+    }
+  };
+
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+      ...(key === "role" && value !== "employee" ? { branchId: "" } : {}),
+    }));
+    if (errors[key]) {
+      setErrors((prev) => ({ ...prev, [key]: "" }));
     }
   };
 
@@ -626,9 +736,7 @@ function EditUserModal({ user, onClose, onUpdate }) {
             <input
               type="text"
               value={formData.fullName}
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
+              onChange={(e) => handleChange("fullName", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
             />
             {errors.fullName && (
@@ -644,9 +752,7 @@ function EditUserModal({ user, onClose, onUpdate }) {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              onChange={(e) => handleChange("email", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
             />
             {errors.email && (
@@ -662,9 +768,7 @@ function EditUserModal({ user, onClose, onUpdate }) {
             <input
               type="tel"
               value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
+              onChange={(e) => handleChange("phone", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
             />
             {errors.phone && (
@@ -679,9 +783,7 @@ function EditUserModal({ user, onClose, onUpdate }) {
             </label>
             <select
               value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
+              onChange={(e) => handleChange("role", e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
             >
               <option value="customer">Khách hàng</option>
@@ -689,6 +791,30 @@ function EditUserModal({ user, onClose, onUpdate }) {
               <option value="admin">Quản trị viên</option>
             </select>
           </div>
+
+          {/* ✅ chọn rạp cho nhân viên */}
+          {formData.role === "employee" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Rạp làm việc
+              </label>
+              <select
+                value={formData.branchId || ""}
+                onChange={(e) => handleChange("branchId", e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+              >
+                <option value="">-- Chọn rạp --</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </select>
+              {errors.branchId && (
+                <p className="mt-1 text-sm text-red-400">{errors.branchId}</p>
+              )}
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <button

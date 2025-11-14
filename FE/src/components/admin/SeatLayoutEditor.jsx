@@ -1,3 +1,4 @@
+// src/pages/admin/SeatLayoutEditor.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Button, InputNumber, message, Radio, Space, Tag } from "antd";
 import {
@@ -13,13 +14,13 @@ const TYPES = [
   { key: "_", label: "Aisle", color: "processing" },
 ];
 
-function makeEmptyGrid(rows, cols) {
+function makeEmptyGrid(rows, cols, fill = "_") {
   return Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => "S")
+    Array.from({ length: cols }, () => fill)
   );
 }
 function cloneGrid(g) {
-  return g.map((r) => [...r]);
+  return (g || []).map((r) => r.slice());
 }
 function labelOf(r, c) {
   return String.fromCharCode(65 + r) + (c + 1);
@@ -31,26 +32,51 @@ export default function SeatLayoutEditor({
   onClose,
   onSaved,
 }) {
-  const [rows, setRows] = useState(initialLayout?.rows || 8);
-  const [cols, setCols] = useState(initialLayout?.cols || 12);
+  const layoutId = initialLayout?._id || initialLayout?.id || null;
+
+  // --- init state ---
+  const [rows, setRows] = useState(initialLayout?.rows || 10);
+  const [cols, setCols] = useState(
+    initialLayout?.seatsPerRow || initialLayout?.cols || 12
+  );
   const [grid, setGrid] = useState(() => {
-    if (initialLayout?.grid && Array.isArray(initialLayout.grid))
+    if (Array.isArray(initialLayout?.grid))
       return cloneGrid(initialLayout.grid);
-    return makeEmptyGrid(rows, cols);
+    if (initialLayout) return makeEmptyGrid(rows, cols, "S"); // edit nhưng BE chưa trả grid
+    return makeEmptyGrid(rows, cols, "_"); // create: tất cả chưa chọn
   });
   const [activeType, setActiveType] = useState("S");
-  const layoutId = initialLayout?._id || initialLayout?.id;
 
-  // resize grid khi rows/cols đổi
+  // 👉 Khi đổi bản ghi (Edit layout khác) hoặc từ Create -> Edit: re-init toàn bộ
+  useEffect(() => {
+    if (initialLayout) {
+      const r = initialLayout.rows || 10;
+      const c = initialLayout.seatsPerRow || initialLayout.cols || 12;
+      setRows(r);
+      setCols(c);
+      if (Array.isArray(initialLayout.grid))
+        setGrid(cloneGrid(initialLayout.grid));
+      else setGrid(makeEmptyGrid(r, c, "S"));
+    } else {
+      const r = 10,
+        c = 12;
+      setRows(r);
+      setCols(c);
+      setGrid(makeEmptyGrid(r, c, "_")); // Create
+    }
+    setActiveType("S");
+  }, [layoutId]); // chỉ cần bám theo id (hoặc null khi create)
+
+  // Resize lưới khi đổi rows/cols
   useEffect(() => {
     setGrid((g) => {
-      const newG = makeEmptyGrid(rows, cols);
+      const ng = makeEmptyGrid(rows, cols, "_");
       for (let r = 0; r < Math.min(rows, g.length); r++) {
-        for (let c = 0; c < Math.min(cols, g[0].length); c++) {
-          newG[r][c] = g[r][c];
+        for (let c = 0; c < Math.min(cols, g[0]?.length || 0); c++) {
+          ng[r][c] = g[r][c];
         }
       }
-      return newG;
+      return ng;
     });
   }, [rows, cols]);
 
@@ -72,7 +98,7 @@ export default function SeatLayoutEditor({
     });
   };
 
-  const clearAll = () => setGrid(makeEmptyGrid(rows, cols));
+  const clearAll = () => setGrid(makeEmptyGrid(rows, cols, "_"));
   const fillAisleRow = (r) =>
     setGrid((g) => {
       const ng = cloneGrid(g);
@@ -80,12 +106,13 @@ export default function SeatLayoutEditor({
       return ng;
     });
 
+  // chuyển về seats[] nếu BE cần (có thể BE chỉ đọc grid)
   const toSeatsArray = () => {
     const seats = [];
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const t = grid[r][c];
-        if (t === "_") continue; // aisle: không phải ghế
+        if (t === "_") continue; // aisle / chưa chọn
         seats.push({
           row: r,
           col: c,
@@ -107,13 +134,7 @@ export default function SeatLayoutEditor({
 
   const handleSave = async () => {
     try {
-      const payload = {
-        theaterId,
-        rows,
-        cols,
-        grid,
-        seats: toSeatsArray(), // nếu backend không cần 'seats' sẽ bỏ qua
-      };
+      const payload = { theaterId, rows, cols, grid, seats: toSeatsArray() };
       let saved;
       if (layoutId) saved = await updateSeatLayout(layoutId, payload);
       else saved = await createSeatLayout(payload);
@@ -127,6 +148,7 @@ export default function SeatLayoutEditor({
 
   return (
     <div className="space-y-4">
+      {/* Kích thước + Loại ghế */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <span className="text-neutral-300">Kích thước:</span>
@@ -143,6 +165,7 @@ export default function SeatLayoutEditor({
             value={cols}
             onChange={(v) => setCols(v || 1)}
           />
+
           <span className="ml-4 text-neutral-300">Loại ghế:</span>
           <Radio.Group
             value={activeType}
@@ -150,37 +173,31 @@ export default function SeatLayoutEditor({
             optionType="button"
             buttonStyle="solid"
           >
-            {TYPES.map((t) => (
-              <Radio.Button key={t.key} value={t.key}>
-                {t.label}
-              </Radio.Button>
-            ))}
+            <Radio.Button value="S">Standard</Radio.Button>
+            <Radio.Button value="V">VIP</Radio.Button>
+            <Radio.Button value="C">Couple</Radio.Button>
+            <Radio.Button value="X">Blocked</Radio.Button>
+            <Radio.Button value="_">Aisle</Radio.Button>
           </Radio.Group>
         </div>
 
         <Space>
-          <Button onClick={clearAll}>Làm mới</Button>
+          <Button onClick={() => clearAll()}>Làm mới</Button>
+          <Button onClick={() => onClose?.()}>Đóng</Button>
           <Button type="primary" onClick={handleSave}>
             Lưu sơ đồ
           </Button>
-          <Button onClick={onClose}>Đóng</Button>
         </Space>
       </div>
 
-      <div className="text-sm text-neutral-400">{legend}</div>
+      {/* Legend */}
+      <div className="flex gap-2">{legend}</div>
 
-      {/* hàng nút nhanh cho "lối đi" theo hàng */}
-      <div className="flex flex-wrap gap-2">
-        {Array.from({ length: rows }).map((_, r) => (
-          <Button key={r} size="small" onClick={() => fillAisleRow(r)}>
-            Hàng {String.fromCharCode(65 + r)} = Lối đi
-          </Button>
-        ))}
-      </div>
-
-      {/* Lưới ghế */}
-      <div className="overflow-auto">
-        <div className="inline-block rounded-xl border border-white/10 p-3 bg-[#0f0f0f]">
+      {/* Lưới chỉnh ghế */}
+      <div className="rounded-xl border border-white/10 p-4 bg-[#0f0f0f]">
+        <div className="text-center text-xs text-neutral-400 mb-3">SCREEN</div>
+        <div className="h-1 w-full bg-white/20 rounded-full mb-4" />
+        <div>
           {grid.map((row, r) => (
             <div key={r} className="flex items-center gap-2 mb-2">
               <div className="w-8 text-right text-neutral-400">
@@ -192,7 +209,7 @@ export default function SeatLayoutEditor({
                     "w-9 h-9 rounded-md flex items-center justify-center cursor-pointer border";
                   const byType =
                     cell === "S"
-                      ? "bg-[#1f1f1f] border-white/10 hover:bg-[#2a2a2a]"
+                      ? "bg-[#123c4a] border-[#1e5a6d] hover:bg-[#165266]" // Standard: xanh đậm (dùng cho cả Create & Edit)
                       : cell === "V"
                       ? "bg-[#3a0f0f] border-[#6b1f1f] hover:bg-[#4a1a1a]"
                       : cell === "C"
@@ -214,7 +231,6 @@ export default function SeatLayoutEditor({
               </div>
             </div>
           ))}
-          {/* chỉ số cột */}
           <div className="ml-10 mt-2 flex gap-1 text-neutral-400">
             {Array.from({ length: cols }).map((_, c) => (
               <div key={c} className="w-9 text-center">

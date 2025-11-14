@@ -18,18 +18,43 @@ export default function BranchForm({
   }, [initialValues, form]);
 
   const handleFinish = (values) => {
-    // Chỉ gửi các key có giá trị (tránh gửi null sai schema)
-    const payload = Object.fromEntries(
-      Object.entries({
-        name: values.name?.trim(),
-        address: values.address?.trim(),
-        city: values.city?.trim(),
-        phone: values.phone?.trim(),
-        lat: values.lat ?? undefined,
-        lng: values.lng ?? undefined,
-        status: values.status || "active",
-      }).filter(([, v]) => v !== undefined && v !== "")
-    );
+    const name = values.name?.trim();
+    const address = values.address?.trim();
+    const city = values.city?.trim();
+    const phone = values.phone?.trim();
+
+    const hasCoords =
+      values.lat !== undefined &&
+      values.lat !== null &&
+      values.lng !== undefined &&
+      values.lng !== null;
+
+    const location = {
+      address,
+      city,
+      // Tạm dùng city làm province để thoả điều kiện required của backend
+      province: city,
+      ...(hasCoords && {
+        coordinates: {
+          latitude: Number(values.lat),
+          longitude: Number(values.lng),
+        },
+      }),
+    };
+
+    const contact = {
+      phone,
+    };
+
+    const isActive = (values.status || "active") === "active";
+
+    const payload = {
+      name,
+      location,
+      contact,
+      isActive,
+    };
+
     onSubmit?.(payload);
   };
 
@@ -45,18 +70,30 @@ export default function BranchForm({
         name="name"
         rules={[{ required: true, message: "Nhập tên chi nhánh" }]}
       >
-        <Input placeholder="Ví dụ: OCBS – Cầu Giấy" />
+        <Input placeholder="Ví dụ: CLBK – Cầu Giấy" />
       </Form.Item>
 
-      <Form.Item label="Địa chỉ" name="address">
+      <Form.Item
+        label="Địa chỉ"
+        name="address"
+        rules={[{ required: true, message: "Nhập địa chỉ" }]}
+      >
         <Input placeholder="Số nhà, đường, phường/xã..." />
       </Form.Item>
 
       <div className="grid grid-cols-2 gap-4">
-        <Form.Item label="Thành phố" name="city">
+        <Form.Item
+          label="Thành phố"
+          name="city"
+          rules={[{ required: true, message: "Nhập thành phố" }]}
+        >
           <Input placeholder="Hà Nội / HCM / ..." />
         </Form.Item>
-        <Form.Item label="Điện thoại" name="phone">
+        <Form.Item
+          label="Điện thoại"
+          name="phone"
+          rules={[{ required: true, message: "Nhập số điện thoại" }]}
+        >
           <Input placeholder="0123456789" />
         </Form.Item>
       </div>

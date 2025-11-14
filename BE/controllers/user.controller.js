@@ -50,10 +50,13 @@ export const updateMe = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
+    console.log(req.user)
     const user = await User.findById(req.user._id).select("+password");
+    console.log(user)
     if (!user) return res.status(404).json({ message: "User không tồn tại" });
 
     const ok = await user.matchPassword(currentPassword);
+    console.log(req.body)
     if (!ok) return res.status(400).json({ message: "Mật khẩu hiện tại không đúng" });
 
     user.password = newPassword; 
@@ -63,9 +66,9 @@ export const changePassword = async (req, res) => {
     const token = issueAccess(user._id);
     setAccessCookie(res, token);
 
-    res.json({ message: "Đổi mật khẩu thành công", token });
+    res.status(200).json({ message: "Đổi mật khẩu thành công", token });
   } catch (e) {
-    console.error("changePassword error:", e);
+    console.error("changePassword error:", e.message);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -86,7 +89,7 @@ export const getUsers = async (req, res) => {
 // Lấy 1 user theo id (nếu bạn vẫn cần)
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select(
+    const user = await User.findById(req.user._id).select(
       "name email phone role createdAt"
     );
     if (!user) {
@@ -180,17 +183,3 @@ export const updateUserById = async (req, res) => {
   }
 };
 
-// Xoá user (cho luôn vì FE đang có popup delete)
-export const deleteUserById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    await user.deleteOne();
-    return res.json({ message: "Đã xóa người dùng" });
-  } catch (e) {
-    console.error("Delete user error:", e);
-    return res.status(500).json({ message: "Server error" });
-  }
-};

@@ -7,7 +7,7 @@ import Header from './Header';
 import Footer from './Footer';
 import PaymentModal from './PaymentModal';
 import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI, payOSAPI, BACKEND_URL } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../context/app.context";
 import '../booking-animations.css';
 
 const { Content } = Layout;

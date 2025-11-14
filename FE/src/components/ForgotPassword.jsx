@@ -63,7 +63,7 @@ export default function ForgotPassword() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 text-gray-700">
         <div className="flex w-full min-h-[32rem] max-w-[64rem] overflow-hidden rounded-2xl bg-white shadow-2xl">
           {/* Left side - Cinema Image */}
           <div className="hidden md:block md:w-1/2 relative">
