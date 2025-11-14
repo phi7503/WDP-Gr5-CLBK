@@ -124,10 +124,10 @@ export default function Register() {
 
           <button
             onClick={handleGoogleRegister}
-            className="w-full max-w-md mx-auto flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-black font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
           >
             <Mail className="w-5 h-5 text-red-600" />
-            <span>Đăng ký bằng Google</span>
+            <span className="text-gray-700">Đăng nhập bằng Google</span>
           </button>
 
           <div className="relative max-w-md mx-auto">
@@ -152,7 +152,7 @@ export default function Register() {
                 placeholder="Họ và tên"
                 className={`w-full px-4 py-3 bg-blue-50 border ${
                   errors.name ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-red-500">{errors.name}</p>
@@ -169,7 +169,7 @@ export default function Register() {
                 placeholder="Email"
                 className={`w-full px-4 py-3 bg-blue-50 border ${
                   errors.email ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500">{errors.email}</p>
@@ -187,7 +187,7 @@ export default function Register() {
                   placeholder="Mật khẩu"
                   className={`w-full px-4 py-3 pr-12 bg-blue-50 border ${
                     errors.password ? "border-red-500" : "border-transparent"
-                  } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                  } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                 />
                 <button
                   type="button"
@@ -195,9 +195,9 @@ export default function Register() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="w-5 h-5  text-gray-700" />
                   ) : (
-                    <Eye className="w-5 h-5" />
+                    <Eye className="w-5 h-5  text-gray-700" />
                   )}
                 </button>
               </div>
@@ -219,7 +219,7 @@ export default function Register() {
                     errors.confirmPassword
                       ? "border-red-500"
                       : "border-transparent"
-                  } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                  } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                 />
                 <button
                   type="button"
@@ -227,9 +227,9 @@ export default function Register() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="w-5 h-5  text-gray-700" />
                   ) : (
-                    <Eye className="w-5 h-5" />
+                    <Eye className="w-5 h-5  text-gray-700" />
                   )}
                 </button>
               </div>
@@ -250,7 +250,7 @@ export default function Register() {
                 placeholder="Số điện thoại"
                 className={`w-full px-4 py-3 bg-blue-50 border ${
                   errors.phone ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
               {errors.phone && (
                 <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
@@ -258,16 +258,16 @@ export default function Register() {
             </div>
 
             {/* Date of Birth Input */}
-            <div>
+            <div className=" text-gray-700">
               <input
                 type="date"
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
                 placeholder="Ngày sinh"
-                className={`w-full px-4 py-3 bg-blue-50 border ${
-                  errors.dob ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                className={`w-full px-4 py-3 bg-blue-50 border  text-gray-700 ${
+                  errors.dob ? "border-red-500 " : "border-transparent  text-gray-700"
+                } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
               {errors.dob && (
                 <p className="mt-1 text-sm text-red-500">{errors.dob}</p>
@@ -275,19 +275,19 @@ export default function Register() {
             </div>
 
             {/* Gender Select */}
-            <div>
+            <div className=" text-gray-700">
               <select
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 bg-blue-50 border ${
-                  errors.gender ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                className={`w-full px-4 py-3 bg-blue-50 border  text-gray-700${
+                  errors.gender ? "border-red-500" : "border-transparent  text-gray-700 "
+                } rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               >
-                <option value="">Chọn giới tính</option>
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
-                <option value="other">Khác</option>
+                <option className=" text-gray-700" value="">Chọn giới tính</option>
+                <option className=" text-gray-700" value="male">Nam</option>
+                <option className=" text-gray-700" value="female">Nữ</option>
+                <option className=" text-gray-700" value="other">Khác</option>
               </select>
               {errors.gender && (
                 <p className="mt-1 text-sm text-red-500">{errors.gender}</p>
@@ -304,7 +304,7 @@ export default function Register() {
                 placeholder="Tỉnh/Thành phố"
                 className={`w-full px-4 py-3 bg-blue-50 border ${
                   errors.province ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
               {errors.province && (
                 <p className="mt-1 text-sm text-red-500">{errors.province}</p>
@@ -321,7 +321,7 @@ export default function Register() {
                 placeholder="Quận/Huyện"
                 className={`w-full px-4 py-3 bg-blue-50 border ${
                   errors.city ? "border-red-500" : "border-transparent"
-                } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
               {errors.city && (
                 <p className="mt-1 text-sm text-red-500">{errors.city}</p>

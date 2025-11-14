@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useEffect, useState } from "react";
 import test5 from "../assets/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -126,10 +125,10 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-black font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Mail className="w-5 h-5 text-red-600" />
-              <span>Đăng nhập bằng Google</span>
+              <span className="text-gray-700">Đăng nhập bằng Google</span>
             </button>
 
             <div className="relative">

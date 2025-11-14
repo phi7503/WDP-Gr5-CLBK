@@ -25,19 +25,14 @@ const VoucherPage = lazy(() => import("../components/VoucherPage"));
 const BookingDetailsPage = lazy(() =>
   import("../components/BookingDetailsPage")
 );
-const AuthPage = lazy(() => import("../components/AuthPage"));
 const BookingHistoryPage = lazy(() =>
   import("../components/BookingHistoryPage")
 );
 const PaymentSuccessPage = lazy(() =>
   import("../components/PaymentSuccessPage")
 );
-const PaymentCancelPage = lazy(() =>
-  import("../components/PaymentCancelPage")
-);
-const ConfirmationPage = lazy(() =>
-  import("../components/ConfirmationPage")
-);
+const PaymentCancelPage = lazy(() => import("../components/PaymentCancelPage"));
+const ConfirmationPage = lazy(() => import("../components/ConfirmationPage"));
 
 // Loader (có thể move qua file riêng cho UI team sửa)
 const CinemaPageLoader = () => (
@@ -131,9 +126,7 @@ export default function AppRouter() {
             element={<BookingDetailsPage />}
           />
 
-          <Route path="/auth" element={<AuthPage />} />
           <Route path="/bookings" element={<BookingHistoryPage />} />
-
           <Route path="/confirmation" element={<ConfirmationPage />} />
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/payment-cancel" element={<PaymentCancelPage />} />

@@ -87,7 +87,7 @@ export default function ResetPassword() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 text-gray-700">
         <div className="flex w-full min-h-[32rem] max-w-[64rem] overflow-hidden rounded-2xl bg-white shadow-2xl">
           {/* Left - Image */}
           <div className="hidden md:block md:w-1/2 relative">
@@ -152,7 +152,7 @@ export default function ResetPassword() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Mật khẩu mới */}
-              <div>
+              <div className="text-gray-700">
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input
@@ -188,7 +188,7 @@ export default function ResetPassword() {
               </div>
 
               {/* Xác nhận mật khẩu */}
-              <div>
+              <div className="text-gray-700">
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <input

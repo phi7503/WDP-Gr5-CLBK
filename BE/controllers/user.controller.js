@@ -50,6 +50,7 @@ export const updateMe = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
+    console.log(req.user)
     const user = await User.findById(req.user._id).select("+password");
     if (!user) return res.status(404).json({ message: "User không tồn tại" });
 
@@ -65,7 +66,7 @@ export const changePassword = async (req, res) => {
 
     res.json({ message: "Đổi mật khẩu thành công", token });
   } catch (e) {
-    console.error("changePassword error:", e);
+    console.error("changePassword error:", e.message);
     res.status(500).json({ message: "Server error" });
   }
 };

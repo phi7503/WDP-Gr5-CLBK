@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Typography, Button, Card, Space, message, Input, List, Badge, Alert } from 'antd';
 import { UserOutlined, SendOutlined, DisconnectOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import io from 'socket.io-client';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../context/app.context";
 import { BACKEND_URL } from '../services/api';
 
 const { Content } = Layout;

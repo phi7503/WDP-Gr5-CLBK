@@ -67,8 +67,6 @@ export default function App() {
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <Routes>
-        {/* ✅ Toàn bộ site QuickShow cho user (Home, Movies, Showtimes, ...) */}
-        {/* AppRouter tự lo Header + MainLayout + Routes bên trong */}
         <Route path="/*" element={<AppRouter />} />
 
         {/* Auth chỉ dành cho khách (chưa login) */}
@@ -95,7 +93,7 @@ export default function App() {
 
         {/* Protected chung (cần đăng nhập) */}
         <Route element={<ProtectedRoute />}>
-          {/* Profile user – tuỳ bạn có muốn cho vào AppRouter hay không */}
+          
           <Route path="/profile" element={<UserProfilePage />} />
         </Route>
 

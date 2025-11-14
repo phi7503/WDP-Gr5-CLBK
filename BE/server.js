@@ -18,7 +18,6 @@ import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 import { scheduleCleanupOldShowtimes } from "./jobs/cleanupOldShowtimes.js";
 import payosRoutes from "./routes/payOSRoutes.js";
 
-
 // Load env
 dotenv.config();
 
@@ -39,6 +38,7 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import voucherRoutes from "./routes/voucherRoutes.js";
 import comboRoutes from "./routes/comboRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import userManaRoutes from "./routes/userRoutes.js";
 
 //import debugRoutes from "./routes/debugRoutes.js";
 
@@ -97,7 +97,7 @@ app.use("/api/branches", branchRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/seats", seatRoutes);
 app.use("/api/seat-status", seatStatusRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/admin/users", userManaRoutes);
 app.use("/api/theaters", theaterRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/vouchers", voucherRoutes);
@@ -106,7 +106,6 @@ app.use("/api/combos", comboRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/admin-dashboard", adminDashboardRoutes);
 app.use("/api/payos", payosRoutes);
-
 
 //app.use("/api/debug", debugRoutes);
 
@@ -135,7 +134,7 @@ scheduleCleanupOldShowtimes(); // Cleanup old showtimes (runs daily at 2 AM)
 
 // Start server
 const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = process.env.NODE_ENV || "development";
 server.listen(PORT, () => {
   console.log(`Server running in ${NODE_ENV} mode on port ${PORT}`);
 });

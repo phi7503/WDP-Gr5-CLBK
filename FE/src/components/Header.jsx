@@ -23,6 +23,7 @@ const Header = () => {
       key: 'profile',
       label: 'Hồ sơ',
       icon: <UserOutlined />,
+      onClick: () => navigate('/profile'),
     },
     {
       key: 'bookings',

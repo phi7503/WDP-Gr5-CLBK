@@ -4,7 +4,7 @@ import { CreditCardOutlined, BankOutlined, WalletOutlined, CheckCircleOutlined }
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../context/app.context";
 import { bookingAPI } from '../services/api';
 import dayjs from 'dayjs';
 

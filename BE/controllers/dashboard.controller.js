@@ -1,8 +1,13 @@
 import asyncHandler from "express-async-handler";
 import mongoose from "mongoose";
 import Booking from "../models/bookingModel.js";
-import showtime from "../models/showtimeModel.js";
-
+import Showtime from "../models/showtimeModel.js";
+import Movie from "../models/movieModel.js";
+import Branch from "../models/branchModel.js";
+import Theater from "../models/theaterModel.js";
+import Seat from "../models/seatModel.js";
+import SeatStatus from "../models/seatStatusModel.js";
+import User from "../models/userModel.js";
 /** Helper: lấy đầu-cuối tuần/tháng */
 const getPeriodDates = (period, date) => {
   const now = date ? new Date(date) : new Date();

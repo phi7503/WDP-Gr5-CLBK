@@ -3,7 +3,7 @@ import { Layout, Typography, Card, Row, Col, Avatar, Button, Form, Input, messag
 import { UserOutlined, EditOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import Header from './Header';
 import Footer from './Footer';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../context/app.context";
 import { userAPI } from '../services/api';
 
 const { Content } = Layout;
