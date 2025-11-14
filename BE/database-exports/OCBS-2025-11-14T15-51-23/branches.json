@@ -1,0 +1,1499 @@
+[
+  {
+    "_id": "688390555d37066a796abc84",
+    "name": "CGV Aeon Mall Hà Đông",
+    "location": {
+      "address": "AEON Mall Hà Đông, Đường 70 mới, Dương Nội, Hà Đông, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 20.9895,
+        "longitude": 105.7506
+      }
+    },
+    "contact": {
+      "phone": "0900900900",
+      "email": "cgvbranch1@gmail.com"
+    },
+    "theaters": [
+      "688391675d37066a796abcb0",
+      "6883916c5d37066a796abcb7",
+      "688391705d37066a796abcbe"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food",
+      "Drink"
+    ],
+    "image": "",
+    "isActive": true,
+    "createdAt": "2025-07-25T14:10:29.655Z",
+    "updatedAt": "2025-11-13T02:48:22.454Z",
+    "__v": 3,
+    "cinemaChain": "CGV"
+  },
+  {
+    "_id": "688390a65d37066a796abc8b",
+    "name": "CGV Aeon Mall Long Biên",
+    "location": {
+      "address": "AEON Mall Long Biên, 27 Cổ Linh, Long Biên, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 21.0275,
+        "longitude": 105.9014
+      }
+    },
+    "contact": {
+      "phone": "0900900901",
+      "email": "cgvbranch2@gmail.com"
+    },
+    "theaters": [
+      "688391825d37066a796abcc7",
+      "688391855d37066a796abcce",
+      "6883918a5d37066a796abcd5"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "Foods",
+      "Drinks"
+    ],
+    "image": "",
+    "isActive": true,
+    "createdAt": "2025-07-25T14:11:50.716Z",
+    "updatedAt": "2025-11-13T02:48:05.721Z",
+    "__v": 4,
+    "cinemaChain": "CGV"
+  },
+  {
+    "_id": "688391365d37066a796abc9a",
+    "name": "CGV Aeon Mall Hải Phòng",
+    "location": {
+      "address": "Aeon Mall Hải Phòng, Đường Võ Nguyên Giáp, An Biên, Lê Chân, Hải Phòng",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng",
+      "coordinates": {
+        "latitude": 20.8319,
+        "longitude": 106.6826
+      }
+    },
+    "contact": {
+      "phone": "0900900902",
+      "email": "cgvbranch3@gmail.com"
+    },
+    "theaters": [
+      "688391965d37066a796abcde",
+      "6883919b5d37066a796abce5",
+      "6883919e5d37066a796abcec"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Foods",
+      "Drinks"
+    ],
+    "image": "",
+    "isActive": true,
+    "createdAt": "2025-07-25T14:14:14.277Z",
+    "updatedAt": "2025-11-13T02:48:22.472Z",
+    "__v": 4,
+    "cinemaChain": "CGV"
+  },
+  {
+    "_id": "68ec7cfb390d52f77372669b",
+    "name": "Beta Cinemas",
+    "location": {
+      "address": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028-1234-5678",
+      "email": "info@betacinemas.vn"
+    },
+    "theaters": [],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:15:56.159Z",
+    "updatedAt": "2025-11-13T02:48:22.475Z",
+    "__v": 0,
+    "cinemaChain": "Beta"
+  },
+  {
+    "_id": "68ec7d09576bb5cbd06c2602",
+    "name": "Beta Cinemas",
+    "location": {
+      "address": "123 Nguyễn Huệ, Quận 1, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028-1234-5678",
+      "email": "info@betacinemas.vn"
+    },
+    "theaters": [
+      "68ec7d09576bb5cbd06c2604",
+      "68ec7d09576bb5cbd06c2697",
+      "68ec7d0a576bb5cbd06c272b"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:09.815Z",
+    "updatedAt": "2025-11-13T02:48:22.480Z",
+    "__v": 1,
+    "cinemaChain": "Beta"
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c27bf",
+    "name": "BHD Star Cineplex",
+    "location": {
+      "address": "456 Lê Lợi, Quận 1, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028-2345-6789",
+      "email": "info@bhdstar.vn"
+    },
+    "theaters": [
+      "68ec7d0a576bb5cbd06c27c1",
+      "68ec7d0a576bb5cbd06c2854",
+      "68ec7d0a576bb5cbd06c28e7"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:10.255Z",
+    "updatedAt": "2025-11-13T02:48:22.485Z",
+    "__v": 1,
+    "cinemaChain": "BHD"
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c297b",
+    "name": "Lotte Cinema",
+    "location": {
+      "address": "789 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.8,
+        "longitude": 106.72
+      }
+    },
+    "contact": {
+      "phone": "028-3456-7890",
+      "email": "info@lottecinema.vn"
+    },
+    "theaters": [
+      "68ec7d0a576bb5cbd06c297d",
+      "68ec7d0a576bb5cbd06c2a10",
+      "68ec7d0a576bb5cbd06c2aa3"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:10.712Z",
+    "updatedAt": "2025-11-13T02:48:22.490Z",
+    "__v": 1,
+    "cinemaChain": "Lotte"
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c2b37",
+    "name": "Galaxy Cinema",
+    "location": {
+      "address": "321 Cách Mạng Tháng 8, Quận 10, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028-4567-8901",
+      "email": "info@galaxycinema.vn"
+    },
+    "theaters": [
+      "68ec7d0a576bb5cbd06c2b39",
+      "68ec7d0b576bb5cbd06c2bcc",
+      "68ec7d0b576bb5cbd06c2c5f"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:10.979Z",
+    "updatedAt": "2025-11-13T02:48:22.494Z",
+    "__v": 1,
+    "cinemaChain": "Galaxy"
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2cf3",
+    "name": "Mega GS",
+    "location": {
+      "address": "654 Nguyễn Văn Cừ, Quận 5, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.75,
+        "longitude": 106.65
+      }
+    },
+    "contact": {
+      "phone": "028-5678-9012",
+      "email": "info@megags.vn"
+    },
+    "theaters": [
+      "68ec7d0b576bb5cbd06c2cf5",
+      "68ec7d0b576bb5cbd06c2d88",
+      "68ec7d0b576bb5cbd06c2e1b"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:11.163Z",
+    "updatedAt": "2025-11-13T02:48:22.499Z",
+    "__v": 1,
+    "cinemaChain": "MegaGS"
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2eaf",
+    "name": "Platinum Cineplex",
+    "location": {
+      "address": "987 Trần Hưng Đạo, Quận 5, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.75,
+        "longitude": 106.65
+      }
+    },
+    "contact": {
+      "phone": "028-6789-0123",
+      "email": "info@platinumcineplex.vn"
+    },
+    "theaters": [
+      "68ec7d0b576bb5cbd06c2eb1",
+      "68ec7d0b576bb5cbd06c2f44",
+      "68ec7d0b576bb5cbd06c2fd7"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:11.344Z",
+    "updatedAt": "2025-11-13T02:48:22.503Z",
+    "__v": 1,
+    "cinemaChain": "Platinum"
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c306b",
+    "name": "Diamond Cinema",
+    "location": {
+      "address": "147 Nguyễn Thị Minh Khai, Quận 3, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.78,
+        "longitude": 106.69
+      }
+    },
+    "contact": {
+      "phone": "028-7890-1234",
+      "email": "info@diamondcinema.vn"
+    },
+    "theaters": [
+      "68ec7d0b576bb5cbd06c306d",
+      "68ec7d0b576bb5cbd06c3100",
+      "68ec7d0b576bb5cbd06c3193"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:11.522Z",
+    "updatedAt": "2025-11-13T02:48:22.506Z",
+    "__v": 1,
+    "cinemaChain": "Diamond"
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c3227",
+    "name": "Vincom Center",
+    "location": {
+      "address": "258 Lê Văn Việt, Quận Thủ Đức, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.85,
+        "longitude": 106.75
+      }
+    },
+    "contact": {
+      "phone": "028-8901-2345",
+      "email": "info@vincomcenter.vn"
+    },
+    "theaters": [
+      "68ec7d0b576bb5cbd06c3229",
+      "68ec7d0b576bb5cbd06c32bc",
+      "68ec7d0b576bb5cbd06c334f"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "Food Court",
+      "Gift Shop"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-13T04:16:11.700Z",
+    "updatedAt": "2025-11-13T02:48:22.510Z",
+    "__v": 1,
+    "cinemaChain": "Other"
+  },
+  {
+    "_id": "68ede6c53b45cefe52e76ba1",
+    "name": "CGV Vincom Center",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Center, Quận 1, TP.HCM",
+      "city": "TP.HCM",
+      "province": "TP.HCM",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "0901234567",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "Parking",
+      "3D",
+      "IMAX"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-14T05:59:33.736Z",
+    "updatedAt": "2025-11-13T02:48:22.513Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db18e55ece88a2ad6849",
+    "name": "CGV Vincom Center Ba Đình",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Center Metropolis, 447 Kim Mã, Ba Đình, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 21.0315,
+        "longitude": 105.8151
+      }
+    },
+    "contact": {
+      "phone": "024 3974 3333",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db18e55ece88a2ad684c",
+      "6914db18e55ece88a2ad68cc",
+      "6914db18e55ece88a2ad694c"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "4DX",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:08.580Z",
+    "updatedAt": "2025-11-13T02:48:05.739Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad69ce",
+    "name": "CGV Vincom Royal City",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Mega Mall Royal City, 72A Nguyễn Trãi, Thanh Xuân, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 21.0023,
+        "longitude": 105.816
+      }
+    },
+    "contact": {
+      "phone": "024 3555 8888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db19e55ece88a2ad69d0",
+      "6914db19e55ece88a2ad6a50",
+      "6914db19e55ece88a2ad6ad0"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP",
+      "Dolby Atmos"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:09.145Z",
+    "updatedAt": "2025-11-13T02:48:05.743Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6b53",
+    "name": "CGV Landmark 72",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Landmark 72, E6 Phạm Hùng, Nam Từ Liêm, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 21.0174,
+        "longitude": 105.7836
+      }
+    },
+    "contact": {
+      "phone": "024 3775 5555",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db19e55ece88a2ad6b55",
+      "6914db19e55ece88a2ad6bd5",
+      "6914db19e55ece88a2ad6c55"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "4DX",
+      "Parking",
+      "Café",
+      "VIP",
+      "Dolby Atmos"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:09.587Z",
+    "updatedAt": "2025-11-13T02:48:05.750Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6cd7",
+    "name": "BHD Star Cineplex Vincom Nguyễn Chí Thanh",
+    "cinemaChain": "BHD",
+    "location": {
+      "address": "Vincom Nguyễn Chí Thanh, 54A Nguyễn Chí Thanh, Đống Đa, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 21.0278,
+        "longitude": 105.8014
+      }
+    },
+    "contact": {
+      "phone": "024 3773 3333",
+      "email": "contact@bhd.com"
+    },
+    "theaters": [
+      "6914db19e55ece88a2ad6cd9",
+      "6914db1ae55ece88a2ad6d59"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:09.964Z",
+    "updatedAt": "2025-11-13T02:48:05.757Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6ddb",
+    "name": "BHD Star Cineplex Vincom Times City",
+    "cinemaChain": "BHD",
+    "location": {
+      "address": "Vincom Times City, 458 Minh Khai, Hai Bà Trưng, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 20.9981,
+        "longitude": 105.8708
+      }
+    },
+    "contact": {
+      "phone": "024 3974 6666",
+      "email": "contact@bhd.com"
+    },
+    "theaters": [
+      "6914db1ae55ece88a2ad6ddd",
+      "6914db1ae55ece88a2ad6e5d",
+      "6914db1ae55ece88a2ad6edd"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:10.171Z",
+    "updatedAt": "2025-11-13T02:48:05.762Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6f5f",
+    "name": "Lotte Cinema Hà Nội",
+    "cinemaChain": "Lotte",
+    "location": {
+      "address": "Lotte Center Hà Nội, 54 Liễu Giai, Ba Đình, Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "coordinates": {
+        "latitude": 21.0306,
+        "longitude": 105.8083
+      }
+    },
+    "contact": {
+      "phone": "024 3775 7777",
+      "email": "contact@lotte.com"
+    },
+    "theaters": [
+      "6914db1ae55ece88a2ad6f61",
+      "6914db1ae55ece88a2ad6fe1",
+      "6914db1ae55ece88a2ad7061"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP",
+      "Dolby Atmos"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:10.337Z",
+    "updatedAt": "2025-11-13T02:48:05.770Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad70e3",
+    "name": "CGV Vincom Hải Phòng",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Plaza Hải Phòng, 4 Lạch Tray, Ngô Quyền, Hải Phòng",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng",
+      "coordinates": {
+        "latitude": 20.8658,
+        "longitude": 106.6904
+      }
+    },
+    "contact": {
+      "phone": "0225 3737 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ae55ece88a2ad70e5",
+      "6914db1ae55ece88a2ad7165"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:10.519Z",
+    "updatedAt": "2025-11-13T02:48:05.775Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad71e7",
+    "name": "CGV Hạ Long",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Hạ Long, 10A Lê Thánh Tôn, Bạch Đằng, Hạ Long",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "coordinates": {
+        "latitude": 20.9101,
+        "longitude": 107.0759
+      }
+    },
+    "contact": {
+      "phone": "0203 3515 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ae55ece88a2ad71e9",
+      "6914db1ae55ece88a2ad7269"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:10.666Z",
+    "updatedAt": "2025-11-13T02:48:05.780Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad72eb",
+    "name": "CGV Vincom Đà Nẵng",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Plaza Đà Nẵng, 910A Ngô Quyền, Sơn Trà, Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "coordinates": {
+        "latitude": 16.0714,
+        "longitude": 108.2303
+      }
+    },
+    "contact": {
+      "phone": "0236 3535 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ae55ece88a2ad72ed",
+      "6914db1ae55ece88a2ad736d",
+      "6914db1ae55ece88a2ad73ed"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:10.789Z",
+    "updatedAt": "2025-11-13T02:48:05.784Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad746f",
+    "name": "CGV Lotte Mart Đà Nẵng",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Lotte Mart Đà Nẵng, 255-257 Hùng Vương, Thanh Khê, Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "coordinates": {
+        "latitude": 16.0349,
+        "longitude": 108.2292
+      }
+    },
+    "contact": {
+      "phone": "0236 3655 999",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ae55ece88a2ad7471",
+      "6914db1be55ece88a2ad74f1"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:10.944Z",
+    "updatedAt": "2025-11-13T02:48:05.788Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7573",
+    "name": "BHD Star Cineplex Đà Nẵng",
+    "cinemaChain": "BHD",
+    "location": {
+      "address": "BigC Đà Nẵng, 255-257 Hùng Vương, Thanh Khê, Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "coordinates": {
+        "latitude": 16.0667,
+        "longitude": 108.2131
+      }
+    },
+    "contact": {
+      "phone": "0236 3777 333",
+      "email": "contact@bhd.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7575",
+      "6914db1be55ece88a2ad75f5"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.080Z",
+    "updatedAt": "2025-11-13T02:48:05.791Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7677",
+    "name": "CGV Vincom Huế",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Plaza Huế, 50A Hùng Vương, Phú Hội, Huế",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "coordinates": {
+        "latitude": 16.4628,
+        "longitude": 107.5942
+      }
+    },
+    "contact": {
+      "phone": "0234 3939 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7679",
+      "6914db1be55ece88a2ad76f9"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.217Z",
+    "updatedAt": "2025-11-13T02:48:05.794Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad777b",
+    "name": "CGV Nha Trang Center",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Nha Trang Center, 20 Trần Phú, Lộc Thọ, Nha Trang",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "coordinates": {
+        "latitude": 12.2483,
+        "longitude": 109.1965
+      }
+    },
+    "contact": {
+      "phone": "0258 3525 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad777d",
+      "6914db1be55ece88a2ad77fd",
+      "6914db1be55ece88a2ad787d"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.307Z",
+    "updatedAt": "2025-11-13T02:48:05.798Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad78ff",
+    "name": "CGV Quy Nhơn",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Quy Nhơn, 01 Nguyễn Tất Thành, Lê Hồng Phong, Quy Nhơn",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "coordinates": {
+        "latitude": 13.7765,
+        "longitude": 109.2233
+      }
+    },
+    "contact": {
+      "phone": "0256 3535 999",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7901",
+      "6914db1be55ece88a2ad7981"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.429Z",
+    "updatedAt": "2025-11-13T02:48:05.802Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7a03",
+    "name": "CGV Crescent Mall",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Crescent Mall, 101 Tôn Dật Tiên, Tân Phú, Quận 7, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.7297,
+        "longitude": 106.7158
+      }
+    },
+    "contact": {
+      "phone": "028 5412 3333",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7a05",
+      "6914db1be55ece88a2ad7a85",
+      "6914db1be55ece88a2ad7b05"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "4DX",
+      "Parking",
+      "Café",
+      "VIP",
+      "Dolby Atmos"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.529Z",
+    "updatedAt": "2025-11-13T02:48:05.806Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7b87",
+    "name": "CGV Pandora City",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Pandora City, 1/1 Trường Chinh, Tân Thới Nhất, Quận 12, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.87,
+        "longitude": 106.625
+      }
+    },
+    "contact": {
+      "phone": "028 6255 8888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7b89",
+      "6914db1be55ece88a2ad7c09"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.718Z",
+    "updatedAt": "2025-11-13T02:48:05.811Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7c8b",
+    "name": "CGV Estella Place",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Estella Place, 88 Song Hành, An Phú, Quận 2, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.787,
+        "longitude": 106.751
+      }
+    },
+    "contact": {
+      "phone": "028 3744 9999",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7c8d",
+      "6914db1be55ece88a2ad7d0d",
+      "6914db1be55ece88a2ad7d8d"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.833Z",
+    "updatedAt": "2025-11-13T02:48:05.816Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7e0f",
+    "name": "CGV SC VivoCity",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "SC VivoCity, 1058 Nguyễn Văn Linh, Tân Phong, Quận 7, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.7297,
+        "longitude": 106.7158
+      }
+    },
+    "contact": {
+      "phone": "028 5412 6666",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1be55ece88a2ad7e11",
+      "6914db1ce55ece88a2ad7e91",
+      "6914db1ce55ece88a2ad7f11"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:11.977Z",
+    "updatedAt": "2025-11-13T02:48:05.820Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7f93",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi",
+    "cinemaChain": "BHD",
+    "location": {
+      "address": "Vincom Đồng Khởi, 72 Lê Thánh Tôn, Bến Nghé, Quận 1, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028 3822 3333",
+      "email": "contact@bhd.com"
+    },
+    "theaters": [
+      "6914db1ce55ece88a2ad7f95",
+      "6914db1ce55ece88a2ad8015",
+      "6914db1ce55ece88a2ad8095"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:12.171Z",
+    "updatedAt": "2025-11-13T02:48:05.826Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8117",
+    "name": "BHD Star Cineplex Vincom Thủ Đức",
+    "cinemaChain": "BHD",
+    "location": {
+      "address": "Vincom Thủ Đức, 216 Võ Văn Ngân, Bình Thọ, Thủ Đức, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.85,
+        "longitude": 106.75
+      }
+    },
+    "contact": {
+      "phone": "028 3725 8888",
+      "email": "contact@bhd.com"
+    },
+    "theaters": [
+      "6914db1ce55ece88a2ad8119",
+      "6914db1ce55ece88a2ad8199"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:12.366Z",
+    "updatedAt": "2025-11-13T02:48:05.836Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad821b",
+    "name": "Lotte Cinema Nam Sài Gòn",
+    "cinemaChain": "Lotte",
+    "location": {
+      "address": "Lotte Mart Nam Sài Gòn, 469 Nguyễn Hữu Thọ, Tân Hưng, Quận 7, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.7297,
+        "longitude": 106.7158
+      }
+    },
+    "contact": {
+      "phone": "028 3775 7777",
+      "email": "contact@lotte.com"
+    },
+    "theaters": [
+      "6914db1ce55ece88a2ad821d",
+      "6914db1ce55ece88a2ad829d",
+      "6914db1ce55ece88a2ad831d"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:12.522Z",
+    "updatedAt": "2025-11-13T02:48:05.843Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad839f",
+    "name": "CGV Vincom Cần Thơ",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Vincom Plaza Cần Thơ, 209 Đường 30/4, Xuân Khánh, Ninh Kiều, Cần Thơ",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ",
+      "coordinates": {
+        "latitude": 10.0249,
+        "longitude": 105.7748
+      }
+    },
+    "contact": {
+      "phone": "0292 3737 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ce55ece88a2ad83a1",
+      "6914db1ce55ece88a2ad8421",
+      "6914db1ce55ece88a2ad84a1"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:12.685Z",
+    "updatedAt": "2025-11-13T02:48:05.848Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8523",
+    "name": "CGV Long Xuyên",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "BigC Long Xuyên, 01 Trần Hưng Đạo, Mỹ Bình, Long Xuyên",
+      "city": "Long Xuyên",
+      "province": "An Giang",
+      "coordinates": {
+        "latitude": 10.3825,
+        "longitude": 105.4403
+      }
+    },
+    "contact": {
+      "phone": "0296 3535 999",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ce55ece88a2ad8525",
+      "6914db1ce55ece88a2ad85a5"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:12.852Z",
+    "updatedAt": "2025-11-13T02:48:05.854Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8627",
+    "name": "CGV Biên Hòa",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "BigC Biên Hòa, 1096 Phạm Văn Thuận, Tân Mai, Biên Hòa",
+      "city": "Biên Hòa",
+      "province": "Đồng Nai",
+      "coordinates": {
+        "latitude": 10.9508,
+        "longitude": 106.8263
+      }
+    },
+    "contact": {
+      "phone": "0251 3838 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1ce55ece88a2ad8629",
+      "6914db1ce55ece88a2ad86a9"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:12.946Z",
+    "updatedAt": "2025-11-13T02:48:05.860Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad872b",
+    "name": "CGV Aeon Bình Dương",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Aeon Mall Bình Dương, 1 Đại Lộ Bình Dương, Chánh Nghĩa, Thủ Dầu Một",
+      "city": "Thủ Dầu Một",
+      "province": "Bình Dương",
+      "coordinates": {
+        "latitude": 10.98,
+        "longitude": 106.65
+      }
+    },
+    "contact": {
+      "phone": "0274 3535 888",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1de55ece88a2ad872d",
+      "6914db1de55ece88a2ad87ad",
+      "6914db1de55ece88a2ad882d"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "IMAX",
+      "3D",
+      "Parking",
+      "Café",
+      "VIP"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:13.052Z",
+    "updatedAt": "2025-11-13T02:48:05.866Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad88af",
+    "name": "CGV Vũng Tàu",
+    "cinemaChain": "CGV",
+    "location": {
+      "address": "Lotte Mart Vũng Tàu, 18 Trần Phú, Phường 1, Vũng Tàu",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "coordinates": {
+        "latitude": 10.346,
+        "longitude": 107.0843
+      }
+    },
+    "contact": {
+      "phone": "0254 3535 999",
+      "email": "contact@cgv.com"
+    },
+    "theaters": [
+      "6914db1de55ece88a2ad88b1",
+      "6914db1de55ece88a2ad8931"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:13.192Z",
+    "updatedAt": "2025-11-13T02:48:05.872Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad89b3",
+    "name": "Galaxy Cinema Quận 1",
+    "cinemaChain": "Galaxy",
+    "location": {
+      "address": "116 Nguyễn Du, Bến Thành, Quận 1, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028 3822 4444",
+      "email": "contact@galaxy.com"
+    },
+    "theaters": [
+      "6914db1de55ece88a2ad89b5",
+      "6914db1de55ece88a2ad8a35"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking",
+      "Café"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:13.306Z",
+    "updatedAt": "2025-11-13T02:48:05.878Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8ab7",
+    "name": "Beta Cinema Cineplex",
+    "cinemaChain": "Beta",
+    "location": {
+      "address": "123 Lý Tự Trọng, Bến Thành, Quận 1, TP.HCM",
+      "city": "Ho Chi Minh",
+      "province": "Ho Chi Minh",
+      "coordinates": {
+        "latitude": 10.7769,
+        "longitude": 106.7009
+      }
+    },
+    "contact": {
+      "phone": "028 3822 5555",
+      "email": "contact@beta.com"
+    },
+    "theaters": [
+      "6914db1de55ece88a2ad8ab9",
+      "6914db1de55ece88a2ad8b39"
+    ],
+    "operatingHours": {
+      "open": "09:00",
+      "close": "23:00"
+    },
+    "facilities": [
+      "3D",
+      "Parking"
+    ],
+    "isActive": true,
+    "createdAt": "2025-11-12T19:08:13.447Z",
+    "updatedAt": "2025-11-13T02:48:05.890Z",
+    "__v": 0
+  }
+]

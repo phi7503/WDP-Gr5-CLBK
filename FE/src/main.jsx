@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { ConfigProvider, theme as antdTheme } from "antd";
+import { ConfigProvider, theme as antdTheme, App as AntApp } from "antd";
 import "./app/cinema-theme.css";
 // ✅ Ant Design CSS được import trong style.css để đảm bảo thứ tự đúng
 import App from "./App.jsx";
@@ -17,23 +17,12 @@ const queryClient = new QueryClient({
     },
   },
 });
-import { message } from "antd";
 import "./style.css";
 import "./animations.css";
 import "./showtimes-colors.css";
 import "./styles/message.css";
 import "./styles/notification.css";
 import { AuthProvider } from "./contexts/AuthContext";
-
-// ✅ Cấu hình Ant Design Message
-message.config({
-  top: 80,
-  duration: 4,
-  maxCount: 3,
-  rtl: false,
-  prefixCls: 'ant-message',
-  getContainer: () => document.body,
-});
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -54,13 +43,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           },
         }}
       >
-    <AuthProvider>
-          <AppProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </AppProvider>
-    </AuthProvider>
+        <AntApp>
+          <AuthProvider>
+            <AppProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </AppProvider>
+          </AuthProvider>
+        </AntApp>
       </ConfigProvider>
     </QueryClientProvider>
   </React.StrictMode>

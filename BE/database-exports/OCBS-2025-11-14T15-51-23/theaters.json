@@ -1,0 +1,947 @@
+[
+  {
+    "_id": "688391675d37066a796abcb0",
+    "name": "CGV Hà Đông - Theater 1",
+    "branch": "688390555d37066a796abc84",
+    "seatLayout": "6883925c5d37066a796abe3d",
+    "createdAt": "2025-07-25T14:15:03.991Z",
+    "updatedAt": "2025-07-25T14:19:08.206Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883916c5d37066a796abcb7",
+    "name": "CGV Hà Đông - Theater 2",
+    "branch": "688390555d37066a796abc84",
+    "seatLayout": "688392c95d37066a796abe52",
+    "createdAt": "2025-07-25T14:15:08.107Z",
+    "updatedAt": "2025-07-25T14:20:57.232Z",
+    "__v": 0
+  },
+  {
+    "_id": "688391705d37066a796abcbe",
+    "name": "CGV Hà Đông - Theater 3",
+    "branch": "688390555d37066a796abc84",
+    "seatLayout": null,
+    "createdAt": "2025-07-25T14:15:12.386Z",
+    "updatedAt": "2025-07-25T14:15:12.386Z",
+    "__v": 0
+  },
+  {
+    "_id": "688391825d37066a796abcc7",
+    "name": "CGV Long Biên - Theater 1",
+    "branch": "688390a65d37066a796abc8b",
+    "seatLayout": "6883931a5d37066a796abe74",
+    "createdAt": "2025-07-25T14:15:30.301Z",
+    "updatedAt": "2025-07-25T14:22:18.287Z",
+    "__v": 0
+  },
+  {
+    "_id": "688391855d37066a796abcce",
+    "name": "CGV Long Biên - Theater 2",
+    "branch": "688390a65d37066a796abc8b",
+    "seatLayout": null,
+    "createdAt": "2025-07-25T14:15:33.359Z",
+    "updatedAt": "2025-07-25T14:15:33.359Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883918a5d37066a796abcd5",
+    "name": "CGV Long Biên - Theater 3",
+    "branch": "688390a65d37066a796abc8b",
+    "seatLayout": null,
+    "createdAt": "2025-07-25T14:15:38.181Z",
+    "updatedAt": "2025-07-25T14:15:38.181Z",
+    "__v": 0
+  },
+  {
+    "_id": "688391965d37066a796abcde",
+    "name": "CGV Hải Phòng - Theater 1",
+    "branch": "688391365d37066a796abc9a",
+    "seatLayout": "6883933d5d37066a796abeb1",
+    "createdAt": "2025-07-25T14:15:50.852Z",
+    "updatedAt": "2025-07-25T14:22:53.702Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883919b5d37066a796abce5",
+    "name": "CGV Hải Phòng - Theater 2",
+    "branch": "688391365d37066a796abc9a",
+    "seatLayout": null,
+    "createdAt": "2025-07-25T14:15:55.064Z",
+    "updatedAt": "2025-07-25T14:15:55.064Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883919e5d37066a796abcec",
+    "name": "CGV Hải Phòng - Theater 3",
+    "branch": "688391365d37066a796abc9a",
+    "seatLayout": null,
+    "createdAt": "2025-07-25T14:15:58.611Z",
+    "updatedAt": "2025-07-25T14:15:58.611Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7cfc390d52f77372669e",
+    "name": "Beta Cinemas - Theater 1",
+    "branch": "68ec7cfb390d52f77372669b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:15:56.602Z",
+    "updatedAt": "2025-10-13T04:15:56.602Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d09576bb5cbd06c2604",
+    "name": "Beta Cinemas - Theater 1",
+    "branch": "68ec7d09576bb5cbd06c2602",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:09.842Z",
+    "updatedAt": "2025-10-13T04:16:09.842Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d09576bb5cbd06c2697",
+    "name": "Beta Cinemas - Theater 2",
+    "branch": "68ec7d09576bb5cbd06c2602",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:09.995Z",
+    "updatedAt": "2025-10-13T04:16:09.995Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c272b",
+    "name": "Beta Cinemas - Theater 3",
+    "branch": "68ec7d09576bb5cbd06c2602",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.158Z",
+    "updatedAt": "2025-10-13T04:16:10.158Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c27c1",
+    "name": "BHD Star Cineplex - Theater 1",
+    "branch": "68ec7d0a576bb5cbd06c27bf",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.259Z",
+    "updatedAt": "2025-10-13T04:16:10.259Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c2854",
+    "name": "BHD Star Cineplex - Theater 2",
+    "branch": "68ec7d0a576bb5cbd06c27bf",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.428Z",
+    "updatedAt": "2025-10-13T04:16:10.428Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c28e7",
+    "name": "BHD Star Cineplex - Theater 3",
+    "branch": "68ec7d0a576bb5cbd06c27bf",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.600Z",
+    "updatedAt": "2025-10-13T04:16:10.600Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c297d",
+    "name": "Lotte Cinema - Theater 1",
+    "branch": "68ec7d0a576bb5cbd06c297b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.719Z",
+    "updatedAt": "2025-10-13T04:16:10.719Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c2a10",
+    "name": "Lotte Cinema - Theater 2",
+    "branch": "68ec7d0a576bb5cbd06c297b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.842Z",
+    "updatedAt": "2025-10-13T04:16:10.842Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c2aa3",
+    "name": "Lotte Cinema - Theater 3",
+    "branch": "68ec7d0a576bb5cbd06c297b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.908Z",
+    "updatedAt": "2025-10-13T04:16:10.908Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0a576bb5cbd06c2b39",
+    "name": "Galaxy Cinema - Theater 1",
+    "branch": "68ec7d0a576bb5cbd06c2b37",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:10.982Z",
+    "updatedAt": "2025-10-13T04:16:10.982Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2bcc",
+    "name": "Galaxy Cinema - Theater 2",
+    "branch": "68ec7d0a576bb5cbd06c2b37",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.039Z",
+    "updatedAt": "2025-10-13T04:16:11.039Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2c5f",
+    "name": "Galaxy Cinema - Theater 3",
+    "branch": "68ec7d0a576bb5cbd06c2b37",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.108Z",
+    "updatedAt": "2025-10-13T04:16:11.108Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2cf5",
+    "name": "Mega GS - Theater 1",
+    "branch": "68ec7d0b576bb5cbd06c2cf3",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.165Z",
+    "updatedAt": "2025-10-13T04:16:11.165Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2d88",
+    "name": "Mega GS - Theater 2",
+    "branch": "68ec7d0b576bb5cbd06c2cf3",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.211Z",
+    "updatedAt": "2025-10-13T04:16:11.211Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2e1b",
+    "name": "Mega GS - Theater 3",
+    "branch": "68ec7d0b576bb5cbd06c2cf3",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.268Z",
+    "updatedAt": "2025-10-13T04:16:11.268Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2eb1",
+    "name": "Platinum Cineplex - Theater 1",
+    "branch": "68ec7d0b576bb5cbd06c2eaf",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.348Z",
+    "updatedAt": "2025-10-13T04:16:11.348Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2f44",
+    "name": "Platinum Cineplex - Theater 2",
+    "branch": "68ec7d0b576bb5cbd06c2eaf",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.405Z",
+    "updatedAt": "2025-10-13T04:16:11.405Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c2fd7",
+    "name": "Platinum Cineplex - Theater 3",
+    "branch": "68ec7d0b576bb5cbd06c2eaf",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.466Z",
+    "updatedAt": "2025-10-13T04:16:11.466Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c306d",
+    "name": "Diamond Cinema - Theater 1",
+    "branch": "68ec7d0b576bb5cbd06c306b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.525Z",
+    "updatedAt": "2025-10-13T04:16:11.525Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c3100",
+    "name": "Diamond Cinema - Theater 2",
+    "branch": "68ec7d0b576bb5cbd06c306b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.567Z",
+    "updatedAt": "2025-10-13T04:16:11.567Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c3193",
+    "name": "Diamond Cinema - Theater 3",
+    "branch": "68ec7d0b576bb5cbd06c306b",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.611Z",
+    "updatedAt": "2025-10-13T04:16:11.611Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c3229",
+    "name": "Vincom Center - Theater 1",
+    "branch": "68ec7d0b576bb5cbd06c3227",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.707Z",
+    "updatedAt": "2025-10-13T04:16:11.707Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c32bc",
+    "name": "Vincom Center - Theater 2",
+    "branch": "68ec7d0b576bb5cbd06c3227",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.747Z",
+    "updatedAt": "2025-10-13T04:16:11.747Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ec7d0b576bb5cbd06c334f",
+    "name": "Vincom Center - Theater 3",
+    "branch": "68ec7d0b576bb5cbd06c3227",
+    "seatLayout": null,
+    "createdAt": "2025-10-13T04:16:11.786Z",
+    "updatedAt": "2025-10-13T04:16:11.786Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ede6c53b45cefe52e76ba3",
+    "name": "CGV Vincom Center - Screen 1",
+    "branch": "68ede6c53b45cefe52e76ba1",
+    "seatLayout": "68ede6c53b45cefe52e76ba5",
+    "createdAt": "2025-10-14T05:59:33.749Z",
+    "updatedAt": "2025-10-14T05:59:33.770Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db18e55ece88a2ad684c",
+    "name": "CGV Vincom Center Ba Đình - Phòng 1",
+    "branch": "6914db18e55ece88a2ad6849",
+    "seatLayout": "6914db18e55ece88a2ad684e",
+    "createdAt": "2025-11-12T19:08:08.603Z",
+    "updatedAt": "2025-11-12T19:08:08.660Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db18e55ece88a2ad68cc",
+    "name": "CGV Vincom Center Ba Đình - Phòng 2",
+    "branch": "6914db18e55ece88a2ad6849",
+    "seatLayout": "6914db18e55ece88a2ad68ce",
+    "createdAt": "2025-11-12T19:08:08.793Z",
+    "updatedAt": "2025-11-12T19:08:08.804Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db18e55ece88a2ad694c",
+    "name": "CGV Vincom Center Ba Đình - Phòng 3",
+    "branch": "6914db18e55ece88a2ad6849",
+    "seatLayout": "6914db19e55ece88a2ad694e",
+    "createdAt": "2025-11-12T19:08:08.991Z",
+    "updatedAt": "2025-11-12T19:08:09.015Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad69d0",
+    "name": "CGV Vincom Royal City - Phòng 1",
+    "branch": "6914db19e55ece88a2ad69ce",
+    "seatLayout": "6914db19e55ece88a2ad69d2",
+    "createdAt": "2025-11-12T19:08:09.151Z",
+    "updatedAt": "2025-11-12T19:08:09.164Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6a50",
+    "name": "CGV Vincom Royal City - Phòng 2",
+    "branch": "6914db19e55ece88a2ad69ce",
+    "seatLayout": "6914db19e55ece88a2ad6a52",
+    "createdAt": "2025-11-12T19:08:09.264Z",
+    "updatedAt": "2025-11-12T19:08:09.277Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6ad0",
+    "name": "CGV Vincom Royal City - Phòng 3",
+    "branch": "6914db19e55ece88a2ad69ce",
+    "seatLayout": "6914db19e55ece88a2ad6ad2",
+    "createdAt": "2025-11-12T19:08:09.390Z",
+    "updatedAt": "2025-11-12T19:08:09.396Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6b55",
+    "name": "CGV Landmark 72 - Phòng 1",
+    "branch": "6914db19e55ece88a2ad6b53",
+    "seatLayout": "6914db19e55ece88a2ad6b57",
+    "createdAt": "2025-11-12T19:08:09.601Z",
+    "updatedAt": "2025-11-12T19:08:09.631Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6bd5",
+    "name": "CGV Landmark 72 - Phòng 2",
+    "branch": "6914db19e55ece88a2ad6b53",
+    "seatLayout": "6914db19e55ece88a2ad6bd7",
+    "createdAt": "2025-11-12T19:08:09.761Z",
+    "updatedAt": "2025-11-12T19:08:09.776Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6c55",
+    "name": "CGV Landmark 72 - Phòng 3",
+    "branch": "6914db19e55ece88a2ad6b53",
+    "seatLayout": "6914db19e55ece88a2ad6c57",
+    "createdAt": "2025-11-12T19:08:09.868Z",
+    "updatedAt": "2025-11-12T19:08:09.878Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6cd9",
+    "name": "BHD Star Cineplex Vincom Nguyễn Chí Thanh - Phòng 1",
+    "branch": "6914db19e55ece88a2ad6cd7",
+    "seatLayout": "6914db19e55ece88a2ad6cdb",
+    "createdAt": "2025-11-12T19:08:09.971Z",
+    "updatedAt": "2025-11-12T19:08:09.986Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6d59",
+    "name": "BHD Star Cineplex Vincom Nguyễn Chí Thanh - Phòng 2",
+    "branch": "6914db19e55ece88a2ad6cd7",
+    "seatLayout": "6914db1ae55ece88a2ad6d5b",
+    "createdAt": "2025-11-12T19:08:10.109Z",
+    "updatedAt": "2025-11-12T19:08:10.113Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6ddd",
+    "name": "BHD Star Cineplex Vincom Times City - Phòng 1",
+    "branch": "6914db1ae55ece88a2ad6ddb",
+    "seatLayout": "6914db1ae55ece88a2ad6ddf",
+    "createdAt": "2025-11-12T19:08:10.173Z",
+    "updatedAt": "2025-11-12T19:08:10.178Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6e5d",
+    "name": "BHD Star Cineplex Vincom Times City - Phòng 2",
+    "branch": "6914db1ae55ece88a2ad6ddb",
+    "seatLayout": "6914db1ae55ece88a2ad6e5f",
+    "createdAt": "2025-11-12T19:08:10.226Z",
+    "updatedAt": "2025-11-12T19:08:10.230Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6edd",
+    "name": "BHD Star Cineplex Vincom Times City - Phòng 3",
+    "branch": "6914db1ae55ece88a2ad6ddb",
+    "seatLayout": "6914db1ae55ece88a2ad6edf",
+    "createdAt": "2025-11-12T19:08:10.287Z",
+    "updatedAt": "2025-11-12T19:08:10.292Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6f61",
+    "name": "Lotte Cinema Hà Nội - Phòng 1",
+    "branch": "6914db1ae55ece88a2ad6f5f",
+    "seatLayout": "6914db1ae55ece88a2ad6f63",
+    "createdAt": "2025-11-12T19:08:10.340Z",
+    "updatedAt": "2025-11-12T19:08:10.346Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6fe1",
+    "name": "Lotte Cinema Hà Nội - Phòng 2",
+    "branch": "6914db1ae55ece88a2ad6f5f",
+    "seatLayout": "6914db1ae55ece88a2ad6fe3",
+    "createdAt": "2025-11-12T19:08:10.385Z",
+    "updatedAt": "2025-11-12T19:08:10.390Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7061",
+    "name": "Lotte Cinema Hà Nội - Phòng 3",
+    "branch": "6914db1ae55ece88a2ad6f5f",
+    "seatLayout": "6914db1ae55ece88a2ad7063",
+    "createdAt": "2025-11-12T19:08:10.443Z",
+    "updatedAt": "2025-11-12T19:08:10.448Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad70e5",
+    "name": "CGV Vincom Hải Phòng - Phòng 1",
+    "branch": "6914db1ae55ece88a2ad70e3",
+    "seatLayout": "6914db1ae55ece88a2ad70e7",
+    "createdAt": "2025-11-12T19:08:10.522Z",
+    "updatedAt": "2025-11-12T19:08:10.526Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7165",
+    "name": "CGV Vincom Hải Phòng - Phòng 2",
+    "branch": "6914db1ae55ece88a2ad70e3",
+    "seatLayout": "6914db1ae55ece88a2ad7167",
+    "createdAt": "2025-11-12T19:08:10.609Z",
+    "updatedAt": "2025-11-12T19:08:10.615Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad71e9",
+    "name": "CGV Hạ Long - Phòng 1",
+    "branch": "6914db1ae55ece88a2ad71e7",
+    "seatLayout": "6914db1ae55ece88a2ad71eb",
+    "createdAt": "2025-11-12T19:08:10.668Z",
+    "updatedAt": "2025-11-12T19:08:10.673Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7269",
+    "name": "CGV Hạ Long - Phòng 2",
+    "branch": "6914db1ae55ece88a2ad71e7",
+    "seatLayout": "6914db1ae55ece88a2ad726b",
+    "createdAt": "2025-11-12T19:08:10.731Z",
+    "updatedAt": "2025-11-12T19:08:10.738Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad72ed",
+    "name": "CGV Vincom Đà Nẵng - Phòng 1",
+    "branch": "6914db1ae55ece88a2ad72eb",
+    "seatLayout": "6914db1ae55ece88a2ad72ef",
+    "createdAt": "2025-11-12T19:08:10.794Z",
+    "updatedAt": "2025-11-12T19:08:10.803Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad736d",
+    "name": "CGV Vincom Đà Nẵng - Phòng 2",
+    "branch": "6914db1ae55ece88a2ad72eb",
+    "seatLayout": "6914db1ae55ece88a2ad736f",
+    "createdAt": "2025-11-12T19:08:10.840Z",
+    "updatedAt": "2025-11-12T19:08:10.844Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad73ed",
+    "name": "CGV Vincom Đà Nẵng - Phòng 3",
+    "branch": "6914db1ae55ece88a2ad72eb",
+    "seatLayout": "6914db1ae55ece88a2ad73ef",
+    "createdAt": "2025-11-12T19:08:10.894Z",
+    "updatedAt": "2025-11-12T19:08:10.899Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7471",
+    "name": "CGV Lotte Mart Đà Nẵng - Phòng 1",
+    "branch": "6914db1ae55ece88a2ad746f",
+    "seatLayout": "6914db1ae55ece88a2ad7473",
+    "createdAt": "2025-11-12T19:08:10.946Z",
+    "updatedAt": "2025-11-12T19:08:10.954Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad74f1",
+    "name": "CGV Lotte Mart Đà Nẵng - Phòng 2",
+    "branch": "6914db1ae55ece88a2ad746f",
+    "seatLayout": "6914db1be55ece88a2ad74f3",
+    "createdAt": "2025-11-12T19:08:11.004Z",
+    "updatedAt": "2025-11-12T19:08:11.018Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7575",
+    "name": "BHD Star Cineplex Đà Nẵng - Phòng 1",
+    "branch": "6914db1be55ece88a2ad7573",
+    "seatLayout": "6914db1be55ece88a2ad7577",
+    "createdAt": "2025-11-12T19:08:11.082Z",
+    "updatedAt": "2025-11-12T19:08:11.088Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad75f5",
+    "name": "BHD Star Cineplex Đà Nẵng - Phòng 2",
+    "branch": "6914db1be55ece88a2ad7573",
+    "seatLayout": "6914db1be55ece88a2ad75f7",
+    "createdAt": "2025-11-12T19:08:11.133Z",
+    "updatedAt": "2025-11-12T19:08:11.149Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7679",
+    "name": "CGV Vincom Huế - Phòng 1",
+    "branch": "6914db1be55ece88a2ad7677",
+    "seatLayout": "6914db1be55ece88a2ad767b",
+    "createdAt": "2025-11-12T19:08:11.219Z",
+    "updatedAt": "2025-11-12T19:08:11.226Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad76f9",
+    "name": "CGV Vincom Huế - Phòng 2",
+    "branch": "6914db1be55ece88a2ad7677",
+    "seatLayout": "6914db1be55ece88a2ad76fb",
+    "createdAt": "2025-11-12T19:08:11.262Z",
+    "updatedAt": "2025-11-12T19:08:11.267Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad777d",
+    "name": "CGV Nha Trang Center - Phòng 1",
+    "branch": "6914db1be55ece88a2ad777b",
+    "seatLayout": "6914db1be55ece88a2ad777f",
+    "createdAt": "2025-11-12T19:08:11.309Z",
+    "updatedAt": "2025-11-12T19:08:11.313Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad77fd",
+    "name": "CGV Nha Trang Center - Phòng 2",
+    "branch": "6914db1be55ece88a2ad777b",
+    "seatLayout": "6914db1be55ece88a2ad77ff",
+    "createdAt": "2025-11-12T19:08:11.345Z",
+    "updatedAt": "2025-11-12T19:08:11.350Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad787d",
+    "name": "CGV Nha Trang Center - Phòng 3",
+    "branch": "6914db1be55ece88a2ad777b",
+    "seatLayout": "6914db1be55ece88a2ad787f",
+    "createdAt": "2025-11-12T19:08:11.385Z",
+    "updatedAt": "2025-11-12T19:08:11.390Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7901",
+    "name": "CGV Quy Nhơn - Phòng 1",
+    "branch": "6914db1be55ece88a2ad78ff",
+    "seatLayout": "6914db1be55ece88a2ad7903",
+    "createdAt": "2025-11-12T19:08:11.432Z",
+    "updatedAt": "2025-11-12T19:08:11.436Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7981",
+    "name": "CGV Quy Nhơn - Phòng 2",
+    "branch": "6914db1be55ece88a2ad78ff",
+    "seatLayout": "6914db1be55ece88a2ad7983",
+    "createdAt": "2025-11-12T19:08:11.470Z",
+    "updatedAt": "2025-11-12T19:08:11.474Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7a05",
+    "name": "CGV Crescent Mall - Phòng 1",
+    "branch": "6914db1be55ece88a2ad7a03",
+    "seatLayout": "6914db1be55ece88a2ad7a07",
+    "createdAt": "2025-11-12T19:08:11.533Z",
+    "updatedAt": "2025-11-12T19:08:11.539Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7a85",
+    "name": "CGV Crescent Mall - Phòng 2",
+    "branch": "6914db1be55ece88a2ad7a03",
+    "seatLayout": "6914db1be55ece88a2ad7a87",
+    "createdAt": "2025-11-12T19:08:11.575Z",
+    "updatedAt": "2025-11-12T19:08:11.579Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7b05",
+    "name": "CGV Crescent Mall - Phòng 3",
+    "branch": "6914db1be55ece88a2ad7a03",
+    "seatLayout": "6914db1be55ece88a2ad7b07",
+    "createdAt": "2025-11-12T19:08:11.626Z",
+    "updatedAt": "2025-11-12T19:08:11.630Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7b89",
+    "name": "CGV Pandora City - Phòng 1",
+    "branch": "6914db1be55ece88a2ad7b87",
+    "seatLayout": "6914db1be55ece88a2ad7b8b",
+    "createdAt": "2025-11-12T19:08:11.720Z",
+    "updatedAt": "2025-11-12T19:08:11.725Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7c09",
+    "name": "CGV Pandora City - Phòng 2",
+    "branch": "6914db1be55ece88a2ad7b87",
+    "seatLayout": "6914db1be55ece88a2ad7c0b",
+    "createdAt": "2025-11-12T19:08:11.766Z",
+    "updatedAt": "2025-11-12T19:08:11.773Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7c8d",
+    "name": "CGV Estella Place - Phòng 1",
+    "branch": "6914db1be55ece88a2ad7c8b",
+    "seatLayout": "6914db1be55ece88a2ad7c8f",
+    "createdAt": "2025-11-12T19:08:11.839Z",
+    "updatedAt": "2025-11-12T19:08:11.844Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7d0d",
+    "name": "CGV Estella Place - Phòng 2",
+    "branch": "6914db1be55ece88a2ad7c8b",
+    "seatLayout": "6914db1be55ece88a2ad7d0f",
+    "createdAt": "2025-11-12T19:08:11.885Z",
+    "updatedAt": "2025-11-12T19:08:11.890Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7d8d",
+    "name": "CGV Estella Place - Phòng 3",
+    "branch": "6914db1be55ece88a2ad7c8b",
+    "seatLayout": "6914db1be55ece88a2ad7d8f",
+    "createdAt": "2025-11-12T19:08:11.929Z",
+    "updatedAt": "2025-11-12T19:08:11.935Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7e11",
+    "name": "CGV SC VivoCity - Phòng 1",
+    "branch": "6914db1be55ece88a2ad7e0f",
+    "seatLayout": "6914db1be55ece88a2ad7e13",
+    "createdAt": "2025-11-12T19:08:11.980Z",
+    "updatedAt": "2025-11-12T19:08:11.985Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7e91",
+    "name": "CGV SC VivoCity - Phòng 2",
+    "branch": "6914db1be55ece88a2ad7e0f",
+    "seatLayout": "6914db1ce55ece88a2ad7e93",
+    "createdAt": "2025-11-12T19:08:12.029Z",
+    "updatedAt": "2025-11-12T19:08:12.035Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7f11",
+    "name": "CGV SC VivoCity - Phòng 3",
+    "branch": "6914db1be55ece88a2ad7e0f",
+    "seatLayout": "6914db1ce55ece88a2ad7f13",
+    "createdAt": "2025-11-12T19:08:12.073Z",
+    "updatedAt": "2025-11-12T19:08:12.078Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7f95",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi - Phòng 1",
+    "branch": "6914db1ce55ece88a2ad7f93",
+    "seatLayout": "6914db1ce55ece88a2ad7f97",
+    "createdAt": "2025-11-12T19:08:12.186Z",
+    "updatedAt": "2025-11-12T19:08:12.197Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8015",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi - Phòng 2",
+    "branch": "6914db1ce55ece88a2ad7f93",
+    "seatLayout": "6914db1ce55ece88a2ad8017",
+    "createdAt": "2025-11-12T19:08:12.240Z",
+    "updatedAt": "2025-11-12T19:08:12.246Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8095",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi - Phòng 3",
+    "branch": "6914db1ce55ece88a2ad7f93",
+    "seatLayout": "6914db1ce55ece88a2ad8097",
+    "createdAt": "2025-11-12T19:08:12.294Z",
+    "updatedAt": "2025-11-12T19:08:12.299Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8119",
+    "name": "BHD Star Cineplex Vincom Thủ Đức - Phòng 1",
+    "branch": "6914db1ce55ece88a2ad8117",
+    "seatLayout": "6914db1ce55ece88a2ad811b",
+    "createdAt": "2025-11-12T19:08:12.374Z",
+    "updatedAt": "2025-11-12T19:08:12.382Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8199",
+    "name": "BHD Star Cineplex Vincom Thủ Đức - Phòng 2",
+    "branch": "6914db1ce55ece88a2ad8117",
+    "seatLayout": "6914db1ce55ece88a2ad819b",
+    "createdAt": "2025-11-12T19:08:12.462Z",
+    "updatedAt": "2025-11-12T19:08:12.473Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad821d",
+    "name": "Lotte Cinema Nam Sài Gòn - Phòng 1",
+    "branch": "6914db1ce55ece88a2ad821b",
+    "seatLayout": "6914db1ce55ece88a2ad821f",
+    "createdAt": "2025-11-12T19:08:12.526Z",
+    "updatedAt": "2025-11-12T19:08:12.534Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad829d",
+    "name": "Lotte Cinema Nam Sài Gòn - Phòng 2",
+    "branch": "6914db1ce55ece88a2ad821b",
+    "seatLayout": "6914db1ce55ece88a2ad829f",
+    "createdAt": "2025-11-12T19:08:12.580Z",
+    "updatedAt": "2025-11-12T19:08:12.585Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad831d",
+    "name": "Lotte Cinema Nam Sài Gòn - Phòng 3",
+    "branch": "6914db1ce55ece88a2ad821b",
+    "seatLayout": "6914db1ce55ece88a2ad831f",
+    "createdAt": "2025-11-12T19:08:12.633Z",
+    "updatedAt": "2025-11-12T19:08:12.638Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad83a1",
+    "name": "CGV Vincom Cần Thơ - Phòng 1",
+    "branch": "6914db1ce55ece88a2ad839f",
+    "seatLayout": "6914db1ce55ece88a2ad83a3",
+    "createdAt": "2025-11-12T19:08:12.687Z",
+    "updatedAt": "2025-11-12T19:08:12.692Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8421",
+    "name": "CGV Vincom Cần Thơ - Phòng 2",
+    "branch": "6914db1ce55ece88a2ad839f",
+    "seatLayout": "6914db1ce55ece88a2ad8423",
+    "createdAt": "2025-11-12T19:08:12.739Z",
+    "updatedAt": "2025-11-12T19:08:12.744Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad84a1",
+    "name": "CGV Vincom Cần Thơ - Phòng 3",
+    "branch": "6914db1ce55ece88a2ad839f",
+    "seatLayout": "6914db1ce55ece88a2ad84a3",
+    "createdAt": "2025-11-12T19:08:12.793Z",
+    "updatedAt": "2025-11-12T19:08:12.797Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8525",
+    "name": "CGV Long Xuyên - Phòng 1",
+    "branch": "6914db1ce55ece88a2ad8523",
+    "seatLayout": "6914db1ce55ece88a2ad8527",
+    "createdAt": "2025-11-12T19:08:12.854Z",
+    "updatedAt": "2025-11-12T19:08:12.860Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad85a5",
+    "name": "CGV Long Xuyên - Phòng 2",
+    "branch": "6914db1ce55ece88a2ad8523",
+    "seatLayout": "6914db1ce55ece88a2ad85a7",
+    "createdAt": "2025-11-12T19:08:12.900Z",
+    "updatedAt": "2025-11-12T19:08:12.904Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8629",
+    "name": "CGV Biên Hòa - Phòng 1",
+    "branch": "6914db1ce55ece88a2ad8627",
+    "seatLayout": "6914db1ce55ece88a2ad862b",
+    "createdAt": "2025-11-12T19:08:12.948Z",
+    "updatedAt": "2025-11-12T19:08:12.956Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad86a9",
+    "name": "CGV Biên Hòa - Phòng 2",
+    "branch": "6914db1ce55ece88a2ad8627",
+    "seatLayout": "6914db1ce55ece88a2ad86ab",
+    "createdAt": "2025-11-12T19:08:12.995Z",
+    "updatedAt": "2025-11-12T19:08:13.000Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad872d",
+    "name": "CGV Aeon Bình Dương - Phòng 1",
+    "branch": "6914db1de55ece88a2ad872b",
+    "seatLayout": "6914db1de55ece88a2ad872f",
+    "createdAt": "2025-11-12T19:08:13.054Z",
+    "updatedAt": "2025-11-12T19:08:13.059Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad87ad",
+    "name": "CGV Aeon Bình Dương - Phòng 2",
+    "branch": "6914db1de55ece88a2ad872b",
+    "seatLayout": "6914db1de55ece88a2ad87af",
+    "createdAt": "2025-11-12T19:08:13.095Z",
+    "updatedAt": "2025-11-12T19:08:13.099Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad882d",
+    "name": "CGV Aeon Bình Dương - Phòng 3",
+    "branch": "6914db1de55ece88a2ad872b",
+    "seatLayout": "6914db1de55ece88a2ad882f",
+    "createdAt": "2025-11-12T19:08:13.133Z",
+    "updatedAt": "2025-11-12T19:08:13.138Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad88b1",
+    "name": "CGV Vũng Tàu - Phòng 1",
+    "branch": "6914db1de55ece88a2ad88af",
+    "seatLayout": "6914db1de55ece88a2ad88b3",
+    "createdAt": "2025-11-12T19:08:13.196Z",
+    "updatedAt": "2025-11-12T19:08:13.200Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8931",
+    "name": "CGV Vũng Tàu - Phòng 2",
+    "branch": "6914db1de55ece88a2ad88af",
+    "seatLayout": "6914db1de55ece88a2ad8933",
+    "createdAt": "2025-11-12T19:08:13.249Z",
+    "updatedAt": "2025-11-12T19:08:13.255Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad89b5",
+    "name": "Galaxy Cinema Quận 1 - Phòng 1",
+    "branch": "6914db1de55ece88a2ad89b3",
+    "seatLayout": "6914db1de55ece88a2ad89b7",
+    "createdAt": "2025-11-12T19:08:13.310Z",
+    "updatedAt": "2025-11-12T19:08:13.314Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8a35",
+    "name": "Galaxy Cinema Quận 1 - Phòng 2",
+    "branch": "6914db1de55ece88a2ad89b3",
+    "seatLayout": "6914db1de55ece88a2ad8a37",
+    "createdAt": "2025-11-12T19:08:13.359Z",
+    "updatedAt": "2025-11-12T19:08:13.370Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8ab9",
+    "name": "Beta Cinema Cineplex - Phòng 1",
+    "branch": "6914db1de55ece88a2ad8ab7",
+    "seatLayout": "6914db1de55ece88a2ad8abb",
+    "createdAt": "2025-11-12T19:08:13.449Z",
+    "updatedAt": "2025-11-12T19:08:13.456Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8b39",
+    "name": "Beta Cinema Cineplex - Phòng 2",
+    "branch": "6914db1de55ece88a2ad8ab7",
+    "seatLayout": "6914db1de55ece88a2ad8b3b",
+    "createdAt": "2025-11-12T19:08:13.537Z",
+    "updatedAt": "2025-11-12T19:08:13.543Z",
+    "__v": 0
+  }
+]

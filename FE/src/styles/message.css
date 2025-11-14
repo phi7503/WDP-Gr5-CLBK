@@ -1,10 +1,10 @@
-/* Custom styles cho Ant Design Message - Hiển thị từ phải sang trái */
+/* Custom styles cho Ant Design Message - Hiển thị ở trên cao */
 .ant-message {
   position: fixed !important;
-  top: 80px !important;
-  right: 24px !important;
-  left: auto !important;
-  z-index: 9999 !important; /* Tăng z-index cao nhất để luôn hiển thị trên cùng */
+  top: 10% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
   pointer-events: none;
 }
 
@@ -16,170 +16,47 @@ body > .ant-message {
 .ant-message-notice {
   pointer-events: auto;
   margin-bottom: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  position: relative;
-  will-change: transform, opacity;
-  z-index: 9999 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px 12px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  text-align: center;
 }
 
-/* Đảm bảo message notice luôn hiển thị trên tất cả */
-.ant-message-notice-content {
-  z-index: 9999 !important;
-  position: relative;
+/* Style cho các loại message - chỉ text, không viền */
+.ant-message-success .ant-message-notice-content {
+  color: #10b981 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* Animation từ phải sang trái - Hiện ra từ phải */
-@keyframes slideInFromRight {
-  0% {
-    transform: translateX(calc(100% + 50px));
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
+.ant-message-error .ant-message-notice-content {
+  color: #ef4444 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* Animation biến mất về phải */
-@keyframes slideOutToRight {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(calc(100% + 50px));
-    opacity: 0;
-  }
+.ant-message-warning .ant-message-notice-content {
+  color: #f59e0b !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* Override tất cả animation của Ant Design */
-.ant-message-notice {
-  animation: slideInFromRight 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards !important;
+.ant-message-info .ant-message-notice-content {
+  color: #3b82f6 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* Khi message biến mất */
-.ant-message-notice.ant-message-move-up-leave {
-  animation: slideOutToRight 0.3s cubic-bezier(0.755, 0.05, 0.855, 0.06) forwards !important;
-}
-
-/* Override cho tất cả các class animation của Ant Design */
-.ant-message-notice.ant-message-fade-enter,
-.ant-message-notice.ant-message-fade-appear,
-.ant-message-notice.ant-message-move-up-enter,
-.ant-message-notice.ant-message-move-up-appear {
-  transform: translateX(calc(100% + 50px)) !important;
-  opacity: 0 !important;
-}
-
-.ant-message-notice.ant-message-fade-enter-active,
-.ant-message-notice.ant-message-fade-appear-active,
-.ant-message-notice.ant-message-move-up-enter-active,
-.ant-message-notice.ant-message-move-up-appear-active {
-  animation: slideInFromRight 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards !important;
-  opacity: 1 !important;
-}
-
-.ant-message-notice.ant-message-fade-leave,
-.ant-message-notice.ant-message-move-up-leave {
-  transform: translateX(0) !important;
-  opacity: 1 !important;
-}
-
-.ant-message-notice.ant-message-fade-leave-active,
-.ant-message-notice.ant-message-move-up-leave-active {
-  animation: slideOutToRight 0.3s cubic-bezier(0.755, 0.05, 0.855, 0.06) forwards !important;
-}
-
-/* Style cho các loại message */
-.ant-message-success {
-  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-  border-left: 4px solid #389e0d;
-}
-
-.ant-message-error {
-  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
-  border-left: 4px solid #cf1322;
-}
-
-.ant-message-warning {
-  background: linear-gradient(135deg, #faad14 0%, #ffc53d 100%);
-  border-left: 4px solid #d48806;
-}
-
-.ant-message-info {
-  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
-  border-left: 4px solid #096dd9;
-}
-
-/* Content styling */
-.ant-message-notice-content {
-  padding: 14px 20px;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  min-width: 320px;
-  max-width: 500px;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-}
-
-/* Icon và text spacing */
+/* Icon styling */
 .ant-message-notice-content .anticon {
-  font-size: 18px;
-  margin-right: 12px;
-}
-
-.ant-message-custom-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Đảm bảo notification luôn bắt đầu từ ngoài màn hình bên phải */
-.ant-message .ant-message-notice {
-  transform-origin: right center;
-}
-
-/* Force animation cho tất cả notifications mới */
-.ant-message-notice:not(.ant-message-move-up-leave):not(.ant-message-fade-leave) {
-  animation: slideInFromRight 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  font-size: 16px;
+  margin-right: 8px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .ant-message {
-    right: 12px !important;
-    left: 12px !important;
-    top: 60px !important;
-  }
-  
-  .ant-message-notice-content {
-    min-width: auto;
-    max-width: 100%;
-  }
-  
-  @keyframes slideInFromRight {
-    0% {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOutToRight {
-    0% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(100%);
-      opacity: 0;
-    }
+  .ant-message-notice {
+    min-width: 250px;
+    font-size: 13px !important;
+    padding: 12px 16px !important;
   }
 }
-

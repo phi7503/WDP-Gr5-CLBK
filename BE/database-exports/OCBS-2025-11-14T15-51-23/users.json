@@ -1,0 +1,214 @@
+[
+  {
+    "_id": "68478026b50225eeefe2fafe",
+    "name": "Nguyễn Tùng Lâm",
+    "email": "tunglam68hs@gmail.com",
+    "password": "$2a$10$ZMUGnSHXdUVs9Y9uIiH3yOk1HYvTSUM359HjnNAiIewVHUDJKdP8G",
+    "phone": "0393180203",
+    "role": "admin",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-06-10T00:45:26.762Z",
+    "updatedAt": "2025-06-10T00:45:26.762Z",
+    "__v": 0
+  },
+  {
+    "_id": "68839e3b5d37066a796abf82",
+    "name": "Nguyễn Hữu Thái",
+    "email": "acquynho2000@gmail.com",
+    "password": "$2b$10$xZkbF.7Ch5oLuHO4kIcQtOtootK6DIgQaPV3fxWAJ1F1zDpELMK6W",
+    "phone": "0902012302",
+    "province": "Tỉnh Bắc Ninh",
+    "city": "Thị xã Quế Võ",
+    "gender": "male",
+    "dob": "2003-07-29T17:00:00.000Z",
+    "role": "employee",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-07-25T15:09:47.458Z",
+    "updatedAt": "2025-07-25T15:13:25.557Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883a4e5245b2d10fd9e9b03",
+    "name": "Nguyễn Tùng Lâm",
+    "email": "lamnthe172167@fpt.edu.vn",
+    "password": "$2a$10$AAL3cLj7ahVeL1yX4A//AeyT4syhnlgav4MpMUp1sSWSGn9SgEMw6",
+    "phone": "0393180203",
+    "province": "Hà Nội",
+    "city": "Hòa Lạc",
+    "gender": "male",
+    "dob": "2003-02-18T00:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-07-25T15:38:13.341Z",
+    "updatedAt": "2025-07-25T15:38:13.341Z",
+    "__v": 0
+  },
+  {
+    "_id": "68847779087bb57e262bc01f",
+    "name": "Lê Minh Nghĩa",
+    "email": "68malgnut@gmail.com",
+    "password": "$2a$10$mypLxT0xfA.8PbNr2/yDL.PMQ8GuuJybiott/OsLd1TDVQeIRFQBy",
+    "phone": "0900900903",
+    "province": "Thành phố Hà Nội",
+    "city": "Quận Hoàn Kiếm",
+    "gender": "male",
+    "dob": "2003-02-17T17:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-07-26T06:36:41.268Z",
+    "updatedAt": "2025-07-26T06:49:33.470Z",
+    "__v": 0
+  },
+  {
+    "_id": "68f64ddd64a801377a94aaf9",
+    "name": "Test User",
+    "email": "test@booking.com",
+    "password": "$2a$10$Y9.mz4crfXEFtEIHQE8NaOg8vEiE.cFqHMMOuMzo/ClSgsJTDwRqO",
+    "phone": "0123456789",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-10-20T14:57:33.972Z",
+    "updatedAt": "2025-10-20T14:57:33.972Z",
+    "__v": 0
+  },
+  {
+    "_id": "68f70ff207d6ff8b9698e179",
+    "name": "Test User 2",
+    "email": "testuser2@gmail.com",
+    "password": "$2a$10$yROJKobvXFxc5OF/oYzPDujc/A4A9WBrYJ6Uk1GGZ5oqfnbixw0qK",
+    "phone": "0987654321",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-10-21T04:45:38.451Z",
+    "updatedAt": "2025-10-21T04:45:38.451Z",
+    "__v": 0
+  },
+  {
+    "_id": "68f70ff207d6ff8b9698e17b",
+    "name": "Socket Test User",
+    "email": "socketuser@gmail.com",
+    "password": "$2a$10$P8vCy79nqeBs0b0ItjWf/eGrJPAdNHceEiw.5Rv6Y3nMDQ0tYFHuK",
+    "phone": "0123456789",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-10-21T04:45:38.523Z",
+    "updatedAt": "2025-10-21T04:45:38.523Z",
+    "__v": 0
+  },
+  {
+    "_id": "69032ec6272d45ec2ecfc5f5",
+    "name": "Nguyễn Văn A",
+    "email": "test1@example.com",
+    "password": "$2b$10$mTxykaBE1YpkgfQ7YbPhJOS4UHs/hGfvs3K/0Xuhp1FlB4Cye4oum",
+    "phone": "0123456789",
+    "province": "Hà Nội",
+    "city": "Hà Nội",
+    "gender": "male",
+    "dob": "1999-10-10T00:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-10-30T09:24:22.625Z",
+    "updatedAt": "2025-10-30T09:24:22.625Z",
+    "__v": 0
+  },
+  {
+    "_id": "69032ec6272d45ec2ecfc5f6",
+    "name": "Trần Thị B",
+    "email": "test2@example.com",
+    "password": "$2b$10$jtk01hpJaHgel2lfACu5xu6irUrYpDF016.I6ZSi7E8CYdXEV6BYG",
+    "phone": "0987654321",
+    "province": "Hà Nội",
+    "city": "Hà Nội",
+    "gender": "female",
+    "dob": "2001-12-05T00:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-10-30T09:24:22.866Z",
+    "updatedAt": "2025-10-30T09:24:22.866Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914b0d61c99d24d4fef7647",
+    "name": "Lê Đức Mạnh",
+    "email": "leeducmanhh4090@gmail.com",
+    "password": "$2b$10$om3mPbXIJB9Ew8Z0ftLdoe4/4x1biCqi3JACFLc0rjoAKBmfqkAc.",
+    "phone": "0922012907",
+    "province": "Ha Noi",
+    "city": "Hà Nội",
+    "gender": "male",
+    "dob": "2025-11-01T00:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-11-12T16:07:50.709Z",
+    "updatedAt": "2025-11-12T16:07:50.709Z",
+    "__v": 0
+  },
+  {
+    "_id": "69154efead05066fee691fae",
+    "name": "Lê Đức Mạnh",
+    "email": "manhgg22@gmail.com",
+    "password": "$2b$10$xZkbF.7Ch5oLuHO4kIcQtOtootK6DIgQaPV3fxWAJ1F1zDpELMK6W",
+    "phone": "0922012907",
+    "province": "Ha Noi",
+    "city": "Hà Nội",
+    "gender": "male",
+    "dob": "2025-11-01T00:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-11-13T03:22:38.996Z",
+    "updatedAt": "2025-11-13T03:22:38.996Z",
+    "__v": 0
+  },
+  {
+    "_id": "6916e80033e75e5a41d448be",
+    "name": "Le Duc Manh (K18 HL)",
+    "email": "manhldhe180916@fpt.edu.vn",
+    "password": "$2b$10$QSMmbTGYckpaKcBgK90Nhe4.24sOaHinlxeDejg.DCvunjLoMN6jW",
+    "phone": "N/A",
+    "province": "N/A",
+    "city": "N/A",
+    "gender": "other",
+    "dob": "2000-01-01T00:00:00.000Z",
+    "role": "customer",
+    "preferences": {
+      "genres": [],
+      "favoriteMovies": []
+    },
+    "createdAt": "2025-11-14T08:27:44.028Z",
+    "updatedAt": "2025-11-14T08:27:44.028Z",
+    "__v": 0
+  }
+]

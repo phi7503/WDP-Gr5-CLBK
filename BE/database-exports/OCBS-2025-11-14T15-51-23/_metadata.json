@@ -1,0 +1,7 @@
+{
+  "database": "OCBS",
+  "exportDate": "2025-11-14T15:51:29.388Z",
+  "collections": 13,
+  "totalDocuments": 316500,
+  "mongoUri": "mongodb://127.0.0.1:27017/OCBS"
+}

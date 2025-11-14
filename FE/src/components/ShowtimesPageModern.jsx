@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Layout, Typography, Button, DatePicker, Select, Tag, Empty, Collapse, Tooltip, Badge, message } from 'antd';
+import { Layout, Typography, Button, DatePicker, Select, Tag, Empty, Collapse, Tooltip, Badge, message, notification } from 'antd';
 import { 
   PlayCircleOutlined, 
   EnvironmentOutlined, 
@@ -57,6 +57,14 @@ const ShowtimesPageModern = () => {
   const [selectedBranch, setSelectedBranch] = useState('all');
   const [selectedMovie, setSelectedMovie] = useState('all');
   const [selectedTimeRange, setSelectedTimeRange] = useState('all'); // 'all', 'morning', 'afternoon', 'evening', 'night'
+  
+  // Location States
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState(null);
+  const [nearbyBranches, setNearbyBranches] = useState([]);
+  const [hasTriedAutoLocation, setHasTriedAutoLocation] = useState(false);
+  const [nearestBranchFilter, setNearestBranchFilter] = useState(true); // Tự động lọc rạp gần nhất
   
   // Data States
   const [movies, setMovies] = useState([]);
@@ -124,6 +132,16 @@ const ShowtimesPageModern = () => {
   useEffect(() => {
     loadInitialData();
   }, []);
+
+  // ✅ TỰ ĐỘNG LẤY VỊ TRÍ KHI VÀO TRANG
+  useEffect(() => {
+    // Tự động lấy vị trí sau khi load xong branches (chỉ thử 1 lần)
+    if (branches.length > 0 && !userLocation && !locationLoading && !hasTriedAutoLocation) {
+      console.log('🌍 Tự động lấy vị trí người dùng...');
+      setHasTriedAutoLocation(true);
+      getUserLocation();
+    }
+  }, [branches.length, userLocation, locationLoading, hasTriedAutoLocation]);
 
   // ✅ Load showtimes khi movies và branches đã sẵn sàng (lần đầu tiên)
   useEffect(() => {
@@ -364,6 +382,8 @@ const ShowtimesPageModern = () => {
         });
       }
 
+
+
       setShowtimes(showtimesList);
       setLoading(false);
     } catch (error) {
@@ -527,6 +547,113 @@ const ShowtimesPageModern = () => {
     setSelectedBranch('all');
     setSelectedMovie('all');
     setSelectedTimeRange('all');
+    setNearestBranchFilter(true);
+    setUserLocation(null);
+    setNearbyBranches([]);
+  };
+
+  // Get user location
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      message.error('Trình duyệt không hỗ trợ định vị');
+      return;
+    }
+
+    message.info('📍 Vui lòng cho phép truy cập vị trí');
+
+    setLocationLoading(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+        setLocationLoading(false);
+        
+        message.success('✓ Đã lấy vị trí thành công');
+        
+        // Calculate nearby branches
+        calculateNearbyBranches(latitude, longitude);
+      },
+      (error) => {
+        setLocationLoading(false);
+        let errorMsg = 'Không thể lấy vị trí của bạn';
+        let errorDesc = '';
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMsg = '❌ Bạn đã từ chối quyền truy cập vị trí';
+            errorDesc = 'Vui lòng bật quyền truy cập vị trí trong cài đặt trình duyệt.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMsg = '❌ Thông tin vị trí không khả dụng';
+            errorDesc = 'Không thể xác định vị trí của bạn. Vui lòng thử lại.';
+            break;
+          case error.TIMEOUT:
+            errorMsg = '⏱️ Yêu cầu lấy vị trí đã hết thời gian';
+            errorDesc = 'Vui lòng thử lại.';
+            break;
+        }
+        
+        setLocationError(errorMsg);
+        message.error(errorMsg);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
+
+  // Calculate distance between two coordinates (Haversine formula)
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  // Calculate nearby branches
+  const calculateNearbyBranches = (userLat, userLon) => {
+    const branchesWithDistance = branches
+      .map(branch => {
+        // Try to get coordinates from branch location
+        const lat = branch.location?.coordinates?.latitude || branch.location?.lat;
+        const lon = branch.location?.coordinates?.longitude || branch.location?.lng;
+        
+        if (!lat || !lon) return null;
+        
+        const distance = calculateDistance(userLat, userLon, lat, lon);
+        
+        return {
+          ...branch,
+          distance: distance
+        };
+      })
+      .filter(b => b !== null)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 10); // Top 10 nearest branches
+
+    setNearbyBranches(branchesWithDistance);
+    
+    if (branchesWithDistance.length > 0) {
+      // ✅ TỰ ĐỘNG LỌC THEO RẠP GẦN NHẤT (chỉ khi filter được bật)
+      if (nearestBranchFilter) {
+        const nearest = branchesWithDistance[0];
+        setSelectedBranch(nearest._id);
+        message.success(`🎯 Đã tự động lọc phim tại ${nearest.name} (${nearest.distance.toFixed(1)} km)`);
+      } else {
+        message.success(`📍 Tìm thấy ${branchesWithDistance.length} rạp gần bạn`);
+      }
+    } else {
+      message.warning('⚠️ Không tìm thấy rạp gần bạn. Vui lòng chọn thủ công.');
+    }
   };
 
   // Get unique cities from branches
@@ -1157,7 +1284,7 @@ const ShowtimesPageModern = () => {
               marginBottom: '16px',
               fontSize: '48px'
             }}>
-              🎬 Lịch Chiếu Phim
+               Lịch Chiếu Phim
             </Title>
             <Text style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>
               Chọn suất chiếu phù hợp với bạn
@@ -1254,6 +1381,148 @@ const ShowtimesPageModern = () => {
                 ))}
               </div>
             </div>
+
+            {/* Location Button */}
+            <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Button
+                icon={<EnvironmentOutlined />}
+                onClick={getUserLocation}
+                loading={locationLoading}
+                style={{
+                  background: userLocation ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.05)',
+                  border: userLocation ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  height: '40px'
+                }}
+              >
+                {userLocation ? '📍 Đã bật định vị' : '🌍 Tìm rạp gần tôi'}
+              </Button>
+
+              {/* Test Message Button */}
+              <Button
+                onClick={() => {
+                  message.success('✅ Message hoạt động!');
+                  message.error('❌ Lỗi test!');
+                  message.warning('⚠️ Cảnh báo test!');
+                  message.info('ℹ️ Thông tin test!');
+                }}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  height: '40px'
+                }}
+              >
+                🧪 Test Message
+              </Button>
+
+              {/* Toggle Nearest Branch Filter */}
+              {userLocation && (
+                <Button
+                  onClick={() => {
+                    const newValue = !nearestBranchFilter;
+                    setNearestBranchFilter(newValue);
+                    
+                    if (newValue && nearbyBranches.length > 0) {
+                      // Bật lọc - tự động chọn rạp gần nhất
+                      const nearest = nearbyBranches[0];
+                      setSelectedBranch(nearest._id);
+                      message.success(`🎯 Đã bật lọc rạp gần nhất: ${nearest.name}`);
+                    } else {
+                      // Tắt lọc - reset về tất cả rạp
+                      setSelectedBranch('all');
+                      message.success('🌍 Đã tắt lọc rạp gần nhất - Hiển thị tất cả rạp');
+                    }
+                  }}
+                  style={{
+                    background: nearestBranchFilter ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255,255,255,0.05)',
+                    border: nearestBranchFilter ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                    color: '#fff',
+                    height: '40px'
+                  }}
+                >
+                  {nearestBranchFilter ? '🎯 Lọc rạp gần (Bật)' : '🌍 Hiển thị tất cả rạp'}
+                </Button>
+              )}
+
+              {/* Auto filter by nearest cinema */}
+              {userLocation && nearbyBranches.length > 0 && (
+                <Button
+                  icon={<FilterOutlined />}
+                  type="primary"
+                  onClick={() => {
+                    // Auto select nearest branch
+                    const nearest = nearbyBranches[0];
+                    setSelectedBranch(nearest._id);
+                    message.success(`🎯 Đã lọc phim tại ${nearest.name} (${nearest.distance.toFixed(1)} km)`);
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    border: 'none',
+                    height: '40px'
+                  }}
+                >
+                  🎯 Lọc phim rạp gần nhất
+                </Button>
+              )}
+              
+              {userLocation && nearbyBranches.length > 0 && (
+                <Text style={{ color: '#10b981' }}>
+                  ✓ Tìm thấy {nearbyBranches.length} rạp gần bạn
+                </Text>
+              )}
+
+              {nearestBranchFilter && userLocation && nearbyBranches.length > 0 && (
+                <Text style={{ color: '#f59e0b', fontSize: '13px' }}>
+                  🎯 Đang lọc theo rạp gần nhất
+                </Text>
+              )}
+              
+              {locationError && (
+                <Text style={{ color: '#ef4444', fontSize: '13px' }}>
+                  ⚠️ {locationError}
+                </Text>
+              )}
+            </div>
+
+            {/* Nearby Branches List */}
+            {userLocation && nearbyBranches.length > 0 && (
+              <div style={{ 
+                marginBottom: '20px', 
+                padding: '16px', 
+                background: 'rgba(16, 185, 129, 0.1)', 
+                borderRadius: '12px',
+                border: '1px solid rgba(16, 185, 129, 0.3)'
+              }}>
+                <Text strong style={{ color: '#10b981', marginBottom: '12px', display: 'block' }}>
+                  📍 Rạp gần bạn:
+                </Text>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {nearbyBranches.slice(0, 5).map(branch => (
+                    <Button
+                      key={branch._id}
+                      size="small"
+                      onClick={() => {
+                        setSelectedBranch(branch._id);
+                        notification.success({
+                          message: '✓ Đã chọn rạp',
+                          description: `${branch.name} - ${branch.distance.toFixed(1)} km`,
+                          placement: 'top',
+                          duration: 2,
+                        });
+                      }}
+                      style={{
+                        background: selectedBranch === branch._id ? 'rgba(16, 185, 129, 0.3)' : 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(16, 185, 129, 0.5)',
+                        color: '#fff'
+                      }}
+                    >
+                      {branch.name} - {branch.distance.toFixed(1)} km
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Filters Row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '16px' }}>

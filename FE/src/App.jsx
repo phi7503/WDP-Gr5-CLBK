@@ -1,5 +1,6 @@
 // src/App.jsx
-import React from "react";
+import React, { useEffect } from "react";
+import { message } from "antd";
 import Header from "./components/Header";
 import AuthLayout from "./components/AuthLayout";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
@@ -65,6 +66,15 @@ function RoleRoute({ allow = [] }) {
 }
 
 export default function App() {
+  // ✅ Cấu hình Message đơn giản - hiển thị ở giữa
+  useEffect(() => {
+    message.config({
+      top: '50%',
+      duration: 3,
+      maxCount: 1,
+    });
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <Routes>

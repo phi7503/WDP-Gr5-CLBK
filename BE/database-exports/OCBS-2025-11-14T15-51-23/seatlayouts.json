@@ -1,0 +1,3975 @@
+[
+  {
+    "_id": "6883925c5d37066a796abe3d",
+    "name": "CGV Hà Đông - Theater 1 - Layout 1",
+    "branch": "688390555d37066a796abc84",
+    "theater": "688391675d37066a796abcb0",
+    "rows": 5,
+    "seatsPerRow": 8,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "vipRows": [
+      "A"
+    ],
+    "coupleSeats": [
+      {
+        "row": "B",
+        "startSeat": 1,
+        "endSeat": 2,
+        "_id": "6883925c5d37066a796abe3e"
+      },
+      {
+        "row": "B",
+        "startSeat": 3,
+        "endSeat": 4,
+        "_id": "6883925c5d37066a796abe3f"
+      },
+      {
+        "row": "B",
+        "startSeat": 5,
+        "endSeat": 6,
+        "_id": "6883925c5d37066a796abe40"
+      },
+      {
+        "row": "B",
+        "startSeat": 7,
+        "endSeat": 8,
+        "_id": "6883925c5d37066a796abe41"
+      }
+    ],
+    "aisleAfterColumns": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "disabledSeats": [],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "createdAt": "2025-07-25T14:19:08.203Z",
+    "updatedAt": "2025-07-25T14:19:08.203Z",
+    "__v": 0
+  },
+  {
+    "_id": "688392c95d37066a796abe52",
+    "name": "CGV Hà Đông - Theater 2 - Layout 1",
+    "branch": "688390555d37066a796abc84",
+    "theater": "6883916c5d37066a796abcb7",
+    "rows": 5,
+    "seatsPerRow": 8,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "vipRows": [
+      "A",
+      "E"
+    ],
+    "coupleSeats": [
+      {
+        "row": "B",
+        "startSeat": 1,
+        "endSeat": 2,
+        "_id": "688392c95d37066a796abe53"
+      },
+      {
+        "row": "B",
+        "startSeat": 5,
+        "endSeat": 6,
+        "_id": "688392c95d37066a796abe54"
+      },
+      {
+        "row": "C",
+        "startSeat": 3,
+        "endSeat": 4,
+        "_id": "688392c95d37066a796abe55"
+      },
+      {
+        "row": "C",
+        "startSeat": 7,
+        "endSeat": 8,
+        "_id": "688392c95d37066a796abe56"
+      },
+      {
+        "row": "D",
+        "startSeat": 1,
+        "endSeat": 2,
+        "_id": "688392c95d37066a796abe57"
+      },
+      {
+        "row": "D",
+        "startSeat": 5,
+        "endSeat": 6,
+        "_id": "688392c95d37066a796abe58"
+      },
+      {
+        "row": "E",
+        "startSeat": 3,
+        "endSeat": 4,
+        "_id": "688392c95d37066a796abe59"
+      },
+      {
+        "row": "E",
+        "startSeat": 7,
+        "endSeat": 8,
+        "_id": "688392c95d37066a796abe5a"
+      }
+    ],
+    "aisleAfterColumns": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "disabledSeats": [],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "createdAt": "2025-07-25T14:20:57.231Z",
+    "updatedAt": "2025-07-25T14:20:57.231Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883931a5d37066a796abe74",
+    "name": "CGV Long Biên - Theater 1 - Layout 1",
+    "branch": "688390a65d37066a796abc8b",
+    "theater": "688391825d37066a796abcc7",
+    "rows": 5,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "vipRows": [
+      "A",
+      "B"
+    ],
+    "coupleSeats": [
+      {
+        "row": "D",
+        "startSeat": 5,
+        "endSeat": 6,
+        "_id": "6883931a5d37066a796abe75"
+      },
+      {
+        "row": "D",
+        "startSeat": 7,
+        "endSeat": 8,
+        "_id": "6883931a5d37066a796abe76"
+      },
+      {
+        "row": "E",
+        "startSeat": 1,
+        "endSeat": 2,
+        "_id": "6883931a5d37066a796abe77"
+      },
+      {
+        "row": "E",
+        "startSeat": 3,
+        "endSeat": 4,
+        "_id": "6883931a5d37066a796abe78"
+      },
+      {
+        "row": "E",
+        "startSeat": 9,
+        "endSeat": 10,
+        "_id": "6883931a5d37066a796abe79"
+      },
+      {
+        "row": "E",
+        "startSeat": 11,
+        "endSeat": 12,
+        "_id": "6883931a5d37066a796abe7a"
+      }
+    ],
+    "aisleAfterColumns": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "disabledSeats": [
+      {
+        "row": "E",
+        "number": 5,
+        "_id": "6883931a5d37066a796abe7b"
+      },
+      {
+        "row": "E",
+        "number": 6,
+        "_id": "6883931a5d37066a796abe7c"
+      },
+      {
+        "row": "E",
+        "number": 7,
+        "_id": "6883931a5d37066a796abe7d"
+      },
+      {
+        "row": "E",
+        "number": 8,
+        "_id": "6883931a5d37066a796abe7e"
+      }
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "createdAt": "2025-07-25T14:22:18.286Z",
+    "updatedAt": "2025-07-25T14:22:18.286Z",
+    "__v": 0
+  },
+  {
+    "_id": "6883933d5d37066a796abeb1",
+    "name": "CGV Hải Phòng - Theater 1 - Layout 1",
+    "branch": "688391365d37066a796abc9a",
+    "theater": "688391965d37066a796abcde",
+    "rows": 5,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "vipRows": [
+      "E",
+      "D"
+    ],
+    "coupleSeats": [],
+    "aisleAfterColumns": [
+      4,
+      8,
+      12,
+      16
+    ],
+    "disabledSeats": [],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "createdAt": "2025-07-25T14:22:53.701Z",
+    "updatedAt": "2025-07-25T14:22:53.701Z",
+    "__v": 0
+  },
+  {
+    "_id": "68ede6c53b45cefe52e76ba5",
+    "name": "CGV Vincom Center - Screen 1 Layout",
+    "branch": "68ede6c53b45cefe52e76ba1",
+    "theater": "68ede6c53b45cefe52e76ba3",
+    "rows": 10,
+    "seatsPerRow": 10,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 4,
+        "endSeat": 7,
+        "_id": "68ede6c53b45cefe52e76ba6"
+      },
+      {
+        "row": "G",
+        "startSeat": 4,
+        "endSeat": 7,
+        "_id": "68ede6c53b45cefe52e76ba7"
+      },
+      {
+        "row": "H",
+        "startSeat": 4,
+        "endSeat": 7,
+        "_id": "68ede6c53b45cefe52e76ba8"
+      }
+    ],
+    "aisleAfterColumns": [
+      5
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-10-14T05:59:33.754Z",
+    "updatedAt": "2025-10-14T05:59:33.754Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db18e55ece88a2ad684e",
+    "name": "CGV Vincom Center Ba Đình - Phòng 1 Layout",
+    "branch": "6914db18e55ece88a2ad6849",
+    "theater": "6914db18e55ece88a2ad684c",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db18e55ece88a2ad684f"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db18e55ece88a2ad6850"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:08.616Z",
+    "updatedAt": "2025-11-12T19:08:08.616Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db18e55ece88a2ad68ce",
+    "name": "CGV Vincom Center Ba Đình - Phòng 2 Layout",
+    "branch": "6914db18e55ece88a2ad6849",
+    "theater": "6914db18e55ece88a2ad68cc",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db18e55ece88a2ad68cf"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db18e55ece88a2ad68d0"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:08.801Z",
+    "updatedAt": "2025-11-12T19:08:08.801Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad694e",
+    "name": "CGV Vincom Center Ba Đình - Phòng 3 Layout",
+    "branch": "6914db18e55ece88a2ad6849",
+    "theater": "6914db18e55ece88a2ad694c",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad694f"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6950"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.010Z",
+    "updatedAt": "2025-11-12T19:08:09.010Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad69d2",
+    "name": "CGV Vincom Royal City - Phòng 1 Layout",
+    "branch": "6914db19e55ece88a2ad69ce",
+    "theater": "6914db19e55ece88a2ad69d0",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad69d3"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad69d4"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.156Z",
+    "updatedAt": "2025-11-12T19:08:09.156Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6a52",
+    "name": "CGV Vincom Royal City - Phòng 2 Layout",
+    "branch": "6914db19e55ece88a2ad69ce",
+    "theater": "6914db19e55ece88a2ad6a50",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6a53"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6a54"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.274Z",
+    "updatedAt": "2025-11-12T19:08:09.274Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6ad2",
+    "name": "CGV Vincom Royal City - Phòng 3 Layout",
+    "branch": "6914db19e55ece88a2ad69ce",
+    "theater": "6914db19e55ece88a2ad6ad0",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6ad3"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6ad4"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.393Z",
+    "updatedAt": "2025-11-12T19:08:09.393Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6b57",
+    "name": "CGV Landmark 72 - Phòng 1 Layout",
+    "branch": "6914db19e55ece88a2ad6b53",
+    "theater": "6914db19e55ece88a2ad6b55",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6b58"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6b59"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.621Z",
+    "updatedAt": "2025-11-12T19:08:09.621Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6bd7",
+    "name": "CGV Landmark 72 - Phòng 2 Layout",
+    "branch": "6914db19e55ece88a2ad6b53",
+    "theater": "6914db19e55ece88a2ad6bd5",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6bd8"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6bd9"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.771Z",
+    "updatedAt": "2025-11-12T19:08:09.771Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6c57",
+    "name": "CGV Landmark 72 - Phòng 3 Layout",
+    "branch": "6914db19e55ece88a2ad6b53",
+    "theater": "6914db19e55ece88a2ad6c55",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6c58"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6c59"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.872Z",
+    "updatedAt": "2025-11-12T19:08:09.872Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db19e55ece88a2ad6cdb",
+    "name": "BHD Star Cineplex Vincom Nguyễn Chí Thanh - Phòng 1 Layout",
+    "branch": "6914db19e55ece88a2ad6cd7",
+    "theater": "6914db19e55ece88a2ad6cd9",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6cdc"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db19e55ece88a2ad6cdd"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:09.982Z",
+    "updatedAt": "2025-11-12T19:08:09.982Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6d5b",
+    "name": "BHD Star Cineplex Vincom Nguyễn Chí Thanh - Phòng 2 Layout",
+    "branch": "6914db19e55ece88a2ad6cd7",
+    "theater": "6914db1ae55ece88a2ad6d59",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6d5c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6d5d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.112Z",
+    "updatedAt": "2025-11-12T19:08:10.112Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6ddf",
+    "name": "BHD Star Cineplex Vincom Times City - Phòng 1 Layout",
+    "branch": "6914db1ae55ece88a2ad6ddb",
+    "theater": "6914db1ae55ece88a2ad6ddd",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6de0"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6de1"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.176Z",
+    "updatedAt": "2025-11-12T19:08:10.176Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6e5f",
+    "name": "BHD Star Cineplex Vincom Times City - Phòng 2 Layout",
+    "branch": "6914db1ae55ece88a2ad6ddb",
+    "theater": "6914db1ae55ece88a2ad6e5d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6e60"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6e61"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.228Z",
+    "updatedAt": "2025-11-12T19:08:10.228Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6edf",
+    "name": "BHD Star Cineplex Vincom Times City - Phòng 3 Layout",
+    "branch": "6914db1ae55ece88a2ad6ddb",
+    "theater": "6914db1ae55ece88a2ad6edd",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6ee0"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6ee1"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.290Z",
+    "updatedAt": "2025-11-12T19:08:10.290Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6f63",
+    "name": "Lotte Cinema Hà Nội - Phòng 1 Layout",
+    "branch": "6914db1ae55ece88a2ad6f5f",
+    "theater": "6914db1ae55ece88a2ad6f61",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6f64"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6f65"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.343Z",
+    "updatedAt": "2025-11-12T19:08:10.343Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad6fe3",
+    "name": "Lotte Cinema Hà Nội - Phòng 2 Layout",
+    "branch": "6914db1ae55ece88a2ad6f5f",
+    "theater": "6914db1ae55ece88a2ad6fe1",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6fe4"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad6fe5"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.387Z",
+    "updatedAt": "2025-11-12T19:08:10.387Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7063",
+    "name": "Lotte Cinema Hà Nội - Phòng 3 Layout",
+    "branch": "6914db1ae55ece88a2ad6f5f",
+    "theater": "6914db1ae55ece88a2ad7061",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7064"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7065"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.446Z",
+    "updatedAt": "2025-11-12T19:08:10.446Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad70e7",
+    "name": "CGV Vincom Hải Phòng - Phòng 1 Layout",
+    "branch": "6914db1ae55ece88a2ad70e3",
+    "theater": "6914db1ae55ece88a2ad70e5",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad70e8"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad70e9"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.524Z",
+    "updatedAt": "2025-11-12T19:08:10.524Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7167",
+    "name": "CGV Vincom Hải Phòng - Phòng 2 Layout",
+    "branch": "6914db1ae55ece88a2ad70e3",
+    "theater": "6914db1ae55ece88a2ad7165",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7168"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7169"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.612Z",
+    "updatedAt": "2025-11-12T19:08:10.612Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad71eb",
+    "name": "CGV Hạ Long - Phòng 1 Layout",
+    "branch": "6914db1ae55ece88a2ad71e7",
+    "theater": "6914db1ae55ece88a2ad71e9",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad71ec"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad71ed"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.671Z",
+    "updatedAt": "2025-11-12T19:08:10.671Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad726b",
+    "name": "CGV Hạ Long - Phòng 2 Layout",
+    "branch": "6914db1ae55ece88a2ad71e7",
+    "theater": "6914db1ae55ece88a2ad7269",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad726c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad726d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.734Z",
+    "updatedAt": "2025-11-12T19:08:10.734Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad72ef",
+    "name": "CGV Vincom Đà Nẵng - Phòng 1 Layout",
+    "branch": "6914db1ae55ece88a2ad72eb",
+    "theater": "6914db1ae55ece88a2ad72ed",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad72f0"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad72f1"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.800Z",
+    "updatedAt": "2025-11-12T19:08:10.800Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad736f",
+    "name": "CGV Vincom Đà Nẵng - Phòng 2 Layout",
+    "branch": "6914db1ae55ece88a2ad72eb",
+    "theater": "6914db1ae55ece88a2ad736d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7370"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7371"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.842Z",
+    "updatedAt": "2025-11-12T19:08:10.842Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad73ef",
+    "name": "CGV Vincom Đà Nẵng - Phòng 3 Layout",
+    "branch": "6914db1ae55ece88a2ad72eb",
+    "theater": "6914db1ae55ece88a2ad73ed",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad73f0"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad73f1"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.897Z",
+    "updatedAt": "2025-11-12T19:08:10.897Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ae55ece88a2ad7473",
+    "name": "CGV Lotte Mart Đà Nẵng - Phòng 1 Layout",
+    "branch": "6914db1ae55ece88a2ad746f",
+    "theater": "6914db1ae55ece88a2ad7471",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7474"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ae55ece88a2ad7475"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:10.950Z",
+    "updatedAt": "2025-11-12T19:08:10.950Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad74f3",
+    "name": "CGV Lotte Mart Đà Nẵng - Phòng 2 Layout",
+    "branch": "6914db1ae55ece88a2ad746f",
+    "theater": "6914db1be55ece88a2ad74f1",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad74f4"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad74f5"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.011Z",
+    "updatedAt": "2025-11-12T19:08:11.011Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7577",
+    "name": "BHD Star Cineplex Đà Nẵng - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad7573",
+    "theater": "6914db1be55ece88a2ad7575",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7578"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7579"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.085Z",
+    "updatedAt": "2025-11-12T19:08:11.085Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad75f7",
+    "name": "BHD Star Cineplex Đà Nẵng - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad7573",
+    "theater": "6914db1be55ece88a2ad75f5",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad75f8"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad75f9"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.142Z",
+    "updatedAt": "2025-11-12T19:08:11.142Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad767b",
+    "name": "CGV Vincom Huế - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad7677",
+    "theater": "6914db1be55ece88a2ad7679",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad767c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad767d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.224Z",
+    "updatedAt": "2025-11-12T19:08:11.224Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad76fb",
+    "name": "CGV Vincom Huế - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad7677",
+    "theater": "6914db1be55ece88a2ad76f9",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad76fc"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad76fd"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.265Z",
+    "updatedAt": "2025-11-12T19:08:11.265Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad777f",
+    "name": "CGV Nha Trang Center - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad777b",
+    "theater": "6914db1be55ece88a2ad777d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7780"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7781"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.311Z",
+    "updatedAt": "2025-11-12T19:08:11.311Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad77ff",
+    "name": "CGV Nha Trang Center - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad777b",
+    "theater": "6914db1be55ece88a2ad77fd",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7800"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7801"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.348Z",
+    "updatedAt": "2025-11-12T19:08:11.348Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad787f",
+    "name": "CGV Nha Trang Center - Phòng 3 Layout",
+    "branch": "6914db1be55ece88a2ad777b",
+    "theater": "6914db1be55ece88a2ad787d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7880"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7881"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.388Z",
+    "updatedAt": "2025-11-12T19:08:11.388Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7903",
+    "name": "CGV Quy Nhơn - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad78ff",
+    "theater": "6914db1be55ece88a2ad7901",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7904"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7905"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.434Z",
+    "updatedAt": "2025-11-12T19:08:11.434Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7983",
+    "name": "CGV Quy Nhơn - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad78ff",
+    "theater": "6914db1be55ece88a2ad7981",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7984"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7985"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.473Z",
+    "updatedAt": "2025-11-12T19:08:11.473Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7a07",
+    "name": "CGV Crescent Mall - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad7a03",
+    "theater": "6914db1be55ece88a2ad7a05",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7a08"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7a09"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.537Z",
+    "updatedAt": "2025-11-12T19:08:11.537Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7a87",
+    "name": "CGV Crescent Mall - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad7a03",
+    "theater": "6914db1be55ece88a2ad7a85",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7a88"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7a89"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.578Z",
+    "updatedAt": "2025-11-12T19:08:11.578Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7b07",
+    "name": "CGV Crescent Mall - Phòng 3 Layout",
+    "branch": "6914db1be55ece88a2ad7a03",
+    "theater": "6914db1be55ece88a2ad7b05",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7b08"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7b09"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.628Z",
+    "updatedAt": "2025-11-12T19:08:11.628Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7b8b",
+    "name": "CGV Pandora City - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad7b87",
+    "theater": "6914db1be55ece88a2ad7b89",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7b8c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7b8d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.723Z",
+    "updatedAt": "2025-11-12T19:08:11.723Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7c0b",
+    "name": "CGV Pandora City - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad7b87",
+    "theater": "6914db1be55ece88a2ad7c09",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7c0c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7c0d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.768Z",
+    "updatedAt": "2025-11-12T19:08:11.768Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7c8f",
+    "name": "CGV Estella Place - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad7c8b",
+    "theater": "6914db1be55ece88a2ad7c8d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7c90"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7c91"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.841Z",
+    "updatedAt": "2025-11-12T19:08:11.841Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7d0f",
+    "name": "CGV Estella Place - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad7c8b",
+    "theater": "6914db1be55ece88a2ad7d0d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7d10"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7d11"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.888Z",
+    "updatedAt": "2025-11-12T19:08:11.888Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7d8f",
+    "name": "CGV Estella Place - Phòng 3 Layout",
+    "branch": "6914db1be55ece88a2ad7c8b",
+    "theater": "6914db1be55ece88a2ad7d8d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7d90"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7d91"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.933Z",
+    "updatedAt": "2025-11-12T19:08:11.933Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1be55ece88a2ad7e13",
+    "name": "CGV SC VivoCity - Phòng 1 Layout",
+    "branch": "6914db1be55ece88a2ad7e0f",
+    "theater": "6914db1be55ece88a2ad7e11",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7e14"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1be55ece88a2ad7e15"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:11.983Z",
+    "updatedAt": "2025-11-12T19:08:11.983Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7e93",
+    "name": "CGV SC VivoCity - Phòng 2 Layout",
+    "branch": "6914db1be55ece88a2ad7e0f",
+    "theater": "6914db1ce55ece88a2ad7e91",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad7e94"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad7e95"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.032Z",
+    "updatedAt": "2025-11-12T19:08:12.032Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7f13",
+    "name": "CGV SC VivoCity - Phòng 3 Layout",
+    "branch": "6914db1be55ece88a2ad7e0f",
+    "theater": "6914db1ce55ece88a2ad7f11",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad7f14"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad7f15"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.076Z",
+    "updatedAt": "2025-11-12T19:08:12.076Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad7f97",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi - Phòng 1 Layout",
+    "branch": "6914db1ce55ece88a2ad7f93",
+    "theater": "6914db1ce55ece88a2ad7f95",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad7f98"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad7f99"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.193Z",
+    "updatedAt": "2025-11-12T19:08:12.193Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8017",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi - Phòng 2 Layout",
+    "branch": "6914db1ce55ece88a2ad7f93",
+    "theater": "6914db1ce55ece88a2ad8015",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8018"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8019"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.243Z",
+    "updatedAt": "2025-11-12T19:08:12.243Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8097",
+    "name": "BHD Star Cineplex Vincom Đồng Khởi - Phòng 3 Layout",
+    "branch": "6914db1ce55ece88a2ad7f93",
+    "theater": "6914db1ce55ece88a2ad8095",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8098"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8099"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.297Z",
+    "updatedAt": "2025-11-12T19:08:12.297Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad811b",
+    "name": "BHD Star Cineplex Vincom Thủ Đức - Phòng 1 Layout",
+    "branch": "6914db1ce55ece88a2ad8117",
+    "theater": "6914db1ce55ece88a2ad8119",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad811c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad811d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.379Z",
+    "updatedAt": "2025-11-12T19:08:12.379Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad819b",
+    "name": "BHD Star Cineplex Vincom Thủ Đức - Phòng 2 Layout",
+    "branch": "6914db1ce55ece88a2ad8117",
+    "theater": "6914db1ce55ece88a2ad8199",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad819c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad819d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.469Z",
+    "updatedAt": "2025-11-12T19:08:12.469Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad821f",
+    "name": "Lotte Cinema Nam Sài Gòn - Phòng 1 Layout",
+    "branch": "6914db1ce55ece88a2ad821b",
+    "theater": "6914db1ce55ece88a2ad821d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8220"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8221"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.531Z",
+    "updatedAt": "2025-11-12T19:08:12.531Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad829f",
+    "name": "Lotte Cinema Nam Sài Gòn - Phòng 2 Layout",
+    "branch": "6914db1ce55ece88a2ad821b",
+    "theater": "6914db1ce55ece88a2ad829d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad82a0"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad82a1"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.582Z",
+    "updatedAt": "2025-11-12T19:08:12.582Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad831f",
+    "name": "Lotte Cinema Nam Sài Gòn - Phòng 3 Layout",
+    "branch": "6914db1ce55ece88a2ad821b",
+    "theater": "6914db1ce55ece88a2ad831d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8320"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8321"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.636Z",
+    "updatedAt": "2025-11-12T19:08:12.636Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad83a3",
+    "name": "CGV Vincom Cần Thơ - Phòng 1 Layout",
+    "branch": "6914db1ce55ece88a2ad839f",
+    "theater": "6914db1ce55ece88a2ad83a1",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad83a4"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad83a5"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.689Z",
+    "updatedAt": "2025-11-12T19:08:12.689Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8423",
+    "name": "CGV Vincom Cần Thơ - Phòng 2 Layout",
+    "branch": "6914db1ce55ece88a2ad839f",
+    "theater": "6914db1ce55ece88a2ad8421",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8424"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8425"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.742Z",
+    "updatedAt": "2025-11-12T19:08:12.742Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad84a3",
+    "name": "CGV Vincom Cần Thơ - Phòng 3 Layout",
+    "branch": "6914db1ce55ece88a2ad839f",
+    "theater": "6914db1ce55ece88a2ad84a1",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad84a4"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad84a5"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.795Z",
+    "updatedAt": "2025-11-12T19:08:12.795Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad8527",
+    "name": "CGV Long Xuyên - Phòng 1 Layout",
+    "branch": "6914db1ce55ece88a2ad8523",
+    "theater": "6914db1ce55ece88a2ad8525",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8528"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad8529"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.857Z",
+    "updatedAt": "2025-11-12T19:08:12.857Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad85a7",
+    "name": "CGV Long Xuyên - Phòng 2 Layout",
+    "branch": "6914db1ce55ece88a2ad8523",
+    "theater": "6914db1ce55ece88a2ad85a5",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad85a8"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad85a9"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.902Z",
+    "updatedAt": "2025-11-12T19:08:12.902Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad862b",
+    "name": "CGV Biên Hòa - Phòng 1 Layout",
+    "branch": "6914db1ce55ece88a2ad8627",
+    "theater": "6914db1ce55ece88a2ad8629",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad862c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad862d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.953Z",
+    "updatedAt": "2025-11-12T19:08:12.953Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1ce55ece88a2ad86ab",
+    "name": "CGV Biên Hòa - Phòng 2 Layout",
+    "branch": "6914db1ce55ece88a2ad8627",
+    "theater": "6914db1ce55ece88a2ad86a9",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad86ac"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1ce55ece88a2ad86ad"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:12.998Z",
+    "updatedAt": "2025-11-12T19:08:12.998Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad872f",
+    "name": "CGV Aeon Bình Dương - Phòng 1 Layout",
+    "branch": "6914db1de55ece88a2ad872b",
+    "theater": "6914db1de55ece88a2ad872d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8730"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8731"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.057Z",
+    "updatedAt": "2025-11-12T19:08:13.057Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad87af",
+    "name": "CGV Aeon Bình Dương - Phòng 2 Layout",
+    "branch": "6914db1de55ece88a2ad872b",
+    "theater": "6914db1de55ece88a2ad87ad",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad87b0"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad87b1"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.098Z",
+    "updatedAt": "2025-11-12T19:08:13.098Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad882f",
+    "name": "CGV Aeon Bình Dương - Phòng 3 Layout",
+    "branch": "6914db1de55ece88a2ad872b",
+    "theater": "6914db1de55ece88a2ad882d",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8830"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8831"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.136Z",
+    "updatedAt": "2025-11-12T19:08:13.136Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad88b3",
+    "name": "CGV Vũng Tàu - Phòng 1 Layout",
+    "branch": "6914db1de55ece88a2ad88af",
+    "theater": "6914db1de55ece88a2ad88b1",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad88b4"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad88b5"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.198Z",
+    "updatedAt": "2025-11-12T19:08:13.198Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8933",
+    "name": "CGV Vũng Tàu - Phòng 2 Layout",
+    "branch": "6914db1de55ece88a2ad88af",
+    "theater": "6914db1de55ece88a2ad8931",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8934"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8935"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.253Z",
+    "updatedAt": "2025-11-12T19:08:13.253Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad89b7",
+    "name": "Galaxy Cinema Quận 1 - Phòng 1 Layout",
+    "branch": "6914db1de55ece88a2ad89b3",
+    "theater": "6914db1de55ece88a2ad89b5",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad89b8"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad89b9"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.312Z",
+    "updatedAt": "2025-11-12T19:08:13.312Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8a37",
+    "name": "Galaxy Cinema Quận 1 - Phòng 2 Layout",
+    "branch": "6914db1de55ece88a2ad89b3",
+    "theater": "6914db1de55ece88a2ad8a35",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8a38"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8a39"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.365Z",
+    "updatedAt": "2025-11-12T19:08:13.365Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8abb",
+    "name": "Beta Cinema Cineplex - Phòng 1 Layout",
+    "branch": "6914db1de55ece88a2ad8ab7",
+    "theater": "6914db1de55ece88a2ad8ab9",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8abc"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8abd"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.452Z",
+    "updatedAt": "2025-11-12T19:08:13.452Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914db1de55ece88a2ad8b3b",
+    "name": "Beta Cinema Cineplex - Phòng 2 Layout",
+    "branch": "6914db1de55ece88a2ad8ab7",
+    "theater": "6914db1de55ece88a2ad8b39",
+    "rows": 10,
+    "seatsPerRow": 12,
+    "rowLabels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J"
+    ],
+    "vipRows": [
+      "H",
+      "I",
+      "J"
+    ],
+    "coupleSeats": [
+      {
+        "row": "F",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8b3c"
+      },
+      {
+        "row": "G",
+        "startSeat": 5,
+        "endSeat": 8,
+        "_id": "6914db1de55ece88a2ad8b3d"
+      }
+    ],
+    "aisleAfterColumns": [
+      6
+    ],
+    "screenPosition": {
+      "x": 0,
+      "y": 0,
+      "width": 100
+    },
+    "isActive": true,
+    "disabledSeats": [],
+    "createdAt": "2025-11-12T19:08:13.540Z",
+    "updatedAt": "2025-11-12T19:08:13.540Z",
+    "__v": 0
+  }
+]

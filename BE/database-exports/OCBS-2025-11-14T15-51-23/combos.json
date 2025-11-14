@@ -1,0 +1,131 @@
+[
+  {
+    "_id": "690987e7de4bde467199ad1b",
+    "name": "2 Popcorn",
+    "description": "2 bắp rang lớn cho 2 người",
+    "price": 80000,
+    "items": [
+      {
+        "name": "Bắp rang lớn",
+        "quantity": 2,
+        "_id": "690987e7de4bde467199ad1c"
+      }
+    ],
+    "image": "uploads/combos/combo-1753455849856-823404103.jpg",
+    "isActive": true,
+    "category": "popcorn",
+    "createdAt": "2025-11-04T04:58:15.478Z",
+    "updatedAt": "2025-11-14T09:21:22.245Z",
+    "__v": 0
+  },
+  {
+    "_id": "690987e7de4bde467199ad1f",
+    "name": "Pepsi 500mL",
+    "description": "Pepsi 500ml",
+    "price": 25000,
+    "items": [
+      {
+        "name": "Pepsi 500mL",
+        "quantity": 1,
+        "_id": "690987e7de4bde467199ad20"
+      }
+    ],
+    "image": "uploads/combos/combo-1753456018338-632903576.jpg",
+    "isActive": true,
+    "category": "drinks",
+    "createdAt": "2025-11-04T04:58:15.514Z",
+    "updatedAt": "2025-11-14T09:21:22.252Z",
+    "__v": 0
+  },
+  {
+    "_id": "690987e7de4bde467199ad23",
+    "name": "Combo Đôi",
+    "description": "1 bắp rang lớn + 2 nước ngọt",
+    "price": 95000,
+    "items": [
+      {
+        "name": "Bắp rang lớn",
+        "quantity": 1,
+        "_id": "690987e7de4bde467199ad24"
+      },
+      {
+        "name": "Nước ngọt",
+        "quantity": 2,
+        "_id": "690987e7de4bde467199ad25"
+      }
+    ],
+    "image": "uploads/combos/combo-1763039955974-633568879.jpg",
+    "isActive": true,
+    "category": "combo",
+    "createdAt": "2025-11-04T04:58:15.522Z",
+    "updatedAt": "2025-11-14T09:21:22.254Z",
+    "__v": 0
+  },
+  {
+    "_id": "690987e7de4bde467199ad28",
+    "name": "Combo Gia Đình",
+    "description": "2 bắp rang lớn + 2 nước ngọt + 1 snack",
+    "price": 150000,
+    "items": [
+      {
+        "name": "Bắp rang lớn",
+        "quantity": 2,
+        "_id": "690987e7de4bde467199ad29"
+      },
+      {
+        "name": "Nước ngọt",
+        "quantity": 2,
+        "_id": "690987e7de4bde467199ad2a"
+      },
+      {
+        "name": "Snack",
+        "quantity": 1,
+        "_id": "690987e7de4bde467199ad2b"
+      }
+    ],
+    "image": "uploads/combos/combo-1763039957695-969834840.jpg",
+    "isActive": true,
+    "category": "combo",
+    "createdAt": "2025-11-04T04:58:15.530Z",
+    "updatedAt": "2025-11-14T09:21:22.258Z",
+    "__v": 0
+  },
+  {
+    "_id": "690987e7de4bde467199ad2e",
+    "name": "Bắp Rang Bơ Nhỏ",
+    "description": "1 bắp rang bơ nhỏ",
+    "price": 45000,
+    "items": [
+      {
+        "name": "Bắp rang bơ nhỏ",
+        "quantity": 1,
+        "_id": "690987e7de4bde467199ad2f"
+      }
+    ],
+    "image": "uploads/combos/combo-1763039958832-825294797.jpg",
+    "isActive": true,
+    "category": "popcorn",
+    "createdAt": "2025-11-04T04:58:15.538Z",
+    "updatedAt": "2025-11-14T09:21:22.261Z",
+    "__v": 0
+  },
+  {
+    "_id": "690987e7de4bde467199ad32",
+    "name": "Coca Cola 500mL",
+    "description": "Coca Cola 500ml",
+    "price": 25000,
+    "items": [
+      {
+        "name": "Coca Cola 500mL",
+        "quantity": 1,
+        "_id": "690987e7de4bde467199ad33"
+      }
+    ],
+    "image": "uploads/combos/combobongnuoc.png",
+    "isActive": true,
+    "category": "drinks",
+    "createdAt": "2025-11-04T04:58:15.543Z",
+    "updatedAt": "2025-11-14T09:21:22.264Z",
+    "__v": 0
+  }
+]

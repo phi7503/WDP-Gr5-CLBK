@@ -136,9 +136,8 @@ const createShowtimesForRemainingMovies = async () => {
               // Check for conflicts
               const conflictingShowtime = await Showtime.findOne({
                 theater: theater._id,
-                $or: [
-                  { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
-                ],
+                startTime: { $lt: endTime },
+                endTime: { $gt: startTime }
               });
               
               if (conflictingShowtime) {

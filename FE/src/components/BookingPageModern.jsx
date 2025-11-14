@@ -30,6 +30,51 @@ const BookingPageModern = () => {
     phone: ''
   });
 
+  // ✅ Hệ thống phân hạng ghế theo giá VNĐ
+  const getSeatCategory = (price) => {
+    if (price >= 200000) {
+      return {
+        name: 'DIAMOND VIP',
+        icon: '💎',
+        color: '#9333ea',
+        bgColor: 'linear-gradient(135deg, #9333ea, #7c3aed)',
+        description: 'Ghế massage, recliner cao cấp'
+      };
+    } else if (price >= 150000) {
+      return {
+        name: 'PLATINUM',
+        icon: '👑',
+        color: '#6b7280',
+        bgColor: 'linear-gradient(135deg, #6b7280, #4b5563)',
+        description: 'Ghế da cao cấp, tựa lưng điện'
+      };
+    } else if (price >= 100000) {
+      return {
+        name: 'GOLD VIP',
+        icon: '🥇',
+        color: '#f59e0b',
+        bgColor: 'linear-gradient(135deg, #f59e0b, #d97706)',
+        description: 'Ghế VIP rộng rãi, thoải mái'
+      };
+    } else if (price >= 70000) {
+      return {
+        name: 'SILVER',
+        icon: '🥈',
+        color: '#10b981',
+        bgColor: 'linear-gradient(135deg, #10b981, #059669)',
+        description: 'Ghế thoải mái, vị trí tốt'
+      };
+    } else {
+      return {
+        name: 'STANDARD',
+        icon: '🎬',
+        color: '#3b82f6',
+        bgColor: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+        description: 'Ghế tiêu chuẩn'
+      };
+    }
+  };
+
   useEffect(() => {
     if (showtimeId) {
       loadShowtimeData();
@@ -744,6 +789,52 @@ const BookingPageModern = () => {
                       opacity: 0.6
                     }} />
                     <Text style={{ color: '#999', fontSize: '14px' }}>Ghế đã đặt</Text>
+                  </div>
+                </div>
+
+                {/* Seat Categories Legend */}
+                <div style={{ 
+                  marginBottom: '32px',
+                  padding: '16px',
+                  background: 'rgba(255,255,255,0.05)',
+                  borderRadius: '8px',
+                  border: '1px solid #333'
+                }}>
+                  <Text style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', display: 'block', textAlign: 'center' }}>
+                    📋 Hạng ghế theo giá
+                  </Text>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
+                    gap: '12px' 
+                  }}>
+                    {[
+                      { price: 250000, name: 'DIAMOND', icon: '💎', color: '#9333ea' },
+                      { price: 180000, name: 'PLATINUM', icon: '👑', color: '#6b7280' },
+                      { price: 120000, name: 'GOLD VIP', icon: '🥇', color: '#f59e0b' },
+                      { price: 80000, name: 'SILVER', icon: '🥈', color: '#10b981' },
+                      { price: 50000, name: 'STANDARD', icon: '🎬', color: '#3b82f6' }
+                    ].map((category, index) => (
+                      <div key={index} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 12px',
+                        background: 'rgba(255,255,255,0.03)',
+                        borderRadius: '6px',
+                        border: `1px solid ${category.color}40`
+                      }}>
+                        <span style={{ fontSize: '16px' }}>{category.icon}</span>
+                        <div>
+                          <div style={{ color: category.color, fontWeight: 'bold', fontSize: '11px' }}>
+                            {category.name}
+                          </div>
+                          <div style={{ color: '#fff', fontSize: '10px' }}>
+                            {category.price.toLocaleString('vi-VN')} ₫
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 

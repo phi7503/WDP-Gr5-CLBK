@@ -1,0 +1,644 @@
+[
+  {
+    "_id": "688398965d37066a796abf11",
+    "title": "Ma Không Đầu",
+    "description": "Phim kinh dị – hài về hành trình ghê rợn khi nhân vật chở xác không đầu bắt đầu gặp hiện tượng siêu nhiên.",
+    "duration": 115,
+    "genre": [
+      "Horror",
+      "Comedy"
+    ],
+    "releaseDate": "2025-06-24T00:00:00.000Z",
+    "endDate": "2025-07-31T00:00:00.000Z",
+    "language": "Vietnamese",
+    "director": "Bùi Văn Hải",
+    "cast": [
+      "Tiến Luật",
+      "Ngô Kiến Huy",
+      "Hồng Vân"
+    ],
+    "poster": "uploads/posters/poster-1753454741979-609694711.jpg",
+    "trailer": "https://www.youtube.com/watch?v=Ij19LCYrGrE",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "createdAt": "2025-07-25T14:45:42.001Z",
+    "updatedAt": "2025-11-12T17:08:54.525Z",
+    "__v": 0,
+    "backdropImage": "uploads/backdrops/backdrop-1753454741979-609694711.jpg"
+  },
+  {
+    "_id": "688399ee5d37066a796abf25",
+    "title": "The Fantastic Four: First Steps",
+    "description": "Bộ phim giới thiệu lại nhóm siêu anh hùng Fantastic Four trong một cuộc phiêu lưu xuyên không gian và thời gian.",
+    "duration": 130,
+    "genre": [
+      "Action",
+      "Sci-Fi",
+      "Adventure"
+    ],
+    "releaseDate": "2025-06-28T00:00:00.000Z",
+    "endDate": "2025-07-31T00:00:00.000Z",
+    "language": "English",
+    "director": "Matt Shakman",
+    "cast": [
+      "Joseph Quinn",
+      "Ebon Moss-Bachrach",
+      "Vanessa Kirby"
+    ],
+    "poster": "uploads/posters/poster-1753455086653-440705890.jpeg",
+    "trailer": "https://www.youtube.com/watch?v=K7446v0CxKk",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "createdAt": "2025-07-25T14:51:26.670Z",
+    "updatedAt": "2025-11-12T17:08:53.154Z",
+    "__v": 0,
+    "backdropImage": "uploads/backdrops/the-fantastic-four-first-steps-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ac7",
+    "title": "Nàng Bạch Tuyết",
+    "description": "Phiên bản live-action của Disney, kể lại câu chuyện cổ tích với nhiều tình tiết sáng tạo và hiện đại hơn. Bạch Tuyết đối đầu với Hoàng hậu độc ác, khám phá sức mạnh tiềm ẩn và tìm ra con đường riêng trong thế giới cổ tích.",
+    "duration": 125,
+    "genre": [
+      "Fantasy",
+      "Adventure",
+      "Family"
+    ],
+    "releaseDate": "2025-03-21T00:00:00.000Z",
+    "endDate": "2025-05-21T00:00:00.000Z",
+    "language": "English",
+    "director": "Marc Webb",
+    "cast": [
+      "Rachel Zegler",
+      "Gal Gadot",
+      "Andrew Burnap"
+    ],
+    "poster": "uploads/posters/nng-bch-tuyt-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=KsSoo5K8CpA",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.349Z",
+    "updatedAt": "2025-11-12T17:08:51.778Z",
+    "backdropImage": "uploads/backdrops/nng-bch-tuyt-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ac8",
+    "title": "Nhà Ga Ma Chó",
+    "description": "Bộ phim kinh dị bí ẩn lấy bối cảnh tại ga tàu Rocafort u ám ở Barcelona, nơi gắn liền với hàng loạt cái chết kỳ bí. Laura – nhân viên mới – nhận ra những điều bất thường và quyết tâm tìm hiểu sự thật.",
+    "duration": 110,
+    "genre": [
+      "Horror",
+      "Mystery",
+      "Thriller"
+    ],
+    "releaseDate": "2025-03-21T00:00:00.000Z",
+    "endDate": "2025-05-21T00:00:00.000Z",
+    "language": "Spanish",
+    "director": "Jaume Balagueró",
+    "cast": [
+      "Marta Nieto",
+      "Álex Monner",
+      "Pep Tosar"
+    ],
+    "poster": "uploads/posters/nh--ga-ma-ch--poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=K8XqJ8qJ8Xq",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.351Z",
+    "updatedAt": "2025-11-12T17:12:50.661Z",
+    "backdropImage": "uploads/backdrops/nh--ga-ma-ch--backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ac9",
+    "title": "Âm Dương Lộ",
+    "description": "Lấy cảm hứng từ những truyền thuyết đô thị rùng rợn, phim kể về một con đường ma quái gắn liền với nhiều vụ mất tích bí ẩn. Nhóm phóng viên quyết định điều tra và phát hiện sự thật rùng mình liên quan đến thế giới tâm linh.",
+    "duration": 95,
+    "genre": [
+      "Horror",
+      "Mystery",
+      "Supernatural"
+    ],
+    "releaseDate": "2025-03-28T00:00:00.000Z",
+    "endDate": "2025-05-28T00:00:00.000Z",
+    "language": "Vietnamese",
+    "director": "Nguyễn Quang Dũng",
+    "cast": [
+      "Trấn Thành",
+      "Hari Won",
+      "Ngô Kiến Huy"
+    ],
+    "poster": "uploads/posters/m-dng-l-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=TXoZ4LfEUCE",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.352Z",
+    "updatedAt": "2025-11-12T17:08:45.291Z",
+    "backdropImage": "uploads/backdrops/m-dng-l-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64acc",
+    "title": "Cô Gái Đến Từ Hôm Qua",
+    "description": "Phim tình cảm lãng mạn dựa trên tiểu thuyết nổi tiếng của Nguyễn Nhật Ánh, kể về mối tình đầu trong sáng và ngây thơ của tuổi học trò.",
+    "duration": 105,
+    "genre": [
+      "Romance",
+      "Drama",
+      "Coming-of-age"
+    ],
+    "releaseDate": "2025-05-20T00:00:00.000Z",
+    "endDate": "2025-07-20T00:00:00.000Z",
+    "language": "Vietnamese",
+    "director": "Phan Gia Nhật Linh",
+    "cast": [
+      "Ngô Kiến Huy",
+      "Hari Won",
+      "Trấn Thành"
+    ],
+    "poster": "uploads/posters/c-gi-n-t-hm-qua-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=NYowPGxSLzU",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.352Z",
+    "updatedAt": "2025-11-12T17:08:46.677Z",
+    "backdropImage": "uploads/backdrops/c-gi-n-t-hm-qua-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64acd",
+    "title": "Ván Cờ Vây – The Match",
+    "description": "Phim hành động, tội phạm lấy bối cảnh thập niên 1980–1990, xoay quanh kỳ thủ cờ vây huyền thoại Cho Hun Hyeon và học trò Lee Chang Ho. Mối quan hệ thầy – trò dần rạn nứt khi Chang Ho khẳng định bản thân.",
+    "duration": 130,
+    "genre": [
+      "Action",
+      "Crime",
+      "Drama"
+    ],
+    "releaseDate": "2025-02-14T00:00:00.000Z",
+    "endDate": "2025-04-14T00:00:00.000Z",
+    "language": "Korean",
+    "director": "Kim Hyung-joo",
+    "cast": [
+      "Lee Byung-hun",
+      "Yoo Ah-in",
+      "Park Jung-min"
+    ],
+    "poster": "uploads/posters/vn-c-vy-the-match-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=JqJ3VtNDXqE",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.352Z",
+    "updatedAt": "2025-11-12T17:10:16.212Z",
+    "backdropImage": "uploads/backdrops/vn-c-vy-the-match-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64acf",
+    "title": "The Bad Guys 2",
+    "description": "Phần tiếp theo của phim hoạt hình The Bad Guys (2022), kể về nhóm bất hảo hóa thiện lành gồm Sói, Rắn, Cá Mập, Cá Hổ và Nhện. Cuộc sống của họ bị đảo lộn khi xuất hiện nhóm tội phạm toàn nữ.",
+    "duration": 100,
+    "genre": [
+      "Animation",
+      "Comedy",
+      "Adventure"
+    ],
+    "releaseDate": "2025-03-07T00:00:00.000Z",
+    "endDate": "2025-05-07T00:00:00.000Z",
+    "language": "English",
+    "director": "Pierre Perifel",
+    "cast": [
+      "Sam Rockwell",
+      "Marc Maron",
+      "Awkwafina"
+    ],
+    "poster": "uploads/posters/the-bad-guys-2-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=HvLHYox_Vq8",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.352Z",
+    "updatedAt": "2025-11-12T17:08:49.443Z",
+    "backdropImage": "uploads/backdrops/the-bad-guys-2-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad0",
+    "title": "Freakier Friday",
+    "description": "22 năm sau bộ phim hài Freaky Friday, Jamie Lee Curtis và Lindsay Lohan trở lại vai cặp mẹ con Tess và Anna, đối diện với những tình huống hài hước khi hoán đổi cơ thể. Phim khai thác các tình tiết xuyên suốt 3 thế hệ phụ nữ.",
+    "duration": 115,
+    "genre": [
+      "Comedy",
+      "Fantasy",
+      "Family"
+    ],
+    "releaseDate": "2025-03-14T00:00:00.000Z",
+    "endDate": "2025-05-14T00:00:00.000Z",
+    "language": "English",
+    "director": "Nisha Ganatra",
+    "cast": [
+      "Jamie Lee Curtis",
+      "Lindsay Lohan",
+      "Chad Michael Murray"
+    ],
+    "poster": "uploads/posters/freakier-friday-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=IyJzhtJEtoU",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.353Z",
+    "updatedAt": "2025-11-12T17:08:36.686Z",
+    "backdropImage": "uploads/backdrops/freakier-friday-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad1",
+    "title": "Wicked: For Good",
+    "description": "Phần tiếp theo của Wicked, tiếp nối mối quan hệ giữa Elphaba và Galinda trong những nhân dạng mới. Phim đánh dấu sự chuyển dịch hoàn toàn của Elphaba thành Phù Thủy Xấu Xa Miền Tây và Galinda thành Glinda Thiện Lành.",
+    "duration": 140,
+    "genre": [
+      "Musical",
+      "Fantasy",
+      "Drama"
+    ],
+    "releaseDate": "2025-03-21T00:00:00.000Z",
+    "endDate": "2025-05-21T00:00:00.000Z",
+    "language": "English",
+    "director": "Jon M. Chu",
+    "cast": [
+      "Cynthia Erivo",
+      "Ariana Grande",
+      "Jeff Goldblum"
+    ],
+    "poster": "uploads/posters/wicked-for-good-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=R2Xubj7lazE",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.353Z",
+    "updatedAt": "2025-11-12T17:08:38.114Z",
+    "backdropImage": "uploads/backdrops/wicked-for-good-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad2",
+    "title": "Fast & Furious 11",
+    "description": "Phần tiếp theo của series phim hành động nổi tiếng Fast & Furious, với những pha hành động mãn nhãn và những chiếc xe siêu tốc.",
+    "duration": 140,
+    "genre": [
+      "Action",
+      "Crime",
+      "Thriller"
+    ],
+    "releaseDate": "2025-04-04T00:00:00.000Z",
+    "endDate": "2025-06-04T00:00:00.000Z",
+    "language": "English",
+    "director": "Louis Leterrier",
+    "cast": [
+      "Vin Diesel",
+      "Jason Momoa",
+      "Michelle Rodriguez"
+    ],
+    "poster": "uploads/posters/fast-furious-11-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=Y5Xq3b9N4Xk",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.353Z",
+    "updatedAt": "2025-11-12T17:10:16.195Z",
+    "backdropImage": "uploads/backdrops/fast-furious-11-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad3",
+    "title": "Spider-Man: Beyond the Spider-Verse",
+    "description": "Phần tiếp theo của Spider-Man: Across the Spider-Verse, tiếp tục cuộc phiêu lưu của Miles Morales trong đa vũ trụ.",
+    "duration": 120,
+    "genre": [
+      "Animation",
+      "Action",
+      "Adventure"
+    ],
+    "releaseDate": "2025-06-06T00:00:00.000Z",
+    "endDate": "2025-08-06T00:00:00.000Z",
+    "language": "English",
+    "director": "Joaquim Dos Santos",
+    "cast": [
+      "Shameik Moore",
+      "Hailee Steinfeld",
+      "Oscar Isaac"
+    ],
+    "poster": "uploads/posters/spider-man-beyond-the-spider-verse-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=shW9i6k8cB0",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.353Z",
+    "updatedAt": "2025-11-12T17:10:16.203Z",
+    "backdropImage": "uploads/backdrops/spider-man-beyond-the-spider-verse-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad4",
+    "title": "Mission: Impossible 8",
+    "description": "Phần tiếp theo của series Mission: Impossible, với Tom Cruise trở lại vai Ethan Hunt trong một nhiệm vụ mới đầy nguy hiểm.",
+    "duration": 150,
+    "genre": [
+      "Action",
+      "Adventure",
+      "Thriller"
+    ],
+    "releaseDate": "2025-05-23T00:00:00.000Z",
+    "endDate": "2025-07-23T00:00:00.000Z",
+    "language": "English",
+    "director": "Christopher McQuarrie",
+    "cast": [
+      "Tom Cruise",
+      "Hayley Atwell",
+      "Simon Pegg"
+    ],
+    "poster": "uploads/posters/mission-impossible-8-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=G1VBfMCZVkw",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.353Z",
+    "updatedAt": "2025-11-12T17:08:42.520Z",
+    "backdropImage": "uploads/backdrops/mission-impossible-8-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad5",
+    "title": "Mật Danh: Kế Toán 2",
+    "description": "Khi một người quen cũ bị sát hại, Wolff buộc phải giải quyết vụ án. Nhận ra các biện pháp cực đoan hơn là cần thiết, Wolff tuyển dụng người anh trai ghẻ lạnh và rất nguy hiểm của mình, Brax, để cùng điều tra.",
+    "duration": 125,
+    "genre": [
+      "Action",
+      "Crime",
+      "Thriller"
+    ],
+    "releaseDate": "2025-02-28T00:00:00.000Z",
+    "endDate": "2025-04-28T00:00:00.000Z",
+    "language": "English",
+    "director": "Gavin O'Connor",
+    "cast": [
+      "Ben Affleck",
+      "Jon Bernthal",
+      "J.K. Simmons"
+    ],
+    "poster": "uploads/posters/mt-danh-k-ton-2-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=RwXDphhQ9Tg",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.353Z",
+    "updatedAt": "2025-11-12T17:08:43.906Z",
+    "backdropImage": "uploads/backdrops/mt-danh-k-ton-2-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad6",
+    "title": "Lưỡi Hái Tử Thần: Huyết Thống",
+    "description": "Bị ám ảnh bởi cơn ác mộng dữ dội liên tục, nữ sinh viên Stefanie trở về nhà để tìm kiếm người có thể phá vỡ vòng luẩn quẩn này và cứu gia đình cô khỏi cái chết đang rình rập.",
+    "duration": 95,
+    "genre": [
+      "Horror",
+      "Thriller",
+      "Mystery"
+    ],
+    "releaseDate": "2025-03-07T00:00:00.000Z",
+    "endDate": "2025-05-07T00:00:00.000Z",
+    "language": "English",
+    "director": "David Bruckner",
+    "cast": [
+      "Isabela Merced",
+      "Jacob Batalon",
+      "Kate Siegel"
+    ],
+    "poster": "uploads/posters/li-hi-t-thn-huyt-thng-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=xitSoRbHJ50",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.354Z",
+    "updatedAt": "2025-11-12T17:08:32.930Z",
+    "backdropImage": "uploads/backdrops/li-hi-t-thn-huyt-thng-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad7",
+    "title": "Quái Vật Đầm Lầy",
+    "description": "Kyle, một sinh viên sinh học vừa tốt nghiệp, cùng nhóm bạn thực hiện chuyến đi đến Florida để rải tro cốt của người anh trai quá cố. Tuy nhiên, chuyến đi trở thành thảm họa khi chiếc máy bay của họ rơi xuống một đầm lầy bí ẩn.",
+    "duration": 110,
+    "genre": [
+      "Horror",
+      "Thriller",
+      "Adventure"
+    ],
+    "releaseDate": "2025-03-14T00:00:00.000Z",
+    "endDate": "2025-05-14T00:00:00.000Z",
+    "language": "English",
+    "director": "Jordan Peele",
+    "cast": [
+      "Daniel Kaluuya",
+      "Keke Palmer",
+      "Brandon Perea"
+    ],
+    "poster": "uploads/posters/qui-vt-m-ly-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=jFvfTbftCnI",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.354Z",
+    "updatedAt": "2025-11-12T17:08:34.321Z",
+    "backdropImage": "uploads/backdrops/qui-vt-m-ly-backdrop.jpg"
+  },
+  {
+    "_id": "68ec638b489da6fe8ba64ad8",
+    "title": "Biệt Đội Sấm Sét",
+    "description": "Sau khi thấy mình bị mắc kẹt trong một cái bẫy chết người, bảy người bị bỏ rơi vỡ mộng phải bắt tay vào một nhiệm vụ nguy hiểm sẽ buộc họ phải đối mặt với những góc đen tối nhất trong quá khứ của mình.",
+    "duration": 135,
+    "genre": [
+      "Action",
+      "Thriller",
+      "Crime"
+    ],
+    "releaseDate": "2025-03-21T00:00:00.000Z",
+    "endDate": "2025-05-21T00:00:00.000Z",
+    "language": "English",
+    "director": "David Ayer",
+    "cast": [
+      "Will Smith",
+      "Margot Robbie",
+      "Jared Leto"
+    ],
+    "poster": "uploads/posters/bi-t---i-s-m-s-t-poster.jpg",
+    "trailer": "https://www.youtube.com/watch?v=bwgSi13u95k",
+    "status": "now-showing",
+    "hotness": 0,
+    "rating": 0,
+    "__v": 0,
+    "createdAt": "2025-10-13T02:27:23.354Z",
+    "updatedAt": "2025-11-12T17:12:46.540Z",
+    "backdropImage": "uploads/backdrops/bi-t---i-s-m-s-t-backdrop.jpg"
+  },
+  {
+    "_id": "6914a6105eb5d55c6238d1aa",
+    "title": "Dune",
+    "description": "Paul Atreides leads a rebellion to restore his family's reign over the desert planet Arrakis while facing a terrible future only he can foresee.",
+    "duration": 155,
+    "genre": [
+      "Sci-Fi",
+      "Adventure",
+      "Drama"
+    ],
+    "releaseDate": "2021-10-22T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "language": "English",
+    "director": "Denis Villeneuve",
+    "cast": [
+      "Timothée Chalamet",
+      "Rebecca Ferguson",
+      "Oscar Isaac",
+      "Zendaya"
+    ],
+    "poster": "uploads/posters/dune-poster.jpg",
+    "backdropImage": "uploads/backdrops/dune-backdrop.jpg",
+    "trailer": "https://www.youtube.com/watch?v=8g18jFHCLXk",
+    "status": "now-showing",
+    "hotness": 85,
+    "rating": 8,
+    "createdAt": "2025-11-12T15:21:52.570Z",
+    "updatedAt": "2025-11-12T15:26:32.732Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914a6105eb5d55c6238d1ad",
+    "title": "The Dark Knight",
+    "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+    "duration": 152,
+    "genre": [
+      "Action",
+      "Crime",
+      "Drama"
+    ],
+    "releaseDate": "2008-07-18T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "language": "English",
+    "director": "Christopher Nolan",
+    "cast": [
+      "Christian Bale",
+      "Heath Ledger",
+      "Aaron Eckhart",
+      "Michael Caine"
+    ],
+    "poster": "uploads/posters/dark-knight-poster.jpg",
+    "backdropImage": "uploads/backdrops/dark-knight-backdrop.jpg",
+    "trailer": "https://www.youtube.com/watch?v=EXeTwQWrcwY",
+    "status": "now-showing",
+    "hotness": 90,
+    "rating": 9.1,
+    "createdAt": "2025-11-12T15:21:52.605Z",
+    "updatedAt": "2025-11-12T15:25:47.042Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914a6105eb5d55c6238d1b0",
+    "title": "Avengers: Endgame",
+    "description": "After the devastating events of Avengers: Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more.",
+    "duration": 181,
+    "genre": [
+      "Action",
+      "Adventure",
+      "Sci-Fi"
+    ],
+    "releaseDate": "2019-04-26T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "language": "English",
+    "director": "Anthony Russo, Joe Russo",
+    "cast": [
+      "Robert Downey Jr.",
+      "Chris Evans",
+      "Mark Ruffalo",
+      "Chris Hemsworth"
+    ],
+    "poster": "uploads/posters/avengers-endgame-poster.jpg",
+    "backdropImage": "uploads/backdrops/avengers-endgame-backdrop.jpg",
+    "trailer": "https://www.youtube.com/watch?v=TcMBFSGVi1c",
+    "status": "now-showing",
+    "hotness": 88,
+    "rating": 9.2,
+    "createdAt": "2025-11-12T15:21:52.616Z",
+    "updatedAt": "2025-11-12T15:25:47.401Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914a6105eb5d55c6238d1b3",
+    "title": "Inception",
+    "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+    "duration": 148,
+    "genre": [
+      "Action",
+      "Sci-Fi",
+      "Thriller"
+    ],
+    "releaseDate": "2010-07-16T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "language": "English",
+    "director": "Christopher Nolan",
+    "cast": [
+      "Leonardo DiCaprio",
+      "Marion Cotillard",
+      "Tom Hardy",
+      "Ellen Page"
+    ],
+    "poster": "uploads/posters/inception-poster.jpg",
+    "backdropImage": "uploads/backdrops/inception-backdrop.jpg",
+    "trailer": "https://www.youtube.com/watch?v=YoHD9XEInc0",
+    "status": "now-showing",
+    "hotness": 87,
+    "rating": 9,
+    "createdAt": "2025-11-12T15:21:52.626Z",
+    "updatedAt": "2025-11-12T15:25:47.574Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914a6105eb5d55c6238d1b6",
+    "title": "Interstellar",
+    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+    "duration": 169,
+    "genre": [
+      "Adventure",
+      "Drama",
+      "Sci-Fi"
+    ],
+    "releaseDate": "2014-11-07T00:00:00.000Z",
+    "endDate": "2025-12-31T00:00:00.000Z",
+    "language": "English",
+    "director": "Christopher Nolan",
+    "cast": [
+      "Matthew McConaughey",
+      "Anne Hathaway",
+      "Jessica Chastain",
+      "Michael Caine"
+    ],
+    "poster": "uploads/posters/interstellar-poster.jpg",
+    "backdropImage": "uploads/backdrops/interstellar-backdrop.jpg",
+    "trailer": "https://www.youtube.com/watch?v=zSWdZVtXT7E",
+    "status": "now-showing",
+    "hotness": 86,
+    "rating": 8.8,
+    "createdAt": "2025-11-12T15:21:52.638Z",
+    "updatedAt": "2025-11-12T15:25:47.814Z",
+    "__v": 0
+  }
+]

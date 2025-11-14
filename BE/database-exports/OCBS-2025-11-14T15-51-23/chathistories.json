@@ -1,0 +1,134 @@
+[
+  {
+    "_id": "690db8304d62ac08c3cf3190",
+    "user": null,
+    "sessionId": "1892fcf1-72f0-4bfa-aed7-dcc43ad5595c",
+    "messages": [],
+    "preferences": {},
+    "isActive": false,
+    "createdAt": "2025-11-07T09:13:20.643Z",
+    "updatedAt": "2025-11-07T09:44:20.810Z",
+    "__v": 15
+  },
+  {
+    "_id": "690dbf78686301e48f9f73c6",
+    "user": null,
+    "sessionId": "ecf13cde-46ce-442d-a98a-6749658241df",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Phim hành động",
+        "timestamp": "2025-11-07T09:44:29.929Z",
+        "recommendedMovies": [],
+        "_id": "690dbf7d686301e48f9f73c9"
+      },
+      {
+        "role": "assistant",
+        "content": "Tuyệt vời! Nếu bạn là một fan của thể loại hành động, tôi đã tìm thấy một số lựa chọn cực kỳ hấp dẫn trong hệ thống CineLink. Từ những cuộc phiêu lưu xuyên không gian đến những pha đua xe mãn nhãn và các nhiệm vụ đầy kịch tính, chắc chắn sẽ có phim làm bạn hài lòng.",
+        "timestamp": "2025-11-07T09:44:29.930Z",
+        "recommendedMovies": [
+          "688399ee5d37066a796abf25",
+          "68ec638b489da6fe8ba64ad3",
+          "68ec638b489da6fe8ba64ad4",
+          "68ec638b489da6fe8ba64ad2",
+          "68ec638b489da6fe8ba64ad8",
+          "68ec638b489da6fe8ba64ad5",
+          "68ec638b489da6fe8ba64acd"
+        ],
+        "_id": "690dbf7d686301e48f9f73ca"
+      },
+      {
+        "role": "user",
+        "content": "Phim đang hot",
+        "timestamp": "2025-11-09T12:45:57.311Z",
+        "recommendedMovies": [],
+        "_id": "69108d05d02119364007fe58"
+      },
+      {
+        "role": "assistant",
+        "content": "Chào bạn! Buổi tối cuối tuần là thời điểm tuyệt vời để thưởng thức một bộ phim hay. Dựa trên yêu cầu của bạn về những phim đang hot, tôi đã chuẩn bị một danh sách đa dạng và hấp dẫn bao gồm những cái tên như \"Ma Không Đầu\", \"Cô Gái Đến Từ Hôm Qua\", \"Nàng Bạch Tuyết\" hay \"The Bad Guys 2\". Tôi hy vọng bạn sẽ tìm được bộ phim ưng ý để giải trí. Nếu bạn có sở thích thể loại cụ thể hay muốn xem cùng ai, đừng ngần ngại cho tôi biết nhé!",
+        "timestamp": "2025-11-09T12:45:57.316Z",
+        "recommendedMovies": [
+          "688398965d37066a796abf11",
+          "68ec638b489da6fe8ba64acc",
+          "68ec638b489da6fe8ba64ac9",
+          "68ec638b489da6fe8ba64ac7",
+          "68ec638b489da6fe8ba64ad1",
+          "68ec638b489da6fe8ba64ad0",
+          "68ec638b489da6fe8ba64acf",
+          "68ec638b489da6fe8ba64ad7"
+        ],
+        "_id": "69108d05d02119364007fe59"
+      },
+      {
+        "role": "user",
+        "content": "chào cậu",
+        "timestamp": "2025-11-11T07:56:52.869Z",
+        "recommendedMovies": [],
+        "_id": "6912ec441baa5b3d289da142"
+      },
+      {
+        "role": "assistant",
+        "content": "Chào bạn! Tôi là CineMate, chuyên gia tư vấn phim của CineLink. Rất vui được hỗ trợ bạn. Bạn có muốn tìm một bộ phim nào đó để giải trí không?",
+        "timestamp": "2025-11-11T07:56:52.873Z",
+        "recommendedMovies": [],
+        "_id": "6912ec441baa5b3d289da143"
+      },
+      {
+        "role": "user",
+        "content": "cậu có biết Dương Tiến Đạt là ai không",
+        "timestamp": "2025-11-11T07:57:09.239Z",
+        "recommendedMovies": [],
+        "_id": "6912ec551baa5b3d289da14f"
+      },
+      {
+        "role": "assistant",
+        "content": "Chào bạn! Tôi là CineMate, chuyên gia tư vấn phim của hệ thống CineLink. Nhiệm vụ của tôi là giúp bạn tìm những bộ phim hay nhất. Rất tiếc, tôi không có thông tin về các cá nhân như Dương Tiến Đạt. Nếu bạn cần gợi ý phim, đừng ngần ngại cho tôi biết nhé!",
+        "timestamp": "2025-11-11T07:57:09.239Z",
+        "recommendedMovies": [],
+        "_id": "6912ec551baa5b3d289da150"
+      },
+      {
+        "role": "user",
+        "content": "tôi cần đề xuất phim",
+        "timestamp": "2025-11-11T07:57:42.415Z",
+        "recommendedMovies": [],
+        "_id": "6912ec761baa5b3d289da15d"
+      },
+      {
+        "role": "assistant",
+        "content": "Chào bạn! Tôi rất sẵn lòng đề xuất phim cho bạn vào buổi chiều ngày thường này. Hệ thống CineLink hiện có một số bộ phim đa dạng đang chờ bạn khám phá như \"Nhà Ga Ma Chó\", \"Wicked: For Good\", \"Freakier Friday\", \"Quái Vật Đầm Lầy\" và \"Lưỡi Hái Tử Thần: Huyết Thống\". Hy vọng bạn sẽ tìm được một bộ phim ưng ý để thư giãn. Nếu bạn có bất kỳ sở thích cụ thể nào về thể loại, tâm trạng hay muốn xem cùng ai, đừng ngần ngại cho tôi biết nhé! Đây là một số phim đang hot trong hệ thống:",
+        "timestamp": "2025-11-11T07:57:42.416Z",
+        "recommendedMovies": [
+          "68ec638b489da6fe8ba64ac8",
+          "68ec638b489da6fe8ba64ad6"
+        ],
+        "_id": "6912ec761baa5b3d289da15e"
+      },
+      {
+        "role": "user",
+        "content": "gợi ý phim hành động cho tôi",
+        "timestamp": "2025-11-11T08:03:56.403Z",
+        "recommendedMovies": [],
+        "_id": "6912edec1baa5b3d289da1ab"
+      },
+      {
+        "role": "assistant",
+        "content": "Chào bạn! Tôi rất tiếc, dựa trên các phim đã được gợi ý trong phiên này và danh sách phim hành động hiện có trong hệ thống CineLink, tôi thấy rằng tất cả các phim hành động phù hợp đã được đề xuất trước đó. Bạn có muốn khám phá các thể loại phim khác không, hay bạn có bất kỳ sở thích nào khác không để tôi có thể tìm kiếm những bộ phim mới mẻ hơn cho bạn?",
+        "timestamp": "2025-11-11T08:03:56.404Z",
+        "recommendedMovies": [],
+        "_id": "6912edec1baa5b3d289da1ac"
+      }
+    ],
+    "preferences": {
+      "genres": [
+        "Action"
+      ],
+      "language": "Vietnamese"
+    },
+    "isActive": true,
+    "createdAt": "2025-11-07T09:44:24.535Z",
+    "updatedAt": "2025-11-11T08:03:56.408Z",
+    "__v": 6
+  }
+]
