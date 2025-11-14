@@ -2,8 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ConfigProvider, theme as antdTheme } from "antd";
-import "antd/dist/reset.css";
 import "./app/cinema-theme.css";
+// ✅ Ant Design CSS được import trong style.css để đảm bảo thứ tự đúng
 import App from "./App.jsx";
 import { AppProvider } from "./context/app.context.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

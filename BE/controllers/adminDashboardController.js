@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Booking from "../models/bookingModel.js";
 import mongoose from "mongoose";
-
 // Helper để lấy ngày bắt đầu/kết thúc của tuần/tháng
 const getPeriodDates = (period, date) => {
   const now = date ? new Date(date) : new Date();

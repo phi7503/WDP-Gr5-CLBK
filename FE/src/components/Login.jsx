@@ -1,4 +1,3 @@
-// src/components/Login.jsx
 import React, { useEffect, useState } from "react";
 import test5 from "../assets/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -126,10 +125,10 @@ export default function Login() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-black font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Mail className="w-5 h-5 text-red-600" />
-              <span>Đăng nhập bằng Google</span>
+              <span className="text-gray-700">Đăng nhập bằng Google</span>
             </button>
 
             <div className="relative">
@@ -143,14 +142,14 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email */}
-              <div>
+              <div className="text-gray-700">
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className={`w-full px-4 py-3 bg-blue-50 border ${
+                  className={`w-full px-4 py-3 bg-blue-50 border text-gray-700 ${
                     errors.email ? "border-red-500" : "border-transparent"
                   } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                 />
@@ -162,7 +161,7 @@ export default function Login() {
               </div>
 
               {/* Password */}
-              <div>
+              <div className="text-gray-700">
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -170,7 +169,7 @@ export default function Login() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Password"
-                    className={`w-full px-4 py-3 pr-12 bg-blue-50 border ${
+                    className={`w-full px-4 py-3 pr-12 bg-blue-50 border text-gray-700 ${
                       errors.password ? "border-red-500" : "border-transparent"
                     } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                   />

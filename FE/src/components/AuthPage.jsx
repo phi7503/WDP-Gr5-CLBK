@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { authAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../context/app.context";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;

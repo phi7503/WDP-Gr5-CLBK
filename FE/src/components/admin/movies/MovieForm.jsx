@@ -26,16 +26,29 @@ export default function MovieForm({
   }, [initialValues, form]);
 
   const handleFinish = (values) => {
+    const genres =
+      Array.isArray(values.genres) && values.genres.length > 0
+        ? values.genres.filter(Boolean)
+        : typeof values.genres === "string"
+        ? values.genres
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : [];
+
     const payload = {
       title: values.title?.trim(),
       description: values.description?.trim() || "",
       duration: values.duration ?? null,
-      genres: values.genres || [],
+      // BE dùng field "genre"
+      genre: genres,
       releaseDate: values.releaseDate
         ? values.releaseDate.format("YYYY-MM-DD")
         : null,
-      status: values.status || "active",
+      // Trùng với BE: now-showing / coming-soon / ended
+      status: values.status || "coming-soon",
     };
+
     onSubmit?.(payload);
   };
 
@@ -44,7 +57,7 @@ export default function MovieForm({
       form={form}
       layout="vertical"
       onFinish={handleFinish}
-      initialValues={{ status: "active" }}
+      initialValues={{ status: "coming-soon" }}
     >
       <Form.Item
         label="Tiêu đề"
@@ -79,8 +92,9 @@ export default function MovieForm({
       <Form.Item label="Trạng thái" name="status">
         <Select
           options={[
-            { value: "active", label: "Active" },
-            { value: "inactive", label: "Inactive" },
+            { value: "now-showing", label: "Đang chiếu" },
+            { value: "coming-soon", label: "Sắp chiếu" },
+            { value: "ended", label: "Ngừng chiếu" },
           ]}
         />
       </Form.Item>

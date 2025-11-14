@@ -136,7 +136,6 @@ export default function AppRouter() {
           <Route path="/bookings" element={<BookingHistoryPage />} />
           <Route path="/login" element={<LoginRegisterPage />} />
           <Route path="/register" element={<LoginRegisterPage />} />
-
           <Route path="/confirmation" element={<ConfirmationPage />} />
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/payment-cancel" element={<PaymentCancelPage />} />

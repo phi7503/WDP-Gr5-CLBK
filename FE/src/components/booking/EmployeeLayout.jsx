@@ -1,16 +1,32 @@
 import { useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { LayoutDashboard, User, Calendar, Ticket, QrCode, Menu, X, LogOut } from "lucide-react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  User,
+  Calendar,
+  Ticket,
+  QrCode,
+  Menu,
+  X,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "../../context/app.context";
 
 export default function EmployeeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
-
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout =  () => {
+     logout();
+    navigate("/");
+    console.log("HẢ")
+  };
   const navigation = [
     { name: "Dashboard", href: "/staff/dashboard", icon: LayoutDashboard },
     { name: "Hồ sơ", href: "/staff/profile", icon: User },
-    { name: "Đặt vé", href: "/staff/book-ticket", icon: Ticket },
-    { name: "Lịch đặt vé", href: "/staff/bookings", icon: Calendar },
+    // { name: "Đặt vé", href: "/staff/book-ticket", icon: Ticket },
+    // { name: "Lịch đặt vé", href: "/staff/bookings", icon: Calendar },
     { name: "QR Check-in", href: "/staff/qr-checkin", icon: QrCode },
   ];
 
@@ -24,7 +40,11 @@ export default function EmployeeLayout() {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
         >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {sidebarOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
@@ -49,7 +69,9 @@ export default function EmployeeLayout() {
                   key={item.name}
                   to={item.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    active ? "bg-red-600 text-white" : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                    active
+                      ? "bg-red-600 text-white"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -61,7 +83,7 @@ export default function EmployeeLayout() {
 
           <div className="p-4 border-t border-gray-800">
             <button
-              onClick={() => console.log("Logout clicked")}
+              onClick={() => handleLogout()}
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors w-full"
             >
               <LogOut className="w-5 h-5" />
@@ -72,12 +94,19 @@ export default function EmployeeLayout() {
       </aside>
 
       {/* Main content */}
-      <main className={`transition-all duration-300 ${sidebarOpen ? "lg:ml-64" : "ml-0"}`}>
+      <main
+        className={`transition-all duration-300 ${
+          sidebarOpen ? "lg:ml-64" : "ml-0"
+        }`}
+      >
         <Outlet />
       </main>
 
       {sidebarOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black/50 z-30" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-30"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
     </div>
   );
