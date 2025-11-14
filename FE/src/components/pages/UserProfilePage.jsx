@@ -379,7 +379,7 @@ function ChangePassword() {
         }
       );
       const data = await res.json();
-      if (!res.status !== 200) throw new Error(data?.message || "Đổi mật khẩu thất bại");
+      if (res.status !== 200) throw new Error(data?.message || "Đổi mật khẩu thất bại");
       if (data.token) localStorage.setItem("token", data.token);
 
       setFormData({

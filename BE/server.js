@@ -44,6 +44,8 @@ import userManaRoutes from "./routes/userRoutes.js";
 
 const app = express();
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const server = createServer(app);
@@ -80,8 +82,7 @@ app.use(
     },
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
 app.use(morgan("dev"));
 
 app.use("/api", userRoutes);

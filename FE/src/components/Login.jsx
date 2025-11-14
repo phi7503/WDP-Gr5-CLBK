@@ -142,14 +142,14 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email */}
-              <div>
+              <div className="text-gray-700">
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className={`w-full px-4 py-3 bg-blue-50 border ${
+                  className={`w-full px-4 py-3 bg-blue-50 border text-gray-700 ${
                     errors.email ? "border-red-500" : "border-transparent"
                   } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                 />
@@ -161,7 +161,7 @@ export default function Login() {
               </div>
 
               {/* Password */}
-              <div>
+              <div className="text-gray-700">
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -169,7 +169,7 @@ export default function Login() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Password"
-                    className={`w-full px-4 py-3 pr-12 bg-blue-50 border ${
+                    className={`w-full px-4 py-3 pr-12 bg-blue-50 border text-gray-700 ${
                       errors.password ? "border-red-500" : "border-transparent"
                     } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                   />

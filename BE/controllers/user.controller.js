@@ -52,9 +52,11 @@ export const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     console.log(req.user)
     const user = await User.findById(req.user._id).select("+password");
+    console.log(user)
     if (!user) return res.status(404).json({ message: "User không tồn tại" });
 
     const ok = await user.matchPassword(currentPassword);
+    console.log(req.body)
     if (!ok) return res.status(400).json({ message: "Mật khẩu hiện tại không đúng" });
 
     user.password = newPassword; 
@@ -64,7 +66,7 @@ export const changePassword = async (req, res) => {
     const token = issueAccess(user._id);
     setAccessCookie(res, token);
 
-    res.json({ message: "Đổi mật khẩu thành công", token });
+    res.status(200).json({ message: "Đổi mật khẩu thành công", token });
   } catch (e) {
     console.error("changePassword error:", e.message);
     res.status(500).json({ message: "Server error" });
