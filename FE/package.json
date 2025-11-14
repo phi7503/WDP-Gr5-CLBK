@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "validate:antd": "node validate-ant-design.js",
+    "validate:tailwind": "node validate-tailwind.js",
+    "validate:all": "npm run validate:antd && npm run validate:tailwind",
+    "check:consistency": "node check-consistency.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
