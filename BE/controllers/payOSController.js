@@ -117,6 +117,13 @@ export const createPaymentFromBooking = async (req, res) => {
     const { bookingId } = req.params;
     const userId = req.user?._id;
 
+    console.log('💳 Creating payment from booking:', {
+      bookingId,
+      userId: userId?.toString(),
+      hasUser: !!req.user,
+      userName: req.user?.name
+    });
+
     if (!bookingId) {
       return res.status(400).json({ 
         message: "Booking ID là bắt buộc" 
@@ -134,11 +141,44 @@ export const createPaymentFromBooking = async (req, res) => {
       });
     }
 
-    // Kiểm tra quyền truy cập
-    if (userId && booking.user._id.toString() !== userId.toString()) {
-      return res.status(403).json({ 
-        message: "Không có quyền truy cập booking này" 
-      });
+    console.log('📋 Booking found:', {
+      bookingId: booking._id.toString(),
+      hasUser: !!booking.user,
+      userId: booking.user?._id?.toString(),
+      hasCustomerInfo: !!booking.customerInfo,
+      customerEmail: booking.customerInfo?.email
+    });
+
+    // ✅ Kiểm tra quyền truy cập
+    // Nếu booking có user, chỉ cho phép user đó truy cập
+    // Nếu booking không có user (guest booking), cho phép bất kỳ ai (vì đã có customerInfo)
+    if (booking.user) {
+      if (!userId) {
+        console.log('❌ Booking requires login but no userId provided');
+        return res.status(403).json({ 
+          message: "Booking này yêu cầu đăng nhập" 
+        });
+      }
+      if (booking.user._id.toString() !== userId.toString()) {
+        console.log('❌ User mismatch:', {
+          bookingUserId: booking.user._id.toString(),
+          requestUserId: userId.toString()
+        });
+        return res.status(403).json({ 
+          message: "Không có quyền truy cập booking này" 
+        });
+      }
+      console.log('✅ User authorized for booking');
+    } else {
+      // Guest booking: không có user, chỉ cần có customerInfo
+      if (!booking.customerInfo || !booking.customerInfo.email) {
+        console.log('❌ Guest booking missing customerInfo');
+        return res.status(400).json({ 
+          message: "Booking không hợp lệ (thiếu thông tin khách hàng)" 
+        });
+      }
+      console.log('✅ Guest booking authorized');
+      // Guest booking không cần kiểm tra userId
     }
 
     // Kiểm tra trạng thái thanh toán

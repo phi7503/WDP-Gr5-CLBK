@@ -5,7 +5,10 @@ const bookingSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: function() { return !this.employeeId; },
+      // ✅ Required nếu không có employeeId VÀ không có customerInfo (guest booking)
+      required: function() { 
+        return !this.employeeId && !this.customerInfo; 
+      },
     },
     showtime: {
       type: mongoose.Schema.Types.ObjectId,

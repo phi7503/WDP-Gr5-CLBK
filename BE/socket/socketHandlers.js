@@ -6,6 +6,9 @@ import mongoose from "mongoose";
 // Store active connections by showtime
 const activeConnections = new Map();
 
+// Store guest seat selections by socket.id (for tracking guest selections)
+const guestSeatSelections = new Map(); // Map<socketId, Set<seatId>>
+
 export const initializeSocketHandlers = (io) => {
   // Authentication middleware for socket (optional - allow guest users)
   io.use(async (socket, next) => {
@@ -101,7 +104,7 @@ export const initializeSocketHandlers = (io) => {
     // Handle seat selection (temporary hold)
     socket.on("select-seats", async (data) => {
 
-      console.log(`🎯 Received select-seats event from ${socket.userId}:`, data);
+      console.log(`🎯 Received select-seats event from ${socket.userId || 'Guest'}:`, data);
       const { showtimeId, seatIds } = data;
       const userName = socket.user?.name || 'Guest';
       console.log(`📍 User ${socket.userId || 'anonymous'} (${userName}) selecting seats:`, data);
@@ -112,6 +115,13 @@ export const initializeSocketHandlers = (io) => {
         const userIdObj = socket.userId && mongoose.Types.ObjectId.isValid(socket.userId) 
           ? new mongoose.Types.ObjectId(socket.userId) 
           : socket.userId;
+        
+        // ✅ Track guest selections by socket.id
+        if (!socket.userId) {
+          if (!guestSeatSelections.has(socket.id)) {
+            guestSeatSelections.set(socket.id, new Set());
+          }
+        }
         
         for (const seatId of seatIds) {
           const updated = await SeatStatus.findOneAndUpdate(
@@ -147,12 +157,28 @@ export const initializeSocketHandlers = (io) => {
                 },
               }
             );
+            // ✅ Clean up guest selections
+            if (!socket.userId && guestSeatSelections.has(socket.id)) {
+              seatIds.forEach(id => guestSeatSelections.get(socket.id).delete(id));
+            }
             socket.emit("seat-selection-failed", {
               message: `Ghế ${seatId} không còn trống`,
             });
             return;
           }
           updatedSeats.push(updated);
+          
+          // ✅ Track guest seat selection - lưu cả string và ObjectId để dễ so sánh
+          if (!socket.userId) {
+            // Lưu dưới dạng string để dễ so sánh
+            const seatIdStr = seatId.toString();
+            guestSeatSelections.get(socket.id).add(seatIdStr);
+            console.log('✅ Tracked guest seat selection:', {
+              socketId: socket.id,
+              seatId: seatIdStr,
+              allSelections: Array.from(guestSeatSelections.get(socket.id))
+            });
+          }
         }
         // Thông báo việc chọn ghế
         console.log(`📢 Broadcasting seat selection to showtime-${showtimeId}`);
@@ -209,14 +235,19 @@ export const initializeSocketHandlers = (io) => {
     // Handle seat reservation (10-minute hold for payment)
     socket.on("reserve-seats", async (data) => {
       const { showtimeId, seatIds } = data;
-      console.log(`🔒 User ${socket.userId} reserving seats for payment:`, seatIds);
+      console.log(`🔒 User ${socket.userId || 'Guest'} reserving seats for payment:`, seatIds);
 
       try {
+        // ✅ Convert seatIds to ObjectId for proper query
+        const seatIdsObj = seatIds.map(id => 
+          mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id
+        );
+        
         // Update seats to reserved status with 15-minute timeout
         // Cho phép reserve từ "available" hoặc "selecting" (nếu đã được user này select)
         const seatQuery = {
           showtime: showtimeId,
-          seat: { $in: seatIds },
+          seat: { $in: seatIdsObj },
         };
         
         if (socket.userId) {
@@ -234,9 +265,52 @@ export const initializeSocketHandlers = (io) => {
             }
           ];
         } else {
-          // Guest: chỉ có thể reserve từ available
-          seatQuery.status = "available";
+          // ✅ Guest: có thể reserve từ available hoặc selecting (nếu đã được guest này select)
+          // Kiểm tra xem ghế có được select bởi socket này không
+          const guestSelectedSeats = guestSeatSelections.get(socket.id) || new Set();
+          console.log('👤 Guest selections:', {
+            socketId: socket.id,
+            guestSelectedSeats: Array.from(guestSelectedSeats),
+            requestedSeats: seatIds.map(id => id.toString())
+          });
+          
+          const selectedSeatIds = seatIds.map(id => id.toString()).filter(id => guestSelectedSeats.has(id));
+          
+          if (selectedSeatIds.length > 0) {
+            // Guest đã select một số ghế: có thể reserve từ selecting với reservedBy = null
+            // ✅ Convert selectedSeatIds to ObjectId
+            const selectedSeatIdsObj = selectedSeatIds.map(id => 
+              mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id
+            );
+            
+            seatQuery.$or = [
+              { status: "available" },
+              { 
+                status: "selecting", 
+                reservedBy: null,
+                seat: { $in: selectedSeatIdsObj }
+              }
+            ];
+            
+            console.log('✅ Guest reserve query (with selected seats):', JSON.stringify(seatQuery, null, 2));
+          } else {
+            // Guest chưa select: chỉ có thể reserve từ available
+            seatQuery.status = "available";
+            console.log('⚠️ Guest reserve query (no selected seats, only available):', JSON.stringify(seatQuery, null, 2));
+          }
         }
+        
+        // ✅ Check current seat statuses before update
+        const currentSeats = await SeatStatus.find({
+          showtime: showtimeId,
+          seat: { $in: seatIdsObj }
+        });
+        
+        console.log('📊 Current seat statuses:', currentSeats.map(s => ({
+          seatId: s.seat?.toString(),
+          status: s.status,
+          reservedBy: s.reservedBy?.toString() || 'null'
+        })));
         
         const result = await SeatStatus.updateMany(
           seatQuery,
@@ -250,11 +324,26 @@ export const initializeSocketHandlers = (io) => {
           }
         );
 
+        console.log('📝 Update result:', {
+          matchedCount: result.matchedCount,
+          modifiedCount: result.modifiedCount,
+          requestedSeats: seatIds.length
+        });
+
         if (result.modifiedCount === 0) {
+          console.log('❌ Reservation failed - no seats updated. Query:', JSON.stringify(seatQuery, null, 2));
           socket.emit("seat-reservation-failed", {
             message: "Seats are no longer available for reservation",
           });
           return;
+        }
+
+        // ✅ Clean up guest selections after successful reservation
+        if (!socket.userId && guestSeatSelections.has(socket.id)) {
+          seatIds.forEach(id => guestSeatSelections.get(socket.id).delete(id.toString()));
+          if (guestSeatSelections.get(socket.id).size === 0) {
+            guestSeatSelections.delete(socket.id);
+          }
         }
 
         // Broadcast reservation
@@ -458,13 +547,38 @@ export const initializeSocketHandlers = (io) => {
       const { showtimeId, seatIds } = data;
 
       try {
+        // ✅ Build query based on user type
+        const releaseQuery = {
+          showtime: showtimeId,
+          seat: { $in: seatIds },
+          status: { $in: ["selecting", "reserved"] },
+        };
+        
+        if (socket.userId) {
+          // User đã đăng nhập: chỉ release ghế của mình
+          const userIdObj = mongoose.Types.ObjectId.isValid(socket.userId) 
+            ? new mongoose.Types.ObjectId(socket.userId) 
+            : socket.userId;
+          releaseQuery.reservedBy = userIdObj;
+        } else {
+          // ✅ Guest: chỉ release ghế đã được select bởi socket này
+          const guestSelectedSeats = guestSeatSelections.get(socket.id) || new Set();
+          const selectedSeatIds = seatIds.map(id => id.toString()).filter(id => guestSelectedSeats.has(id));
+          
+          if (selectedSeatIds.length === 0) {
+            // Guest không có quyền release ghế này
+            socket.emit("seat-release-failed", {
+              message: "You can only release seats you have selected",
+            });
+            return;
+          }
+          
+          releaseQuery.seat = { $in: selectedSeatIds.map(id => mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id) };
+          releaseQuery.reservedBy = null; // Guest seats have reservedBy = null
+        }
+        
         await SeatStatus.updateMany(
-          {
-            showtime: showtimeId,
-            seat: { $in: seatIds },
-            reservedBy: socket.userId,
-            status: { $in: ["selecting", "reserved"] },
-          },
+          releaseQuery,
           {
             $set: {
               status: "available",
@@ -475,10 +589,18 @@ export const initializeSocketHandlers = (io) => {
           }
         );
 
+        // ✅ Clean up guest selections
+        if (!socket.userId && guestSeatSelections.has(socket.id)) {
+          seatIds.forEach(id => guestSeatSelections.get(socket.id).delete(id.toString()));
+          if (guestSeatSelections.get(socket.id).size === 0) {
+            guestSeatSelections.delete(socket.id);
+          }
+        }
+
         // Broadcast seat release
         io.to(`showtime-${showtimeId}`).emit("seats-released", {
           seatIds,
-          userId: socket.userId,
+          userId: socket.userId || 'anonymous',
           reason: "manual-release",
           timestamp: new Date(),
         });
@@ -496,6 +618,34 @@ export const initializeSocketHandlers = (io) => {
     socket.on("disconnect", async () => {
       const userName = socket.user?.name || 'Guest';
       console.log(`🔌 User ${userName} disconnected: ${socket.id}`);
+
+      // ✅ Clean up guest selections on disconnect
+      if (!socket.userId && guestSeatSelections.has(socket.id)) {
+        const selectedSeats = Array.from(guestSeatSelections.get(socket.id));
+        if (socket.currentShowtime && selectedSeats.length > 0) {
+          try {
+            await SeatStatus.updateMany(
+              {
+                showtime: socket.currentShowtime,
+                seat: { $in: selectedSeats.map(id => mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id) },
+                status: "selecting",
+                reservedBy: null,
+              },
+              {
+                $set: {
+                  status: "available",
+                  reservedBy: null,
+                  reservedAt: null,
+                  reservationExpires: null,
+                },
+              }
+            );
+          } catch (error) {
+            console.error("Error releasing guest seats on disconnect:", error);
+          }
+        }
+        guestSeatSelections.delete(socket.id);
+      }
 
       if (socket.currentShowtime) {
         // Release any selecting seats

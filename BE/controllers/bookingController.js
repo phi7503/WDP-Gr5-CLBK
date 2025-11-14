@@ -81,9 +81,14 @@ const createBooking = asyncHandler(async (req, res) => {
 
       // Khách hàng có thể book ghế available, selecting, hoặc reserved (nếu đã reserve trước)
       // Nếu userId là null (guest), chỉ cho phép ghế available
+      // ✅ Convert seatIds to ObjectId for proper query
+      const seatIdsObj = seatIds.map(id => 
+        mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id
+      );
+      
       const seatQuery = {
         showtime: showtimeId,
-        seat: { $in: seatIds },
+        seat: { $in: seatIdsObj },
       };
       
       if (userId) {
@@ -105,44 +110,86 @@ const createBooking = asyncHandler(async (req, res) => {
             reservationExpires: { $gt: new Date() } 
           }
         ];
+        
+        console.log('✅ User booking query:', {
+          userId: userIdObj.toString(),
+          query: JSON.stringify(seatQuery, null, 2)
+        });
       } else {
-        // Guest: chỉ có thể book available
-        // Nhưng nếu có customerInfo, có thể đã reserve qua socket (không có userId trong booking)
-        // Trong trường hợp này, vẫn chỉ cho phép available để đảm bảo an toàn
-        seatQuery.status = "available";
+        // ✅ Guest: có thể book từ available hoặc reserved (nếu đã reserve qua socket với reservedBy = null)
+        // Guest reserve qua socket sẽ có reservedBy = null và status = "reserved"
+        // ✅ Query tất cả ghế và filter trong code để tránh vấn đề với MongoDB null query
+        seatQuery.$or = [
+          { status: "available" },
+          { status: "reserved" }  // Query tất cả reserved, filter reservedBy và reservationExpires trong code
+        ];
+        
+        console.log('✅ Guest booking query:', {
+          query: JSON.stringify(seatQuery, null, 2),
+          seatIds: seatIdsObj.map(id => id.toString())
+        });
       }
       
-      seatStatuses = await SeatStatus.find(seatQuery).populate("seat");
+      // Query tất cả ghế match điều kiện
+      let allSeatStatuses = await SeatStatus.find(seatQuery).populate("seat");
+      
+      // ✅ Filter cho guest booking: chỉ lấy ghế available hoặc reserved với reservedBy = null và chưa hết hạn
+      if (!userId) {
+        const now = new Date();
+        allSeatStatuses = allSeatStatuses.filter(s => {
+          if (s.status === "available") return true;
+          if (s.status === "reserved") {
+            // Guest booking: chỉ lấy ghế reserved với reservedBy = null và chưa hết hạn
+            const isNull = s.reservedBy === null || s.reservedBy === undefined;
+            const notExpired = s.reservationExpires && new Date(s.reservationExpires) > now;
+            return isNull && notExpired;
+          }
+          return false;
+        });
+      }
+      
+      seatStatuses = allSeatStatuses;
       
       // ✅ Debug logging
       console.log('🔍 Booking seat check:', {
         seatIds: seatIds.length,
         foundSeats: seatStatuses.length,
         userId: userId,
+        isGuest: !userId,
         reqUser: req.user ? { id: req.user._id?.toString(), name: req.user.name } : null,
         query: JSON.stringify(seatQuery, null, 2)
       });
       
       // Nếu không tìm đủ ghế, log chi tiết để debug
       if (seatStatuses.length !== seatIds.length) {
+        // Convert seatIds to ObjectId for proper comparison
+        const seatIdsObj = seatIds.map(id => 
+          mongoose.Types.ObjectId.isValid(id) ? new mongoose.Types.ObjectId(id) : id
+        );
+        
         const allSeats = await SeatStatus.find({
           showtime: showtimeId,
-          seat: { $in: seatIds }
+          seat: { $in: seatIdsObj }
         }).populate("seat");
         
         console.log('❌ Seat availability details:', {
           requested: seatIds,
+          requestedCount: seatIds.length,
+          foundCount: seatStatuses.length,
           found: seatStatuses.map(s => ({
             seatId: s.seat?._id?.toString(),
             status: s.status,
-            reservedBy: s.reservedBy?.toString(),
-            reservationExpires: s.reservationExpires
+            reservedBy: s.reservedBy?.toString() || 'null',
+            reservationExpires: s.reservationExpires,
+            booking: s.booking?.toString() || 'null'
           })),
           allSeats: allSeats.map(s => ({
             seatId: s.seat?._id?.toString(),
             status: s.status,
-            reservedBy: s.reservedBy?.toString(),
-            reservationExpires: s.reservationExpires
+            reservedBy: s.reservedBy?.toString() || 'null',
+            reservationExpires: s.reservationExpires,
+            booking: s.booking?.toString() || 'null',
+            matchesQuery: seatStatuses.some(fs => fs.seat?._id?.toString() === s.seat?._id?.toString())
           }))
         });
       }
@@ -239,9 +286,10 @@ const createBooking = asyncHandler(async (req, res) => {
     });
 
     // 5. Tạo booking với trạng thái pending (chờ thanh toán)
-    const booking = await Booking.create({
-      user: userId,
-      employeeId,
+    const bookingData = {
+      // ✅ Chỉ set user nếu có userId (không set nếu null để tránh validation error)
+      ...(userId && { user: userId }),
+      ...(employeeId && { employeeId }),
       customerInfo: customerInfoData,
       showtime: showtimeId,
       seats: seatStatuses.map((status) => ({
@@ -255,11 +303,11 @@ const createBooking = asyncHandler(async (req, res) => {
       combos: comboDetails,
       voucher: appliedVoucher,
       discountAmount,
-
       paymentStatus: "pending", // Chờ thanh toán qua PayOS
       bookingStatus: "pending", // Chờ thanh toán
-
-    });
+    };
+    
+    const booking = await Booking.create(bookingData);
 
     if (!booking) {
       res.status(500);
