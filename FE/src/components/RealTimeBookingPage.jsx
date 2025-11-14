@@ -61,22 +61,30 @@ const RealTimeBookingPage = () => {
   // Initialize socket connection - reconnect khi token thay đổi (user đăng nhập)
   useEffect(() => {
     if (showtimeId) {
-      // Disconnect socket cũ nếu có
-      if (socketRef.current) {
-        console.log('🔄 Reconnecting socket with new token...');
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
+      // ✅ Đợi một chút để đảm bảo token đã được load từ localStorage
+      const initTimer = setTimeout(() => {
+        // Disconnect socket cũ nếu có
+        if (socketRef.current) {
+          console.log('🔄 Reconnecting socket with new token...', {
+            hasToken: !!token,
+            userId: user?._id,
+            userName: user?.name
+          });
+          socketRef.current.disconnect();
+          socketRef.current = null;
+        }
+        
+        initializeSocket();
+      }, 100); // Đợi 100ms để đảm bảo token đã được load
       
-      initializeSocket();
+      return () => {
+        clearTimeout(initTimer);
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+        }
+      };
     }
-    
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
-  }, [showtimeId, token]); // ✅ Thêm token vào dependency để reconnect khi user đăng nhập
+  }, [showtimeId, token, user]); // ✅ Thêm user vào dependency
 
   // Load showtime data
   useEffect(() => {
@@ -88,9 +96,21 @@ const RealTimeBookingPage = () => {
 
   const initializeSocket = () => {
     const socketOptions = {};
-    if (token) {
-      socketOptions.auth = { token: token };
-      console.log('🔑 Initializing socket with token for user:', user?.name || 'Unknown');
+    // ✅ Lấy token mới nhất từ context
+    const currentToken = token;
+    const currentUser = user;
+    
+    console.log('🔍 Socket initialization check:', {
+      hasToken: !!currentToken,
+      tokenLength: currentToken?.length || 0,
+      userId: currentUser?._id,
+      userName: currentUser?.name,
+      tokenPreview: currentToken ? currentToken.substring(0, 20) + '...' : 'none'
+    });
+    
+    if (currentToken) {
+      socketOptions.auth = { token: currentToken };
+      console.log('🔑 Initializing socket with token for user:', currentUser?.name || 'Unknown');
     } else {
       console.log('👤 Initializing socket as guest (no token)');
     }
@@ -98,7 +118,13 @@ const RealTimeBookingPage = () => {
     socketRef.current = io(BACKEND_URL, socketOptions);
 
     socketRef.current.on('connect', () => {
-      console.log('🔌 Connected to server', token ? `(Authenticated as: ${user?.name || 'Unknown'})` : '(Guest)');
+      // ✅ Sử dụng currentToken và currentUser từ closure
+      console.log('🔌 Connected to server', currentToken ? `(Authenticated as: ${currentUser?.name || 'Unknown'})` : '(Guest)');
+      console.log('🔍 Connection details:', {
+        hasToken: !!currentToken,
+        userId: currentUser?._id,
+        userName: currentUser?.name
+      });
       setSocketConnected(true);
       
       // Join showtime room
@@ -397,8 +423,8 @@ const RealTimeBookingPage = () => {
         try {
           await reservePromise;
           console.log('✅ Seats reserved successfully, proceeding with booking...');
-          // ✅ Đợi một chút để đảm bảo database đã update (tăng lên 500ms để chắc chắn)
-          await new Promise(resolve => setTimeout(resolve, 500));
+          // ✅ Đợi một chút để đảm bảo database đã update (tăng lên 1000ms để chắc chắn)
+          await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (reserveError) {
           console.error('❌ Reservation failed:', reserveError);
           message.error(reserveError.message || 'Không thể giữ chỗ ghế. Vui lòng thử lại.');

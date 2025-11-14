@@ -251,7 +251,7 @@ export const initializeSocketHandlers = (io) => {
         };
         
         if (socket.userId) {
-          // User đã đăng nhập: có thể reserve từ available hoặc selecting (nếu đã select)
+          // User đã đăng nhập: có thể reserve từ available, selecting (nếu đã select), hoặc reserved (nếu đã reserve)
           // Convert socket.userId to ObjectId để so sánh đúng
           const userIdObj = mongoose.Types.ObjectId.isValid(socket.userId) 
             ? new mongoose.Types.ObjectId(socket.userId) 
@@ -262,6 +262,11 @@ export const initializeSocketHandlers = (io) => {
             { 
               status: "selecting", 
               reservedBy: userIdObj 
+            },
+            { 
+              status: "reserved", 
+              reservedBy: userIdObj,
+              reservationExpires: { $gt: new Date() } // Chỉ cho phép nếu chưa hết hạn
             }
           ];
         } else {
@@ -309,28 +314,143 @@ export const initializeSocketHandlers = (io) => {
         console.log('📊 Current seat statuses:', currentSeats.map(s => ({
           seatId: s.seat?.toString(),
           status: s.status,
-          reservedBy: s.reservedBy?.toString() || 'null'
+          reservedBy: s.reservedBy?.toString() || 'null',
+          reservationExpires: s.reservationExpires
         })));
         
-        const result = await SeatStatus.updateMany(
-          seatQuery,
-          {
-            $set: {
-              status: "reserved",
-              reservedAt: new Date(),
-              reservedBy: socket.userId ? (mongoose.Types.ObjectId.isValid(socket.userId) ? new mongoose.Types.ObjectId(socket.userId) : socket.userId) : null,
-              reservationExpires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
-            },
+        // ✅ Kiểm tra xem có ghế nào đã được reserve bởi user này chưa
+        const userIdObj = socket.userId ? (mongoose.Types.ObjectId.isValid(socket.userId) ? new mongoose.Types.ObjectId(socket.userId) : socket.userId) : null;
+        const now = new Date();
+        const alreadyReservedSeats = currentSeats.filter(s => {
+          if (socket.userId) {
+            return s.status === "reserved" && 
+                   s.reservedBy && 
+                   s.reservedBy.toString() === userIdObj.toString() &&
+                   s.reservationExpires && 
+                   new Date(s.reservationExpires) > now;
+          } else {
+            return s.status === "reserved" && 
+                   s.reservedBy === null &&
+                   s.reservationExpires && 
+                   new Date(s.reservationExpires) > now;
           }
-        );
+        });
+        
+        console.log('✅ Already reserved seats:', alreadyReservedSeats.map(s => s.seat?.toString()));
+        
+        // ✅ Chỉ update những ghế chưa được reserve
+        const seatsToUpdate = seatIdsObj.filter(seatId => {
+          const seat = currentSeats.find(s => s.seat.toString() === seatId.toString());
+          if (!seat) return true; // Nếu không tìm thấy, cần update
+          
+          // Nếu đã được reserve bởi user này và chưa hết hạn, không cần update
+          if (socket.userId && seat.status === "reserved" && 
+              seat.reservedBy && seat.reservedBy.toString() === userIdObj.toString() &&
+              seat.reservationExpires && new Date(seat.reservationExpires) > now) {
+            return false;
+          }
+          
+          if (!socket.userId && seat.status === "reserved" && 
+              seat.reservedBy === null &&
+              seat.reservationExpires && new Date(seat.reservationExpires) > now) {
+            return false;
+          }
+          
+          return true;
+        });
+        
+        let result = { matchedCount: 0, modifiedCount: alreadyReservedSeats.length };
+        
+        // ✅ Chỉ update những ghế cần update
+        if (seatsToUpdate.length > 0) {
+          const updateQuery = {
+            ...seatQuery,
+            seat: { $in: seatsToUpdate }
+          };
+          
+          console.log('🔒 Updating seats to reserved:', {
+            seatsToUpdate: seatsToUpdate.length,
+            userIdObj: userIdObj,
+            isGuest: !socket.userId,
+            updateQuery: JSON.stringify(updateQuery, null, 2)
+          });
+          
+          result = await SeatStatus.updateMany(
+            updateQuery,
+            {
+              $set: {
+                status: "reserved",
+                reservedAt: new Date(),
+                reservedBy: userIdObj, // null cho guest, userId cho user
+                reservationExpires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+              },
+            }
+          );
+          
+          // ✅ Verify sau khi update
+          const updatedSeats = await SeatStatus.find({
+            showtime: showtimeId,
+            seat: { $in: seatsToUpdate }
+          });
+          
+          console.log('✅ After update - seat statuses:', updatedSeats.map(s => ({
+            seatId: s.seat?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy,
+            reservedByType: typeof s.reservedBy,
+            reservedByIsNull: s.reservedBy === null,
+            reservationExpires: s.reservationExpires
+          })));
+          
+          result.modifiedCount += alreadyReservedSeats.length; // Cộng thêm những ghế đã reserve
+        }
 
         console.log('📝 Update result:', {
           matchedCount: result.matchedCount,
           modifiedCount: result.modifiedCount,
-          requestedSeats: seatIds.length
+          requestedSeats: seatIds.length,
+          alreadyReserved: alreadyReservedSeats.length,
+          seatsToUpdate: seatsToUpdate.length
         });
 
-        if (result.modifiedCount === 0) {
+        // ✅ Nếu tất cả ghế đã được reserve bởi user này, vẫn coi như thành công (chỉ cần update lại thời gian hết hạn)
+        // Chỉ update lại thời gian hết hạn nếu không có ghế nào được update (tất cả đã reserve)
+        if (alreadyReservedSeats.length > 0 && seatsToUpdate.length === 0) {
+          // Update lại thời gian hết hạn cho những ghế đã reserve
+          const alreadyReservedSeatIds = alreadyReservedSeats.map(s => s.seat);
+          await SeatStatus.updateMany(
+            {
+              showtime: showtimeId,
+              seat: { $in: alreadyReservedSeatIds },
+              status: "reserved"
+            },
+            {
+              $set: {
+                reservationExpires: new Date(Date.now() + 15 * 60 * 1000), // Gia hạn thêm 15 phút
+              },
+            }
+          );
+          console.log('✅ Extended reservation time for already reserved seats');
+        } else if (alreadyReservedSeats.length > 0 && seatsToUpdate.length > 0) {
+          // Một số ghế đã reserve, một số chưa - chỉ cần update lại thời gian cho những ghế đã reserve
+          const alreadyReservedSeatIds = alreadyReservedSeats.map(s => s.seat);
+          await SeatStatus.updateMany(
+            {
+              showtime: showtimeId,
+              seat: { $in: alreadyReservedSeatIds },
+              status: "reserved"
+            },
+            {
+              $set: {
+                reservationExpires: new Date(Date.now() + 15 * 60 * 1000), // Gia hạn thêm 15 phút
+              },
+            }
+          );
+          console.log('✅ Extended reservation time for already reserved seats (partial)');
+        }
+        
+        // ✅ Chỉ fail nếu không có ghế nào được reserve và không có ghế nào được update
+        if (result.modifiedCount === 0 && alreadyReservedSeats.length === 0) {
           console.log('❌ Reservation failed - no seats updated. Query:', JSON.stringify(seatQuery, null, 2));
           socket.emit("seat-reservation-failed", {
             message: "Seats are no longer available for reservation",

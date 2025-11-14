@@ -92,7 +92,8 @@ const createBooking = asyncHandler(async (req, res) => {
       };
       
       if (userId) {
-        // User đã đăng nhập: có thể book available, selecting, hoặc reserved (nếu đã reserve)
+        // User đã đăng nhập: có thể book available, selecting, hoặc reserved
+        // ✅ Query tất cả reserved và filter trong code (vì MongoDB có thể không match reservedBy = null trong $or)
         // Convert userId to ObjectId để so sánh đúng
         const userIdObj = mongoose.Types.ObjectId.isValid(userId) 
           ? new mongoose.Types.ObjectId(userId) 
@@ -104,11 +105,7 @@ const createBooking = asyncHandler(async (req, res) => {
             status: "selecting", 
             reservedBy: userIdObj 
           },
-          { 
-            status: "reserved", 
-            reservedBy: userIdObj, 
-            reservationExpires: { $gt: new Date() } 
-          }
+          { status: "reserved" } // Query tất cả reserved, filter trong code
         ];
         
         console.log('✅ User booking query:', {
@@ -133,18 +130,124 @@ const createBooking = asyncHandler(async (req, res) => {
       // Query tất cả ghế match điều kiện
       let allSeatStatuses = await SeatStatus.find(seatQuery).populate("seat");
       
+      // ✅ Filter cho user booking: chỉ lấy ghế available, selecting (của user), hoặc reserved (của user hoặc null)
+      if (userId) {
+        const userIdObj = mongoose.Types.ObjectId.isValid(userId) 
+          ? new mongoose.Types.ObjectId(userId) 
+          : userId;
+        const now = new Date();
+        
+        console.log('🔍 User booking - filtering seats:', {
+          totalSeats: allSeatStatuses.length,
+          userId: userIdObj.toString(),
+          beforeFilter: allSeatStatuses.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy?.toString() || 'null',
+            reservedByMatches: s.reservedBy ? s.reservedBy.toString() === userIdObj.toString() : false,
+            reservationExpires: s.reservationExpires,
+            isExpired: s.reservationExpires ? new Date(s.reservationExpires) <= now : 'no expiry'
+          }))
+        });
+        
+        allSeatStatuses = allSeatStatuses.filter(s => {
+          if (s.status === "available") {
+            console.log('✅ Seat available:', s.seat?._id?.toString());
+            return true;
+          }
+          if (s.status === "selecting") {
+            // Chỉ lấy ghế selecting của user này
+            const matches = s.reservedBy && s.reservedBy.toString() === userIdObj.toString();
+            console.log('🔍 Seat selecting check:', {
+              seatId: s.seat?._id?.toString(),
+              reservedBy: s.reservedBy?.toString() || 'null',
+              matches
+            });
+            return matches;
+          }
+          if (s.status === "reserved") {
+            // User có thể book ghế reserved với reservedBy = userId hoặc null (user đăng nhập sau khi reserve)
+            const matchesUser = s.reservedBy && s.reservedBy.toString() === userIdObj.toString();
+            const isNull = s.reservedBy === null || s.reservedBy === undefined;
+            const notExpired = s.reservationExpires && new Date(s.reservationExpires) > now;
+            const result = (matchesUser || isNull) && notExpired;
+            console.log('🔍 Seat reserved check:', {
+              seatId: s.seat?._id?.toString(),
+              reservedBy: s.reservedBy?.toString() || 'null',
+              matchesUser,
+              isNull,
+              notExpired,
+              result
+            });
+            return result;
+          }
+          console.log('❌ Seat not available/selecting/reserved:', {
+            seatId: s.seat?._id?.toString(),
+            status: s.status
+          });
+          return false;
+        });
+        
+        console.log('✅ After filter (user):', {
+          filteredCount: allSeatStatuses.length,
+          requestedCount: seatIds.length,
+          filteredSeats: allSeatStatuses.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status
+          }))
+        });
+      }
+      
       // ✅ Filter cho guest booking: chỉ lấy ghế available hoặc reserved với reservedBy = null và chưa hết hạn
       if (!userId) {
         const now = new Date();
+        console.log('🔍 Guest booking - filtering seats:', {
+          totalSeats: allSeatStatuses.length,
+          beforeFilter: allSeatStatuses.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status,
+            reservedBy: s.reservedBy,
+            reservedByType: typeof s.reservedBy,
+            reservedByIsNull: s.reservedBy === null,
+            reservedByIsUndefined: s.reservedBy === undefined,
+            reservationExpires: s.reservationExpires,
+            isExpired: s.reservationExpires ? new Date(s.reservationExpires) <= now : 'no expiry'
+          }))
+        });
+        
         allSeatStatuses = allSeatStatuses.filter(s => {
-          if (s.status === "available") return true;
+          if (s.status === "available") {
+            console.log('✅ Seat available:', s.seat?._id?.toString());
+            return true;
+          }
           if (s.status === "reserved") {
             // Guest booking: chỉ lấy ghế reserved với reservedBy = null và chưa hết hạn
-            const isNull = s.reservedBy === null || s.reservedBy === undefined;
+            const isNull = s.reservedBy === null || s.reservedBy === undefined || (s.reservedBy && s.reservedBy.toString() === 'null');
             const notExpired = s.reservationExpires && new Date(s.reservationExpires) > now;
-            return isNull && notExpired;
+            const result = isNull && notExpired;
+            console.log('🔍 Seat reserved check:', {
+              seatId: s.seat?._id?.toString(),
+              reservedBy: s.reservedBy,
+              isNull,
+              notExpired,
+              result
+            });
+            return result;
           }
+          console.log('❌ Seat not available/reserved:', {
+            seatId: s.seat?._id?.toString(),
+            status: s.status
+          });
           return false;
+        });
+        
+        console.log('✅ After filter:', {
+          filteredCount: allSeatStatuses.length,
+          requestedCount: seatIds.length,
+          filteredSeats: allSeatStatuses.map(s => ({
+            seatId: s.seat?._id?.toString(),
+            status: s.status
+          }))
         });
       }
       
