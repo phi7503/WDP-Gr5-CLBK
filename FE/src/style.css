@@ -1,133 +1,193 @@
 /* ============================================
-   ANT DESIGN - Import trước để có base styles
+   IMPORT ORDER - Quan trọng để tránh xung đột
    ============================================ */
+/* Ant Design import trước để có base styles */
 @import 'antd/dist/reset.css';
 
-/* ============================================
-   TAILWIND CSS - Import sau, có thể override nếu cần
-   ============================================ */
+/* Tailwind import sau - preflight đã tắt nên không override Ant Design */
 @import "tailwindcss";
+
+/* ============================================
+   CSS LAYERS - Tách biệt custom styles
+   ============================================ */
+@layer custom;
 
 /* ============================================
    CSS ISOLATION - Đảm bảo 2 thư viện không xung đột
    ============================================ */
-
 /* Ant Design components - Sử dụng prefix 'ant-' */
 /* Tailwind sẽ không ảnh hưởng đến Ant Design vì Ant Design dùng prefix riêng */
 
-/* Custom styles for CLBK */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ============================================
+   CUSTOM STYLES LAYER - Styles riêng cho CLBK
+   ============================================ */
+@layer custom {
+  /* Base reset - chỉ apply cho elements không phải Ant Design */
+  *:not([class*="ant-"]) {
+    box-sizing: border-box;
+  }
 
-html {
-  margin: 0;
-  padding: 0;
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #0a0a0a;
-  color: #ffffff;
-  overflow-x: hidden;
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    overflow-x: hidden;
+  }
 }
 
 /* ============================================
    ANT DESIGN ISOLATION - Đảm bảo Ant Design styles không bị override
    ============================================ */
-/* Dark theme overrides */
-#root {
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 100vh;
-}
+@layer custom {
+  /* Dark theme overrides */
+  #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh;
+  }
 
-/* Ant Design Layout - Sử dụng !important để đảm bảo không bị Tailwind override */
-.ant-layout {
-  background: #0a0a0a !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 100vh;
-}
+  /* Ant Design Layout - Sử dụng !important để đảm bảo không bị Tailwind override */
+  .ant-layout {
+    background: #0a0a0a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh;
+  }
 
-.ant-layout-header {
-  background: #0a0a0a !important;
-  border-bottom: 1px solid #333;
-  margin: 0 !important;
-  padding: 0 !important;
-  top: 0 !important;
+  .ant-layout-header {
+    background: #0a0a0a !important;
+    border-bottom: 1px solid #333;
+    margin: 0 !important;
+    padding: 0 !important;
+    top: 0 !important;
+  }
 }
 
 /* ============================================
-   TAILWIND CSS SCOPE - Chỉ apply trong phạm vi nhất định
+   TAILWIND CSS ISOLATION - Bảo vệ Tailwind components
    ============================================ */
-/* Tailwind classes chỉ apply cho elements không có class 'ant-' */
-/* Ant Design components đã có prefix 'ant-' nên tự động được bảo vệ */
+@layer custom {
+  /* Tailwind classes chỉ apply cho elements không có class 'ant-' */
+  /* Ant Design components đã có prefix 'ant-' nên tự động được bảo vệ */
+  
+  /* CSS Isolation cho components dùng Tailwind */
+  /* Sử dụng class 'tailwind-isolated' để tách biệt khỏi Ant Design */
+  .tailwind-isolated,
+  .tailwind-isolated * {
+    /* Đảm bảo Tailwind classes hoạt động đúng trong scope này */
+    box-sizing: border-box;
+  }
 
-/* Leaflet Map Styles */
-.leaflet-container {
-  background: #1a1a1a !important;
-  font-family: inherit;
-  width: 100% !important;
-  height: 100% !important;
+  /* Bảo vệ Auth Layout và Login/Register components */
+  /* Đảm bảo Tailwind classes trong auth components không bị Ant Design override */
+  .tailwind-isolated main[class*="bg-gray-100"],
+  main.tailwind-isolated[class*="bg-gray-100"] {
+    background-color: #f3f4f6 !important;
+  }
+
+  /* Bảo vệ white backgrounds trong Login/Register */
+  .tailwind-isolated div[class*="bg-white"],
+  .tailwind-isolated div[class*="bg-card"],
+  div.tailwind-isolated[class*="bg-white"],
+  div.tailwind-isolated[class*="bg-card"] {
+    background-color: #ffffff !important;
+  }
+
+  /* Bảo vệ input backgrounds */
+  .tailwind-isolated input[class*="bg-blue-50"],
+  input.tailwind-isolated[class*="bg-blue-50"] {
+    background-color: #eff6ff !important;
+  }
+
+  /* Bảo vệ button colors */
+  .tailwind-isolated button[class*="bg-red-600"],
+  button.tailwind-isolated[class*="bg-red-600"],
+  .tailwind-isolated button[type="submit"] {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+  }
+
+  .tailwind-isolated button[class*="bg-red-600"]:hover,
+  button.tailwind-isolated[class*="bg-red-600"]:hover,
+  .tailwind-isolated button[type="submit"]:hover:not(:disabled) {
+    background-color: #b91c1c !important;
+  }
+
+  .tailwind-isolated button[class*="bg-white"],
+  button.tailwind-isolated[class*="bg-white"] {
+    background-color: #ffffff !important;
+  }
 }
 
-#branch-map-container {
-  width: 100% !important;
-  height: 100% !important;
-}
+/* ============================================
+   LEAFLET MAP STYLES
+   ============================================ */
+@layer custom {
+  .leaflet-container {
+    background: #1a1a1a !important;
+    font-family: inherit;
+    width: 100% !important;
+    height: 100% !important;
+  }
 
-#branch-map-container .leaflet-container {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 800px;
-}
+  #branch-map-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
 
-.leaflet-popup-content-wrapper {
-  background: #fff;
-  border-radius: 8px;
-}
+  #branch-map-container .leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 800px;
+  }
 
-.leaflet-popup-content {
-  margin: 12px;
-  font-size: 14px;
-}
+  .leaflet-popup-content-wrapper {
+    background: #fff;
+    border-radius: 8px;
+  }
 
-.leaflet-control-zoom {
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
-}
+  .leaflet-popup-content {
+    margin: 12px;
+    font-size: 14px;
+  }
 
-.leaflet-control-zoom a {
-  background: #1a1a1a !important;
-  color: #fff !important;
-  border: 1px solid #333 !important;
-}
+  .leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
 
-.leaflet-control-zoom a:hover {
-  background: #2a2a2a !important;
-}
+  .leaflet-control-zoom a {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+  }
 
-.leaflet-control-attribution {
-  background: rgba(26, 26, 26, 0.8) !important;
-  color: #999 !important;
-  font-size: 11px !important;
-  border: none !important;
-}
+  .leaflet-control-zoom a:hover {
+    background: #2a2a2a !important;
+  }
 
-.custom-branch-marker,
-.custom-user-marker {
-  background: transparent !important;
-  border: none !important;
+  .leaflet-control-attribution {
+    background: rgba(26, 26, 26, 0.8) !important;
+    color: #999 !important;
+    font-size: 11px !important;
+    border: none !important;
+  }
+
+  .custom-branch-marker,
+  .custom-user-marker {
+    background: transparent !important;
+    border: none !important;
+  }
 }
 
 .ant-menu-dark {
@@ -832,7 +892,7 @@ html {
   .carousel-arrow-btn {
     width: 44px !important;
     height: 44px !important;
-    fontSize: 20px !important;
+    font-size: 20px !important;
   }
 }
 
@@ -843,7 +903,7 @@ html {
 }
 
 
-@custom-variant dark (&:is(.dark *));
+/* @custom-variant dark (&:is(.dark *)); - Commented out, Tailwind v4 feature */
 
 :root {
   --background: oklch(1 0 0);
@@ -915,7 +975,9 @@ html {
   --sidebar-ring: oklch(0.439 0 0);
 }
 
-@theme inline {
+/* @theme inline { - Commented out, Tailwind v4 feature */
+/* Using :root instead */
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -955,11 +1017,11 @@ html {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+/* @layer base - Commented out to avoid conflicts with Ant Design */
+/* Using custom layer instead */
+@layer custom {
+  /* Base styles for Tailwind components only */
+  .tailwind-isolated * {
+    box-sizing: border-box;
   }
 }

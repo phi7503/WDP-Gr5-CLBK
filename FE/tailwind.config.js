@@ -4,11 +4,10 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-  // ✅ Đảm bảo Tailwind không conflict với Ant Design
-  // Ant Design sử dụng prefix 'ant-' nên không bị ảnh hưởng
+  // ✅ Tắt preflight để không override Ant Design reset
+  // Ant Design đã có reset riêng, không cần Tailwind reset
   corePlugins: {
-    // Giữ nguyên tất cả core plugins
-    preflight: true, // Tailwind reset - nhưng Ant Design đã có reset riêng
+    preflight: false, // Tắt Tailwind reset để không conflict với Ant Design
   },
   // ✅ Important: false để không dùng !important (tránh override Ant Design)
   important: false,

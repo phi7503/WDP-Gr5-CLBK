@@ -116,19 +116,41 @@ export default function Login() {
   };
 
   return (
-    <div className="overflow-y-auto p-10 min-h-screen md:w-1/2 flex items-center justify-center px-4">
-      <div className="flex w-full min-h-[32rem] max-w-[64rem] overflow-hidden rounded-2xl bg-card shadow-2xl">
-        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
+    <div 
+      className="tailwind-isolated overflow-y-auto p-10 min-h-screen md:w-1/2 flex items-center justify-center px-4" 
+      style={{ isolation: 'isolate' }}
+    >
+      <div 
+        className="flex w-full min-h-[32rem] max-w-[64rem] overflow-hidden rounded-2xl shadow-2xl" 
+        style={{ 
+          backgroundColor: '#ffffff !important',
+          background: '#ffffff !important'
+        }}
+      >
+        <div 
+          className="w-full md:w-1/2 p-10 flex flex-col justify-center" 
+          style={{ 
+            backgroundColor: '#ffffff !important',
+            background: '#ffffff !important'
+          }}
+        >
           <div className="text-center space-y-6">
-            <h1 className="text-3xl font-bold text-red-600">Login to CLBK</h1>
+            <h1 className="text-3xl font-bold text-red-600" style={{ color: '#dc2626' }}>Login to CLBK</h1>
 
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-black font-semibold py-3 px-4 rounded-lg border-2 border-gray-300 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-3 font-semibold py-3 px-4 rounded-lg border-2 transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{ 
+                backgroundColor: '#ffffff !important',
+                background: '#ffffff !important',
+                borderColor: '#dc2626 !important',
+                borderWidth: '2px',
+                color: '#000000 !important'
+              }}
             >
-              <Mail className="w-5 h-5 text-red-600" />
-              <span className="text-gray-700">Đăng nhập bằng Google</span>
+              <Mail className="w-5 h-5 text-red-600" style={{ color: '#dc2626' }} />
+              <span className="text-gray-700" style={{ color: '#374151' }}>Đăng nhập bằng Google</span>
             </button>
 
             <div className="relative">
@@ -136,7 +158,15 @@ export default function Login() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Hoặc</span>
+                <span 
+                  className="px-4 text-gray-500"
+                  style={{ 
+                    backgroundColor: '#ffffff !important',
+                    background: '#ffffff !important'
+                  }}
+                >
+                  Hoặc
+                </span>
               </div>
             </div>
 
@@ -149,9 +179,15 @@ export default function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className={`w-full px-4 py-3 bg-blue-50 border text-gray-700 ${
+                  className={`w-full px-4 py-3 border rounded-lg transition-all ${
                     errors.email ? "border-red-500" : "border-transparent"
-                  } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                  }`}
+                  style={{
+                    backgroundColor: '#eff6ff !important',
+                    background: '#eff6ff !important',
+                    borderColor: errors.email ? '#ef4444 !important' : 'transparent',
+                    color: '#111827 !important'
+                  }}
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-500 text-left">
@@ -169,9 +205,15 @@ export default function Login() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Password"
-                    className={`w-full px-4 py-3 pr-12 bg-blue-50 border text-gray-700 ${
+                    className={`w-full px-4 py-3 pr-12 border rounded-lg transition-all ${
                       errors.password ? "border-red-500" : "border-transparent"
-                    } rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
+                    }`}
+                    style={{
+                      backgroundColor: '#eff6ff !important',
+                      background: '#eff6ff !important',
+                      borderColor: errors.password ? '#ef4444 !important' : 'transparent',
+                      color: '#111827 !important'
+                    }}
                   />
                   <button
                     type="button"
@@ -202,6 +244,10 @@ export default function Login() {
                 type="submit"
                 disabled={loading}
                 className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-semibold py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg mt-2"
+                style={{
+                  backgroundColor: '#dc2626',
+                  color: '#ffffff'
+                }}
               >
                 {loading ? "Đang đăng nhập..." : "Login"}
               </button>
@@ -211,6 +257,7 @@ export default function Login() {
               <Link
                 to="/forgot-password"
                 className="text-sm text-gray-600 hover:text-red-600 transition-colors"
+                style={{ color: '#4b5563' }}
               >
                 Quên mật khẩu?
               </Link>
@@ -219,6 +266,7 @@ export default function Login() {
               <Link
                 to="/register"
                 className="text-red-600 hover:text-red-700 font-medium transition-colors"
+                style={{ color: '#dc2626' }}
               >
                 Don't have an account? Sign up
               </Link>
