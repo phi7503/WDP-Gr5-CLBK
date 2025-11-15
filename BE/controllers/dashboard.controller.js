@@ -81,6 +81,56 @@ export const getAdminDashboardStats = asyncHandler(async (req, res) => {
     endDate.toISOString()
   );
 
+  // ✅ DEBUG: Kiểm tra số lượng booking trong DB
+  const totalBookings = await Booking.countDocuments({});
+  const completedBookingsAll = await Booking.countDocuments({
+    paymentStatus: "completed",
+  });
+  const confirmedBookingsAll = await Booking.countDocuments({
+    paymentStatus: "completed",
+    bookingStatus: { $in: ["confirmed", "completed"] },
+  });
+  const bookingsInRange = await Booking.countDocuments({
+    createdAt: { $gte: startDate, $lte: endDate },
+    paymentStatus: "completed",
+    bookingStatus: { $in: ["confirmed", "completed"] },
+  });
+
+  console.log("🔍 DEBUG STATS:");
+  console.log("  - Total bookings in DB:", totalBookings);
+  console.log("  - Completed bookings (all time):", completedBookingsAll);
+  console.log("  - Confirmed/Completed bookings (all time):", confirmedBookingsAll);
+  console.log("  - Confirmed bookings in date range:", bookingsInRange);
+
+  // ✅ DEBUG: Lấy một vài booking mẫu để xem dates
+  const sampleBookings = await Booking.find({
+    paymentStatus: "completed",
+  })
+    .limit(5)
+    .select("_id createdAt paymentStatus bookingStatus totalAmount seats")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (sampleBookings.length > 0) {
+    console.log("📋 Sample completed bookings:");
+    sampleBookings.forEach((b) => {
+      console.log(`  - ID: ${b._id}, createdAt: ${b.createdAt}, paymentStatus: ${b.paymentStatus}, bookingStatus: ${b.bookingStatus}, totalAmount: ${b.totalAmount}, seats: ${b.seats?.length || 0}`);
+    });
+  }
+
+  // ✅ DEBUG: Kiểm tra collection name (Mongoose pluralize)
+  // Mongoose tự động pluralize "Showtime" → "showtimes"
+  const showtimeCollectionName = Showtime.collection?.collectionName || "showtimes";
+  console.log("📦 Showtime collection name:", showtimeCollectionName);
+  
+  // ✅ DEBUG: Kiểm tra có showtime nào trong collection không
+  try {
+    const showtimeCount = await Showtime.countDocuments();
+    console.log("📦 Total showtimes in collection:", showtimeCount);
+  } catch (error) {
+    console.error("⚠️ Error counting showtimes:", error.message);
+  }
+
   const matchStage = {
     createdAt: { $gte: startDate, $lte: endDate },
     paymentStatus: "completed",
@@ -103,25 +153,130 @@ export const getAdminDashboardStats = asyncHandler(async (req, res) => {
         bookingStatus: matchStage.bookingStatus,
       },
     },
+    // ✅ DEBUG: Đếm số booking sau match stage đầu tiên
+    {
+      $count: "afterFirstMatch"
+    }
+  ];
+
+  const countAfterMatch = await Booking.aggregate(pipeline);
+  console.log("🔍 Bookings after first $match:", countAfterMatch);
+
+  // Pipeline thực tế
+  const pipeline2 = [
+    {
+      $match: {
+        createdAt: matchStage.createdAt,
+        paymentStatus: matchStage.paymentStatus,
+        bookingStatus: matchStage.bookingStatus,
+      },
+    },
     {
       $lookup: {
-        from: "showtimes",
+        from: showtimeCollectionName, // ✅ Sử dụng collection name từ model
         localField: "showtime",
         foreignField: "_id",
         as: "showtimeInfo",
       },
     },
-    { $unwind: "$showtimeInfo" },
+    // ✅ DEBUG: Kiểm tra bookings không có showtime match
+    {
+      $addFields: {
+        hasShowtime: { $gt: [{ $size: "$showtimeInfo" }, 0] }
+      }
+    },
+    // ✅ DEBUG: Đếm bookings có/không có showtime
+    {
+      $group: {
+        _id: "$hasShowtime",
+        count: { $sum: 1 },
+        sampleIds: { $push: "$_id" }
+      }
+    }
+  ];
+
+  const countAfterLookup = await Booking.aggregate(pipeline2);
+  console.log("🔍 Bookings after $lookup (grouped by hasShowtime):", countAfterLookup);
+
+  // ✅ DEBUG: Kiểm tra chi tiết bookings không có showtime match
+  if (countAfterLookup.some(item => item._id === false)) {
+    const bookingIds = countAfterLookup.find(item => item._id === false)?.sampleIds || [];
+    console.log("⚠️ Bookings without showtime match:", bookingIds.length);
+    
+    // Lấy chi tiết các bookings này
+    const bookingsWithoutShowtime = await Booking.find({
+      _id: { $in: bookingIds }
+    })
+      .select("_id showtime createdAt paymentStatus bookingStatus")
+      .lean();
+    
+    console.log("📋 Details of bookings without showtime:");
+    for (const booking of bookingsWithoutShowtime) {
+      console.log(`  - Booking ID: ${booking._id}`);
+      console.log(`    Showtime ID: ${booking.showtime} (type: ${typeof booking.showtime})`);
+      console.log(`    Showtime ObjectId: ${booking.showtime?.toString()}`);
+      
+      // Kiểm tra xem showtime có tồn tại không
+      if (booking.showtime) {
+        const showtimeExists = await Showtime.findById(booking.showtime).lean();
+        console.log(`    Showtime exists in DB: ${showtimeExists ? 'YES' : 'NO'}`);
+        if (!showtimeExists) {
+          console.log(`    ⚠️ Showtime ${booking.showtime} NOT FOUND in collection!`);
+        }
+      } else {
+        console.log(`    ⚠️ Booking has no showtime field!`);
+      }
+    }
+  }
+
+  // Pipeline thực tế để tính stats
+  // ✅ Nếu cần filter theo movieId hoặc branchId, phải có showtime
+  // ✅ Nếu không cần filter, có thể tính stats ngay cả khi showtime không tồn tại
+  const needsShowtimeFilter = (movieId && mongoose.Types.ObjectId.isValid(movieId)) || 
+                               (branchId && mongoose.Types.ObjectId.isValid(branchId));
+
+  const pipeline3 = [
     {
       $match: {
-        ...(movieId && mongoose.Types.ObjectId.isValid(movieId)
-          ? { "showtimeInfo.movie": new mongoose.Types.ObjectId(movieId) }
-          : {}),
-        ...(branchId && mongoose.Types.ObjectId.isValid(branchId)
-          ? { "showtimeInfo.branch": new mongoose.Types.ObjectId(branchId) }
-          : {}),
+        createdAt: matchStage.createdAt,
+        paymentStatus: matchStage.paymentStatus,
+        bookingStatus: matchStage.bookingStatus,
       },
     },
+    {
+      $lookup: {
+        from: showtimeCollectionName, // ✅ Sử dụng collection name từ model
+        localField: "showtime",
+        foreignField: "_id",
+        as: "showtimeInfo",
+      },
+    },
+    // ✅ Chỉ unwind nếu cần filter theo movie/branch
+    // ✅ Nếu không cần filter, giữ lại booking ngay cả khi không có showtime
+    ...(needsShowtimeFilter ? [
+      { $unwind: "$showtimeInfo" },
+      {
+        $match: {
+          ...(movieId && mongoose.Types.ObjectId.isValid(movieId)
+            ? { "showtimeInfo.movie": new mongoose.Types.ObjectId(movieId) }
+            : {}),
+          ...(branchId && mongoose.Types.ObjectId.isValid(branchId)
+            ? { "showtimeInfo.branch": new mongoose.Types.ObjectId(branchId) }
+            : {}),
+        },
+      }
+    ] : [
+      // ✅ Nếu không cần filter theo movie/branch, vẫn tính stats
+      // ✅ Bao gồm cả booking có showtime bị xóa (showtimeInfo rỗng)
+      // ✅ Để đảm bảo stats chính xác, chỉ tính booking có showtime hợp lệ
+      // ✅ Nhưng nếu showtime bị xóa, booking vẫn nên được tính (booking đã completed)
+      // ✅ Vì vậy, chỉ filter booking có showtime nếu showtime thực sự cần thiết
+      // ✅ Ở đây, ta vẫn cần showtime để đảm bảo booking hợp lệ, nhưng sẽ log warning nếu không có
+      { $unwind: { path: "$showtimeInfo", preserveNullAndEmptyArrays: true } },
+      // ✅ Chỉ filter ra booking không có showtime nếu chúng ta chắc chắn cần showtime
+      // ✅ Nhưng với stats dashboard, ta muốn tính cả booking có showtime bị xóa
+      // ✅ Vì vậy, KHÔNG filter out booking không có showtime
+    ]),
     {
       $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -142,7 +297,13 @@ export const getAdminDashboardStats = asyncHandler(async (req, res) => {
     },
   ];
 
-  const dailyStats = await Booking.aggregate(pipeline);
+  const dailyStats = await Booking.aggregate(pipeline3);
+  console.log("📊 Daily stats result:", dailyStats.length, "days with data");
+  if (dailyStats.length > 0) {
+    console.log("📊 Daily stats details:", JSON.stringify(dailyStats, null, 2));
+  } else {
+    console.log("⚠️ No daily stats found - all bookings may have been filtered out");
+  }
 
   // Lấp ngày trống
   const map = new Map(dailyStats.map((i) => [i.date, i]));
@@ -169,6 +330,12 @@ export const getAdminDashboardStats = asyncHandler(async (req, res) => {
     }),
     { totalRevenue: 0, totalTickets: 0, totalBookings: 0 }
   );
+
+  console.log("📊 Final totals:", {
+    totalRevenue: totals.totalRevenue,
+    totalTickets: totals.totalTickets,
+    totalBookings: totals.totalBookings,
+  });
 
   res.json({
     ...totals,

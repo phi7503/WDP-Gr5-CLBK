@@ -434,16 +434,18 @@ export const checkAndUpdatePayment = async (req, res) => {
           booking.qrCode = paymentStatusResponse.qrCode;
         } else if (!booking.qrCode) {
           // Tạo QR code tự động nếu PayOS không có
+          // ✅ QR code chứa booking ID để quét và verify tại rạp
           console.log("📱 Generating QR code locally");
-          const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-          const qrData = `${baseUrl}/booking-details/${booking._id}`;
+          const qrData = booking._id.toString();
           const qrCodeBase64 = await QRCode.toDataURL(qrData, {
             width: 300,
-            margin: 2,
+            margin: 3,
             color: {
               dark: '#000000',
               light: '#FFFFFF'
-            }
+            },
+            errorCorrectionLevel: 'M', // Medium error correction
+            type: 'image/png'
           });
           booking.qrCode = qrCodeBase64;
         }
@@ -655,16 +657,18 @@ export const updatePaymentFromRedirect = async (req, res) => {
     booking.paidAt = paidAtDate; // ✅ Lưu thời gian thanh toán
 
     // Tạo QR code nếu chưa có
+    // ✅ QR code chứa booking ID để quét và verify tại rạp
     if (!booking.qrCode) {
-      const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      const qrData = `${baseUrl}/booking-details/${booking._id}`;
+      const qrData = booking._id.toString();
       const qrCodeBase64 = await QRCode.toDataURL(qrData, {
         width: 300,
-        margin: 2,
+        margin: 3,
         color: {
           dark: '#000000',
           light: '#FFFFFF'
-        }
+        },
+        errorCorrectionLevel: 'M', // Medium error correction
+        type: 'image/png'
       });
       booking.qrCode = qrCodeBase64;
     }
@@ -949,15 +953,17 @@ export const handleWebhook = async (req, res) => {
       booking.paidAt = paidAtDate; // ✅ Lưu thời gian thanh toán từ PayOS
 
       // Tạo QR code
-      const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      const qrData = `${baseUrl}/booking-details/${booking._id}`;
+      // ✅ QR code chứa booking ID để quét và verify tại rạp
+      const qrData = booking._id.toString();
       const qrCodeBase64 = await QRCode.toDataURL(qrData, {
         width: 300,
-        margin: 2,
+        margin: 3,
         color: {
           dark: '#000000',
           light: '#FFFFFF'
-        }
+        },
+        errorCorrectionLevel: 'M', // Medium error correction
+        type: 'image/png'
       });
       booking.qrCode = qrCodeBase64;
       await booking.save();

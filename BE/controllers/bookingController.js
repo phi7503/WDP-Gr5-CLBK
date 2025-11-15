@@ -419,8 +419,18 @@ const createBooking = asyncHandler(async (req, res) => {
 
 
     // Tạo mã QR cho booking (dùng booking._id làm nội dung QR)
+    // ✅ QR code sẽ chứa booking ID để quét và verify tại rạp
     const qrData = booking._id.toString();
-    const qrCodeBase64 = await QRCode.toDataURL(qrData);
+    const qrCodeBase64 = await QRCode.toDataURL(qrData, {
+      width: 300,
+      margin: 3,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      },
+      errorCorrectionLevel: 'M', // Medium error correction
+      type: 'image/png'
+    });
     booking.qrCode = qrCodeBase64;
     await booking.save();
 
@@ -881,15 +891,17 @@ export const resendEmailQRCode = asyncHandler(async (req, res) => {
   // Kiểm tra có QR code chưa
   if (!booking.qrCode) {
     // Tạo QR code nếu chưa có
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-    const qrData = `${baseUrl}/booking-details/${booking._id}`;
+    // ✅ QR code chứa booking ID để quét và verify tại rạp
+    const qrData = booking._id.toString();
     const qrCodeBase64 = await QRCode.toDataURL(qrData, {
       width: 300,
-      margin: 2,
+      margin: 3,
       color: {
         dark: '#000000',
         light: '#FFFFFF'
-      }
+      },
+      errorCorrectionLevel: 'M', // Medium error correction
+      type: 'image/png'
     });
     booking.qrCode = qrCodeBase64;
     await booking.save();
@@ -903,16 +915,17 @@ export const resendEmailQRCode = asyncHandler(async (req, res) => {
   }
 
   try {
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-    const qrData = `${baseUrl}/booking-details/${booking._id}`;
+    // ✅ QR code chứa booking ID để quét và verify tại rạp
+    const qrData = booking._id.toString();
     const qrCodeBuffer = await QRCode.toBuffer(qrData, {
       type: 'png',
       width: 300,
-      margin: 2,
+      margin: 3,
       color: {
         dark: '#000000',
         light: '#FFFFFF'
-      }
+      },
+      errorCorrectionLevel: 'M' // Medium error correction
     });
 
     const emailHtml = `
