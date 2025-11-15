@@ -63,22 +63,6 @@ const BookingPageModern = () => {
       };
     } else if (price >= 100000) {
       return {
-        name: 'GOLD VIP',
-        icon: '🥇',
-        color: '#f59e0b',
-        bgColor: 'linear-gradient(135deg, #f59e0b, #d97706)',
-        description: 'Ghế VIP rộng rãi, thoải mái'
-      };
-    } else if (price >= 70000) {
-      return {
-        name: 'SILVER',
-        icon: '🥈',
-        color: '#10b981',
-        bgColor: 'linear-gradient(135deg, #10b981, #059669)',
-        description: 'Ghế thoải mái, vị trí tốt'
-      };
-    } else {
-      return {
         name: 'STANDARD',
         icon: '🎬',
         color: '#3b82f6',
@@ -696,53 +680,56 @@ const BookingPageModern = () => {
     }
   };
 
-  // Helper function to get seat category color based on price
-  const getSeatCategoryColor = (price) => {
-    if (price >= 200000) {
-      return {
-        bg: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
-        border: '#c084fc',
-        color: '#fff',
-        glow: 'rgba(147, 51, 234, 0.5)'
-      };
-    } else if (price >= 150000) {
-      return {
-        bg: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
-        border: '#9ca3af',
-        color: '#fff',
-        glow: 'rgba(107, 114, 128, 0.5)'
-      };
-    } else if (price >= 100000) {
-      return {
-        bg: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-        border: '#fcd34d',
-        color: '#fff',
-        glow: 'rgba(245, 158, 11, 0.5)'
-      };
-    } else if (price >= 70000) {
-      return {
-        bg: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        border: '#6ee7b7',
-        color: '#fff',
-        glow: 'rgba(16, 185, 129, 0.5)'
-      };
-    } else {
-      return {
-        bg: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-        border: '#93c5fd',
-        color: '#fff',
-        glow: 'rgba(59, 130, 246, 0.5)'
-      };
+  // Helper function to get seat category color based on seat type
+  const getSeatCategoryColor = (seatType) => {
+    // Normalize seat type to lowercase
+    const type = (seatType || 'standard').toLowerCase();
+    
+    switch (type) {
+      case 'vip':
+        return {
+          bg: '#B53737',
+          border: '#D9534F',
+          color: '#fff',
+          glow: 'rgba(181, 55, 55, 0.5)'
+        };
+      case 'couple':
+        return {
+          bg: '#6A1B9A',
+          border: '#8E24AA',
+          color: '#fff',
+          glow: 'rgba(106, 27, 154, 0.5)'
+        };
+      case 'standard':
+      default:
+        return {
+          bg: '#0A728A',
+          border: '#0D8FA8',
+          color: '#fff',
+          glow: 'rgba(10, 114, 138, 0.5)'
+        };
     }
   };
 
   const getSeatStyle = (seat) => {
-    console.log('Getting style for seat:', seat._id, 'occupied:', seat.occupied, 'status:', seat.availability?.status);
+    console.log('Getting style for seat:', seat._id, 'occupied:', seat.occupied, 'status:', seat.availability?.status, 'type:', seat.type);
     
     const status = seat.availability?.status || (seat.occupied ? 'booked' : 'available');
-    const seatPrice = seat.availability?.price || seat.price || 50000;
-    const categoryColors = getSeatCategoryColor(seatPrice);
+    const seatType = seat.type || 'standard';
     
+    // Blocked / Không bán - màu xám #444
+    if (status === 'blocked' || status === 'maintenance' || !seat.isActive) {
+      return {
+        background: '#444',
+        border: '1px solid #555',
+        color: '#999',
+        cursor: 'not-allowed',
+        opacity: 0.6,
+        pointerEvents: 'none'
+      };
+    }
+    
+    // Booked or reserved
     if (status === 'booked' || status === 'reserved') {
       return {
         background: '#4B5563',
@@ -766,6 +753,7 @@ const BookingPageModern = () => {
       };
     }
     
+    // Selected seat
     if (selectedSeats.includes(seat._id)) {
       return {
         background: '#DC2626',
@@ -779,7 +767,8 @@ const BookingPageModern = () => {
       };
     }
     
-    // Available seat - color based on seat category (price)
+    // Available seat - color based on seat type (Standard, VIP, Couple)
+    const categoryColors = getSeatCategoryColor(seatType);
     return {
       background: categoryColors.bg,
       border: `2px solid ${categoryColors.border}`,
@@ -1140,9 +1129,9 @@ const BookingPageModern = () => {
                                 }}
                                 onMouseEnter={(e) => {
                                   const status = seat.availability?.status || (seat.occupied ? 'booked' : 'available');
-                                  if (status === 'available' && !selectedSeats.includes(seat._id)) {
-                                    const seatPrice = seat.availability?.price || seat.price || 50000;
-                                    const categoryColors = getSeatCategoryColor(seatPrice);
+                                  if (status === 'available' && !selectedSeats.includes(seat._id) && seat.isActive !== false) {
+                                    const seatType = seat.type || 'standard';
+                                    const categoryColors = getSeatCategoryColor(seatType);
                                     e.currentTarget.style.transform = 'scale(1.15) translateY(-2px)';
                                     e.currentTarget.style.boxShadow = `0 6px 20px ${categoryColors.glow}, inset 0 1px 0 rgba(255,255,255,0.3)`;
                                     e.currentTarget.style.borderWidth = '3px';
@@ -1150,9 +1139,9 @@ const BookingPageModern = () => {
                                 }}
                                 onMouseLeave={(e) => {
                                   const status = seat.availability?.status || (seat.occupied ? 'booked' : 'available');
-                                  if (status === 'available' && !selectedSeats.includes(seat._id)) {
-                                    const seatPrice = seat.availability?.price || seat.price || 50000;
-                                    const categoryColors = getSeatCategoryColor(seatPrice);
+                                  if (status === 'available' && !selectedSeats.includes(seat._id) && seat.isActive !== false) {
+                                    const seatType = seat.type || 'standard';
+                                    const categoryColors = getSeatCategoryColor(seatType);
                                     e.currentTarget.style.transform = 'scale(1)';
                                     e.currentTarget.style.boxShadow = `0 2px 8px ${categoryColors.glow}`;
                                     e.currentTarget.style.borderWidth = '2px';
@@ -1196,12 +1185,36 @@ const BookingPageModern = () => {
                     <div style={{
                       width: '24px',
                       height: '24px',
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                      border: '2px solid #93c5fd',
+                      background: '#0A728A',
+                      border: '2px solid #0D8FA8',
                       borderRadius: '4px 4px 1px 1px',
-                      boxShadow: '0 2px 4px rgba(59, 130, 246, 0.4)'
+                      boxShadow: '0 2px 4px rgba(10, 114, 138, 0.4)'
                     }} />
-                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Ghế trống (theo hạng)</Text>
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Standard</Text>
+                  </div>
+                  
+                  <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      background: '#B53737',
+                      border: '2px solid #D9534F',
+                      borderRadius: '4px 4px 1px 1px',
+                      boxShadow: '0 2px 4px rgba(181, 55, 55, 0.4)'
+                    }} />
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>VIP</Text>
+                  </div>
+                  
+                  <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      background: '#6A1B9A',
+                      border: '2px solid #8E24AA',
+                      borderRadius: '4px 4px 1px 1px',
+                      boxShadow: '0 2px 4px rgba(106, 27, 154, 0.4)'
+                    }} />
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Couple</Text>
                   </div>
                   
                   <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1228,119 +1241,17 @@ const BookingPageModern = () => {
                     }} />
                     <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Ghế đã đặt</Text>
                   </div>
-                </div>
-
-                {/* Seat Categories Legend */}
-                <div style={{ 
-                  marginBottom: '32px',
-                  padding: '16px',
-                  background: 'rgba(255,255,255,0.05)',
-                  borderRadius: '8px',
-                  border: '1px solid #333'
-                }}>
-                  <Text style={{ color: '#fff', fontSize: '16px', fontWeight: 'bold', marginBottom: '16px', display: 'block', textAlign: 'center' }}>
-                    📋 Hạng ghế theo giá
-                  </Text>
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
-                    gap: '12px' 
-                  }}>
-                    {[
-                      { 
-                        price: 250000, 
-                        name: 'DIAMOND', 
-                        icon: '💎', 
-                        color: '#9333ea',
-                        bgGradient: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
-                        borderColor: '#c084fc',
-                        glowColor: 'rgba(147, 51, 234, 0.5)'
-                      },
-                      { 
-                        price: 180000, 
-                        name: 'PLATINUM', 
-                        icon: '👑', 
-                        color: '#e5e7eb',
-                        bgGradient: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
-                        borderColor: '#9ca3af',
-                        glowColor: 'rgba(107, 114, 128, 0.5)'
-                      },
-                      { 
-                        price: 120000, 
-                        name: 'GOLD VIP', 
-                        icon: '🥇', 
-                        color: '#fbbf24',
-                        bgGradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                        borderColor: '#fcd34d',
-                        glowColor: 'rgba(245, 158, 11, 0.5)'
-                      },
-                      { 
-                        price: 80000, 
-                        name: 'SILVER', 
-                        icon: '🥈', 
-                        color: '#34d399',
-                        bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                        borderColor: '#6ee7b7',
-                        glowColor: 'rgba(16, 185, 129, 0.5)'
-                      },
-                      { 
-                        price: 50000, 
-                        name: 'STANDARD', 
-                        icon: '🎬', 
-                        color: '#60a5fa',
-                        bgGradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                        borderColor: '#93c5fd',
-                        glowColor: 'rgba(59, 130, 246, 0.5)'
-                      }
-                    ].map((category, index) => (
-                      <div 
-                        key={index} 
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          padding: '12px 16px',
-                          background: category.bgGradient,
-                          borderRadius: '8px',
-                          border: `2px solid ${category.borderColor}`,
-                          boxShadow: `0 4px 12px ${category.glowColor}, inset 0 1px 0 rgba(255,255,255,0.2)`,
-                          transition: 'all 0.3s ease',
-                          cursor: 'default'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = `0 6px 20px ${category.glowColor}, inset 0 1px 0 rgba(255,255,255,0.3)`;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = `0 4px 12px ${category.glowColor}, inset 0 1px 0 rgba(255,255,255,0.2)`;
-                        }}
-                      >
-                        <span style={{ fontSize: '20px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-                          {category.icon}
-                        </span>
-                        <div>
-                          <div style={{ 
-                            color: '#fff', 
-                            fontWeight: 'bold', 
-                            fontSize: '12px',
-                            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                            letterSpacing: '0.5px'
-                          }}>
-                            {category.name}
-                          </div>
-                          <div style={{ 
-                            color: '#fff', 
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                            opacity: 0.95
-                          }}>
-                            {category.price.toLocaleString('vi-VN')} ₫
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  
+                  <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      background: '#444',
+                      border: '1px solid #555',
+                      borderRadius: '4px 4px 1px 1px',
+                      opacity: 0.6
+                    }} />
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Blocked / Không bán</Text>
                   </div>
                 </div>
                 

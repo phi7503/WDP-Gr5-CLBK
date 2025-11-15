@@ -67,29 +67,13 @@ const RealTimeBookingPage = () => {
       };
     } else if (price >= 100000) {
       return {
-        name: 'GOLD VIP',
-        icon: '🥇',
-        color: '#f59e0b',
-        bgColor: 'linear-gradient(135deg, #f59e0b, #d97706)',
-        description: 'Ghế VIP rộng rãi, thoải mái'
-      };
-    } else if (price >= 70000) {
-      return {
-        name: 'SILVER',
-        icon: '🥈',
-        color: '#10b981',
-        bgColor: 'linear-gradient(135deg, #10b981, #059669)',
-        description: 'Ghế thoải mái, vị trí tốt'
-      };
-    } else {
-      return {
         name: 'STANDARD',
         icon: '🎬',
         color: '#3b82f6',
         bgColor: 'linear-gradient(135deg, #3b82f6, #2563eb)',
         description: 'Ghế tiêu chuẩn'
       };
-    }
+    } 
   };
 
   // Update customer info when user loads
@@ -909,7 +893,7 @@ const RealTimeBookingPage = () => {
                     boxShadow: '0 2px 8px rgba(255, 77, 79, 0.3)'
                   }} />
                   <Text style={{ color: '#ff4d4f', fontSize: '16px', fontWeight: 'bold' }}>
-                    🎭 MÀN HÌNH
+                     MÀN HÌNH
                   </Text>
                 </div>
                 
@@ -1055,7 +1039,7 @@ const RealTimeBookingPage = () => {
                   border: '1px solid #333'
                 }}>
                   <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold', marginBottom: '12px', display: 'block' }}>
-                    📋 Hạng ghế theo giá
+                    Hạng ghế theo giá
                   </Text>
                   <div style={{ 
                     display: 'grid', 
@@ -1063,11 +1047,9 @@ const RealTimeBookingPage = () => {
                     gap: '8px' 
                   }}>
                     {[
-                      { price: 250000, name: 'DIAMOND', icon: '💎', color: '#9333ea' },
+                      { price: 240000, name: 'DIAMOND', icon: '💎', color: '#9333ea' },
                       { price: 180000, name: 'PLATINUM', icon: '👑', color: '#6b7280' },
-                      { price: 120000, name: 'GOLD VIP', icon: '🥇', color: '#f59e0b' },
-                      { price: 80000, name: 'SILVER', icon: '🥈', color: '#10b981' },
-                      { price: 50000, name: 'STANDARD', icon: '🎬', color: '#3b82f6' }
+                      { price: 120000,  name: 'STANDARD', icon: '🎬', color: '#3b82f6'},
                     ].map((category, index) => (
                       <div key={index} style={{
                         display: 'flex',

@@ -346,6 +346,47 @@ const createBooking = asyncHandler(async (req, res) => {
       if (!voucher || !voucher.isActive || now < voucher.startDate || now > voucher.endDate) {
         throw new Error("Voucher is not valid or expired");
       }
+      
+      // ✅ KIỂM TRA: Mỗi khách hàng chỉ được dùng 1 mã voucher 1 lần
+      let existingBooking = null;
+      if (userId) {
+        // Nếu có user (đã đăng nhập), kiểm tra theo userId
+        existingBooking = await Booking.findOne({
+          user: userId,
+          voucher: voucherId,
+          paymentStatus: 'completed', // Chỉ kiểm tra các booking đã thanh toán thành công
+          bookingStatus: { $in: ['confirmed', 'completed'] } // Đã xác nhận hoặc hoàn thành
+        });
+        
+        if (existingBooking) {
+          throw new Error("Bạn đã sử dụng mã voucher này rồi. Mỗi khách hàng chỉ được dùng 1 mã voucher 1 lần.");
+        }
+      } else if (customerInfoData && customerInfoData.email) {
+        // Nếu là guest booking, kiểm tra theo email
+        existingBooking = await Booking.findOne({
+          'customerInfo.email': customerInfoData.email,
+          voucher: voucherId,
+          paymentStatus: 'completed', // Chỉ kiểm tra các booking đã thanh toán thành công
+          bookingStatus: { $in: ['confirmed', 'completed'] } // Đã xác nhận hoặc hoàn thành
+        });
+        
+        if (existingBooking) {
+          throw new Error("Email này đã sử dụng mã voucher này rồi. Mỗi khách hàng chỉ được dùng 1 mã voucher 1 lần.");
+        }
+      } else if (customerInfoData && customerInfoData.phone) {
+        // Nếu không có email, kiểm tra theo phone
+        existingBooking = await Booking.findOne({
+          'customerInfo.phone': customerInfoData.phone,
+          voucher: voucherId,
+          paymentStatus: 'completed', // Chỉ kiểm tra các booking đã thanh toán thành công
+          bookingStatus: { $in: ['confirmed', 'completed'] } // Đã xác nhận hoặc hoàn thành
+        });
+        
+        if (existingBooking) {
+          throw new Error("Số điện thoại này đã sử dụng mã voucher này rồi. Mỗi khách hàng chỉ được dùng 1 mã voucher 1 lần.");
+        }
+      }
+      
       // Kiểm tra minPurchase
       const subtotal = seatTotal + comboTotal;
       if (voucher.minPurchase && subtotal < voucher.minPurchase) {

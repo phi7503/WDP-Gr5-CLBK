@@ -148,9 +148,10 @@ function ProfileInfo() {
         }),
       });
       const data = await res.json();
-      if (!res.status !== 200) throw new Error(data?.message || "Cập nhật thất bại");
+      if (res.status !== 200) throw new Error(data?.message || "Cập nhật thất bại");
       setUser(data.user);
       setIsEditing(false);
+      toast.success("Cập nhật thông tin thành công!");
     } catch (err) {
       setErrors((prev) => ({ ...prev, form: err.message }));
     } finally {

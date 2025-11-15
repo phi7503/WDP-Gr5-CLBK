@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Typography, Button, Row, Col, Card, Space, message, Rate } from 'antd';
-import { PlayCircleOutlined, CalendarOutlined, ClockCircleOutlined, StarFilled, FireFilled } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { PlayCircleOutlined, CalendarOutlined, ClockCircleOutlined, StarFilled, FireFilled, CreditCardOutlined, EyeOutlined } from '@ant-design/icons';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import MovieCard from './MovieCard';
 import ChatBot from './ChatBot';
 import TrailerModal from './TrailerModal';
-import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL, getImageUrl } from '../services/api';
+import { movieAPI, showtimeAPI, comboAPI, branchAPI, BACKEND_URL, getImageUrl, payOSAPI } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [featuredMovies, setFeaturedMovies] = useState([]); // ✅ Load từ database
   const [nowShowingMovies, setNowShowingMovies] = useState([]);
   const [comingSoonMovies, setComingSoonMovies] = useState([]);
@@ -24,6 +25,7 @@ const HomePage = () => {
   const [branchesByChain, setBranchesByChain] = useState({});
   const [trailerModalVisible, setTrailerModalVisible] = useState(false);
   const [selectedTrailerUrl, setSelectedTrailerUrl] = useState(null);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   // Auto-slide effect - Tự động chuyển slide sau mỗi 5 giây
   useEffect(() => {
@@ -121,6 +123,66 @@ const HomePage = () => {
       setCombos([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePayment = async (combo) => {
+    try {
+      setProcessingPayment(true);
+      
+      // Tạo orderCode duy nhất: timestamp (seconds) * 1000 + random 3 digits + hash từ combo ID
+      // Đảm bảo orderCode là số nguyên duy nhất
+      const timestamp = Math.floor(Date.now() / 1000);
+      const random = Math.floor(Math.random() * 1000);
+      const comboHash = combo._id ? parseInt(combo._id.slice(-6), 16) % 1000 : 0;
+      const orderCode = timestamp * 10000 + random * 10 + comboHash;
+      
+      // Lưu thông tin combo vào localStorage để hiển thị sau khi thanh toán thành công
+      const paymentInfo = {
+        orderCode: orderCode,
+        combo: {
+          _id: combo._id,
+          name: combo.name,
+          description: combo.description,
+          price: combo.price,
+          image: combo.image,
+          category: combo.category,
+          items: combo.items
+        },
+        type: 'combo', // Đánh dấu đây là thanh toán combo
+        timestamp: Date.now()
+      };
+      localStorage.setItem(`payment_combo_${orderCode}`, JSON.stringify(paymentInfo));
+      
+      // Tạo description từ tên combo (tối đa 25 ký tự cho PayOS)
+      const description = combo.name.length > 22 
+        ? combo.name.substring(0, 22) + '...' 
+        : combo.name;
+
+      // Gọi API PayOS để tạo payment link
+      const paymentData = {
+        orderCode: orderCode,
+        amount: combo.price,
+        description: description,
+      };
+
+      console.log('🔄 Creating PayOS payment for combo:', combo.name);
+      const response = await payOSAPI.createPayment(paymentData);
+      
+      if (response && response.checkoutUrl) {
+        console.log('✅ Payment link created, redirecting to PayOS');
+        message.success('Đang chuyển đến trang thanh toán...');
+        
+        // Redirect đến PayOS payment page
+        window.location.href = response.checkoutUrl;
+      } else {
+        throw new Error('Không nhận được link thanh toán từ PayOS');
+      }
+    } catch (error) {
+      console.error('❌ Error creating payment:', error);
+      const errorMessage = error?.message || error?.data?.message || 'Không thể tạo link thanh toán. Vui lòng thử lại.';
+      message.error(errorMessage);
+      setProcessingPayment(false);
     }
   };
 
@@ -867,14 +929,9 @@ const HomePage = () => {
                       {combo.description?.slice(0, 60) || 'Delicious combo for your movie experience'}
                     </Text>
                     
-                    {/* Price and Button */}
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginTop: '16px'
-                    }}>
-                      <div>
+                    {/* Price and Buttons */}
+                    <div style={{ marginTop: '16px' }}>
+                      <div style={{ marginBottom: '12px' }}>
                         <Text style={{ 
                           color: '#ef4444', 
                           fontSize: '22px', 
@@ -885,20 +942,67 @@ const HomePage = () => {
                           {combo.price.toLocaleString('vi-VN')}₫
                         </Text>
                       </div>
-                      <Button 
-                        type="primary"
-                        className="combo-add-button"
-                        style={{
-                          background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-                          border: 'none',
-                          borderRadius: '20px',
-                          fontWeight: '600',
-                          height: '40px',
-                          padding: '0 20px'
-                        }}
-                      >
-                        Add
-                      </Button>
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: '8px',
+                        flexWrap: 'wrap'
+                      }}>
+                        <Button 
+                          type="primary"
+                          icon={<CreditCardOutlined />}
+                          loading={processingPayment}
+                          onClick={() => handlePayment(combo)}
+                          style={{
+                            flex: 1,
+                            minWidth: '120px',
+                            background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontWeight: '600',
+                            height: '40px',
+                            padding: '0 16px',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.4)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        >
+                          Thanh toán
+                        </Button>
+                        <Button 
+                          icon={<EyeOutlined />}
+                          onClick={() => navigate('/combos')}
+                          style={{
+                            flex: 1,
+                            minWidth: '120px',
+                            background: '#333',
+                            border: '1px solid #666',
+                            color: '#fff',
+                            borderRadius: '12px',
+                            fontWeight: '600',
+                            height: '40px',
+                            padding: '0 16px',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.background = '#444';
+                            e.currentTarget.style.borderColor = '#888';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.background = '#333';
+                            e.currentTarget.style.borderColor = '#666';
+                          }}
+                        >
+                          Chi tiết
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

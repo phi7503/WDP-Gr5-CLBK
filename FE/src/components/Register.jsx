@@ -143,14 +143,14 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name Input */}
-            <div>
+            <div className="text-gray-700">
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Họ và tên"
-                className={`w-full px-4 py-3 bg-blue-50 border ${
+                className={`w-full px-4 py-3 bg-blue-50 border text-gray-700 ${
                   errors.name ? "border-red-500" : "border-transparent"
                 } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
@@ -160,14 +160,14 @@ export default function Register() {
             </div>
 
             {/* Email Input */}
-            <div>
+            <div className="text-gray-700">
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Email"
-                className={`w-full px-4 py-3 bg-blue-50 border ${
+                className={`w-full px-4 py-3 bg-blue-50 border text-gray-700${
                   errors.email ? "border-red-500" : "border-transparent"
                 } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
               />
@@ -177,7 +177,7 @@ export default function Register() {
             </div>
 
             {/* Password Input */}
-            <div>
+            <div className="text-gray-700">
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -185,7 +185,7 @@ export default function Register() {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Mật khẩu"
-                  className={`w-full px-4 py-3 pr-12 bg-blue-50 border ${
+                  className={`w-full px-4 py-3 pr-12 bg-blue-50 border text-gray-700${
                     errors.password ? "border-red-500" : "border-transparent"
                   } rounded-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-all`}
                 />
@@ -207,7 +207,7 @@ export default function Register() {
             </div>
 
             {/* Confirm Password Input */}
-            <div>
+            <div className="text-gray-700">
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -241,7 +241,7 @@ export default function Register() {
             </div>
 
             {/* Phone Input */}
-            <div>
+            <div className="text-gray-700">
               <input
                 type="tel"
                 name="phone"

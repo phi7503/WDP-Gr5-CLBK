@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Typography, Button, Row, Col, Card, Space, Avatar, DatePicker, message, Badge, Tag } from 'antd';
-import { PlayCircleOutlined, HeartOutlined, StarOutlined, CalendarOutlined, ClockCircleOutlined, EnvironmentOutlined, FireFilled, GlobalOutlined, TagOutlined, TrophyOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Layout, Typography, Button, Row, Col, Card, Space, Avatar, DatePicker, message, Badge, Tag, Select, Input, Collapse } from 'antd';
+import { PlayCircleOutlined, HeartOutlined, StarOutlined, CalendarOutlined, ClockCircleOutlined, EnvironmentOutlined, FireFilled, GlobalOutlined, TagOutlined, TrophyOutlined, CheckCircleOutlined, FilterOutlined, SearchOutlined, DownOutlined } from '@ant-design/icons';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -11,6 +11,9 @@ import '../cinema-brand.css';
 
 const { Content } = Layout;
 const { Title, Text, Paragraph } = Typography;
+const { Option } = Select;
+const { Panel } = Collapse;
+const { Search } = Input;
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -24,6 +27,11 @@ const MovieDetail = () => {
   const [availableDates, setAvailableDates] = useState([]); // Các ngày có suất chiếu
   const [loading, setLoading] = useState(true);
   const [trailerModalVisible, setTrailerModalVisible] = useState(false);
+  // Filter states
+  const [selectedCity, setSelectedCity] = useState('all');
+  const [selectedCinemaChain, setSelectedCinemaChain] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCities, setExpandedCities] = useState([]);
 
   useEffect(() => {
     if (id) {
@@ -31,12 +39,27 @@ const MovieDetail = () => {
     }
   }, [id]);
 
-  // Filter showtimes when date changes
+  // Filter showtimes when date or filters change
   useEffect(() => {
     if (allShowtimes.length > 0 && selectedDate) {
       filterShowtimesByDate(allShowtimes, selectedDate);
     }
-  }, [selectedDate]);
+  }, [selectedDate, selectedCity, selectedCinemaChain, searchTerm, allShowtimes.length]);
+
+  // Auto-expand first city when showtimes change
+  useEffect(() => {
+    if (showtimes.length > 0 && expandedCities.length === 0) {
+      const citiesSet = new Set();
+      showtimes.forEach(st => {
+        const city = st.branch?.location?.city || st.branch?.location?.province || 'Khác';
+        if (city) citiesSet.add(city);
+      });
+      const cities = Array.from(citiesSet).sort();
+      if (cities.length > 0) {
+        setExpandedCities([cities[0]]);
+      }
+    }
+  }, [showtimes.length]);
 
   // Reload showtimes when page becomes visible (user returns from booking page)
   useEffect(() => {
@@ -98,17 +121,71 @@ const MovieDetail = () => {
     }
   };
 
-  // Helper function to filter showtimes by date
+  // Helper function to filter showtimes by date and filters
   const filterShowtimesByDate = (showtimesList, date) => {
     const now = new Date();
-    const filtered = showtimesList.filter(st => {
+    let filtered = showtimesList.filter(st => {
       const showtimeDate = new Date(st.startTime).toISOString().split('T')[0];
       const startTime = new Date(st.startTime);
       // ✅ Lọc theo ngày VÀ chỉ giữ lại các suất chiếu chưa bắt đầu
       return showtimeDate === date && startTime > now;
     });
+
+    // Filter by city
+    if (selectedCity !== 'all') {
+      filtered = filtered.filter(st => {
+        const branchCity = st.branch?.location?.city || st.branch?.location?.province || '';
+        const normalizeText = (text) => {
+          return text
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[.\s]+/g, '');
+        };
+        return normalizeText(branchCity).includes(normalizeText(selectedCity));
+      });
+    }
+
+    // Filter by cinema chain
+    if (selectedCinemaChain !== 'all') {
+      filtered = filtered.filter(st => {
+        const branchChain = st.branch?.cinemaChain || 'Other';
+        return branchChain === selectedCinemaChain;
+      });
+    }
+
+    // Filter by search term (branch name)
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(st => {
+        const branchName = st.branch?.name || '';
+        return branchName.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+    }
+
     console.log(`Filtered showtimes for ${date}:`, filtered.length);
     setShowtimes(filtered);
+  };
+
+  // Get unique cities from showtimes
+  const getAvailableCities = () => {
+    const citiesSet = new Set();
+    showtimes.forEach(st => {
+      const city = st.branch?.location?.city || st.branch?.location?.province;
+      if (city) {
+        citiesSet.add(city);
+      }
+    });
+    return Array.from(citiesSet).sort();
+  };
+
+  // Get unique cinema chains from showtimes
+  const getAvailableCinemaChains = () => {
+    const chainsSet = new Set();
+    showtimes.forEach(st => {
+      const chain = st.branch?.cinemaChain || 'Other';
+      chainsSet.add(chain);
+    });
+    return Array.from(chainsSet).sort();
   };
 
   // Function to get actor image from TMDB API
@@ -1102,64 +1179,137 @@ const MovieDetail = () => {
             {availableDates.length > 0 && (
               <div style={{ 
                 marginBottom: '32px',
-                display: 'flex',
-                gap: '12px',
-                flexWrap: 'wrap',
                 padding: '20px',
                 background: '#1a1a1a',
                 borderRadius: '12px',
                 border: '1px solid #333'
               }}>
-                {availableDates.map((date, index) => {
-                  const dateObj = new Date(date + 'T00:00:00');
-                  const today = new Date().toISOString().split('T')[0];
-                  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-                  
-                  let dayLabel = dateObj.toLocaleDateString('vi-VN', { 
-                    weekday: 'short',
-                    day: '2-digit',
-                    month: '2-digit'
-                  });
-                  
-                  if (date === today) dayLabel = 'Hôm nay';
-                  else if (date === tomorrow) dayLabel = 'Ngày mai';
-                  
-                  const isSelected = date === selectedDate;
-                  const showtimeCount = allShowtimes.filter(st => {
-                    return new Date(st.startTime).toISOString().split('T')[0] === date;
-                  }).length;
+                <div style={{ marginBottom: '16px' }}>
+                  <Text strong style={{ color: '#fff', fontSize: '16px', display: 'block', marginBottom: '12px' }}>
+                    <CalendarOutlined /> Chọn ngày:
+                  </Text>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {availableDates.map((date, index) => {
+                      const dateObj = new Date(date + 'T00:00:00');
+                      const today = new Date().toISOString().split('T')[0];
+                      const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+                      
+                      let dayLabel = dateObj.toLocaleDateString('vi-VN', { 
+                        weekday: 'short',
+                        day: '2-digit',
+                        month: '2-digit'
+                      });
+                      
+                      if (date === today) dayLabel = 'Hôm nay';
+                      else if (date === tomorrow) dayLabel = 'Ngày mai';
+                      
+                      const isSelected = date === selectedDate;
+                      const showtimeCount = allShowtimes.filter(st => {
+                        return new Date(st.startTime).toISOString().split('T')[0] === date;
+                      }).length;
 
-                  return (
-                    <Button
-                      key={index}
-                      size="large"
-                      onClick={() => setSelectedDate(date)}
-                      style={{
-                        background: isSelected 
-                          ? 'linear-gradient(135deg, #ff4d4f 0%, #ff7a45 100%)' 
-                          : '#333',
-                        border: isSelected ? 'none' : '1px solid #666',
-                        color: '#fff',
-                        height: 'auto',
-                        padding: '12px 20px',
-                        borderRadius: '8px',
-                        transition: 'all 0.3s ease',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '4px',
-                        minWidth: '100px'
-                      }}
+                      return (
+                        <Button
+                          key={index}
+                          size="large"
+                          onClick={() => setSelectedDate(date)}
+                          style={{
+                            background: isSelected 
+                              ? 'linear-gradient(135deg, #ff4d4f 0%, #ff7a45 100%)' 
+                              : '#333',
+                            border: isSelected ? 'none' : '1px solid #666',
+                            color: '#fff',
+                            height: 'auto',
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            transition: 'all 0.3s ease',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '4px',
+                            minWidth: '100px'
+                          }}
+                        >
+                          <span style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                            {dayLabel}
+                          </span>
+                          <span style={{ fontSize: '12px', opacity: 0.8 }}>
+                            {showtimeCount} suất
+                          </span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Filter Bar */}
+                {showtimes.length > 0 && (
+                  <div style={{ 
+                    paddingTop: '20px', 
+                    borderTop: '1px solid #333',
+                    display: 'flex',
+                    gap: '12px',
+                    flexWrap: 'wrap',
+                    alignItems: 'center'
+                  }}>
+                    <Text strong style={{ color: '#fff', fontSize: '14px' }}>
+                      <FilterOutlined /> Lọc:
+                    </Text>
+                    <Search
+                      placeholder="Tìm kiếm rạp..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{ width: 200, flex: '0 0 auto' }}
+                      allowClear
+                      prefix={<SearchOutlined style={{ color: '#666' }} />}
+                    />
+                    <Select
+                      value={selectedCity}
+                      onChange={setSelectedCity}
+                      placeholder="Chọn thành phố"
+                      style={{ width: 180, flex: '0 0 auto' }}
+                      allowClear
                     >
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                        {dayLabel}
-                      </span>
-                      <span style={{ fontSize: '12px', opacity: 0.8 }}>
-                        {showtimeCount} suất
-                      </span>
-                    </Button>
-                  );
-                })}
+                      <Option value="all">Tất cả thành phố</Option>
+                      {getAvailableCities().map(city => (
+                        <Option key={city} value={city}>
+                          <EnvironmentOutlined /> {city}
+                        </Option>
+                      ))}
+                    </Select>
+                    <Select
+                      value={selectedCinemaChain}
+                      onChange={setSelectedCinemaChain}
+                      placeholder="Chọn cụm rạp"
+                      style={{ width: 180, flex: '0 0 auto' }}
+                      allowClear
+                    >
+                      <Option value="all">Tất cả cụm rạp</Option>
+                      {getAvailableCinemaChains().map(chain => (
+                        <Option key={chain} value={chain}>
+                          {chain}
+                        </Option>
+                      ))}
+                    </Select>
+                    {(selectedCity !== 'all' || selectedCinemaChain !== 'all' || searchTerm) && (
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          setSelectedCity('all');
+                          setSelectedCinemaChain('all');
+                          setSearchTerm('');
+                        }}
+                        style={{
+                          background: '#333',
+                          border: '1px solid #666',
+                          color: '#fff'
+                        }}
+                      >
+                        Xóa bộ lọc
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1175,113 +1325,162 @@ const MovieDetail = () => {
               </Card>
             ) : (
               <div>
-                {/* Group showtimes by branch */}
+                {/* Group showtimes by city, then by branch */}
                 {(() => {
-                  const groupedByBranch = {};
+                  // Group by city first
+                  const groupedByCity = {};
                   showtimes.forEach(st => {
+                    const city = st.branch?.location?.city || st.branch?.location?.province || 'Khác';
+                    if (!groupedByCity[city]) {
+                      groupedByCity[city] = {};
+                    }
+                    
                     const branchId = st.branch?._id || 'unknown';
-                    if (!groupedByBranch[branchId]) {
-                      groupedByBranch[branchId] = {
+                    if (!groupedByCity[city][branchId]) {
+                      groupedByCity[city][branchId] = {
                         branch: st.branch,
                         showtimes: []
                       };
                     }
-                    groupedByBranch[branchId].showtimes.push(st);
+                    groupedByCity[city][branchId].showtimes.push(st);
                   });
 
-                  return Object.values(groupedByBranch).map((data, idx) => (
-                    <Card
-                      key={idx}
-                      style={{
-                        background: '#1a1a1a',
-                        border: '1px solid #333',
-                        marginBottom: '24px',
-                        borderRadius: '12px'
-                      }}
+                  // Sort cities
+                  const cities = Object.keys(groupedByCity).sort();
+
+                  return (
+                    <Collapse
+                      ghost
+                      activeKey={expandedCities}
+                      onChange={setExpandedCities}
+                      expandIcon={({ isActive }) => <DownOutlined rotate={isActive ? 180 : 0} style={{ color: '#ff4d4f' }} />}
+                      style={{ background: 'transparent' }}
                     >
-                      {/* Branch Header */}
-                      <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #333' }}>
-                        <Space>
-                          <EnvironmentOutlined style={{ color: '#ff4d4f', fontSize: '20px' }} />
-                          <div>
-                            <Text strong style={{ color: '#fff', fontSize: '18px', display: 'block' }}>
-                              {data.branch?.name || 'Rạp chiếu'}
-                            </Text>
-                            <Text style={{ color: '#999', fontSize: '14px' }}>
-                              {data.branch?.location?.city || 'N/A'}
-                            </Text>
-                          </div>
-                        </Space>
-                      </div>
+                      {cities.map((city) => {
+                        const branches = Object.values(groupedByCity[city]);
+                        const totalShowtimes = branches.reduce((sum, b) => sum + b.showtimes.length, 0);
 
-                      {/* Time Slots */}
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                        {data.showtimes
-                          .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
-                          .map((st, stIdx) => {
-                            const startTime = new Date(st.startTime);
-                            const timeStr = startTime.toLocaleTimeString('vi-VN', { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
-                            });
-                            const dateStr = startTime.toLocaleDateString('vi-VN', {
-                              day: '2-digit',
-                              month: '2-digit'
-                            });
-
-                            return (
-                              <Button
-                                key={stIdx}
-                                size="large"
-                                onClick={() => navigate(`/booking/${st._id}`)}
+                        return (
+                          <Panel
+                            key={city}
+                            header={
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingRight: '24px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                  <EnvironmentOutlined style={{ color: '#ff4d4f', fontSize: '20px' }} />
+                                  <Text strong style={{ color: '#fff', fontSize: '18px' }}>
+                                    {city}
+                                  </Text>
+                                  <Badge 
+                                    count={branches.length} 
+                                    style={{ backgroundColor: '#ff4d4f' }}
+                                    title="Số rạp"
+                                  />
+                                </div>
+                                <Text style={{ color: '#999', fontSize: '14px' }}>
+                                  {totalShowtimes} suất chiếu
+                                </Text>
+                              </div>
+                            }
+                            style={{
+                              background: '#1a1a1a',
+                              border: '1px solid #333',
+                              marginBottom: '16px',
+                              borderRadius: '12px',
+                              overflow: 'hidden'
+                            }}
+                          >
+                            {branches.map((data, idx) => (
+                              <Card
+                                key={idx}
                                 style={{
-                                  background: 'linear-gradient(135deg, #ff4d4f 0%, #ff7a45 100%)',
-                                  border: 'none',
-                                  color: '#fff',
-                                  height: 'auto',
-                                  minWidth: '140px',
-                                  padding: '12px 20px',
-                                  borderRadius: '8px',
-                                  transition: 'all 0.3s ease',
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  alignItems: 'center',
-                                  gap: '4px'
+                                  background: '#0a0a0a',
+                                  border: '1px solid #333',
+                                  marginBottom: '16px',
+                                  borderRadius: '12px'
                                 }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.transform = 'translateY(-2px)';
-                                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 77, 79, 0.4)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.transform = 'translateY(0)';
-                                  e.currentTarget.style.boxShadow = 'none';
-                                }}
+                                bodyStyle={{ padding: '16px' }}
                               >
-                                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                                  {timeStr}
-                                </span>
-                                <span style={{ fontSize: '12px', opacity: 0.8 }}>
-                                  {dateStr}
-                                </span>
-                                <span style={{ fontSize: '11px', opacity: 0.9, marginTop: '2px' }}>
-                                  {(st.totalSeats - (st.bookedSeats || 0))} ghế
-                                </span>
-                                {st.isFirstShow && (
-                                  <Tag color="blue" style={{ margin: 0, fontSize: '10px' }}>
-                                    Suất đầu
-                                  </Tag>
-                                )}
-                                {st.isLastShow && (
-                                  <Tag color="purple" style={{ margin: 0, fontSize: '10px' }}>
-                                    Suất cuối
-                                  </Tag>
-                                )}
-                              </Button>
-                            );
-                          })}
-                      </div>
-                    </Card>
-                  ));
+                                {/* Branch Header */}
+                                <div style={{ marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid #333' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div>
+                                      <Text strong style={{ color: '#fff', fontSize: '16px', display: 'block' }}>
+                                        {data.branch?.name || 'Rạp chiếu'}
+                                      </Text>
+                                      <Text style={{ color: '#999', fontSize: '13px' }}>
+                                        {data.branch?.cinemaChain || 'N/A'} • {data.branch?.location?.address || ''}
+                                      </Text>
+                                    </div>
+                                    <Tag color="blue" style={{ margin: 0 }}>
+                                      {data.showtimes.length} suất
+                                    </Tag>
+                                  </div>
+                                </div>
+
+                                {/* Time Slots */}
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                  {data.showtimes
+                                    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
+                                    .map((st, stIdx) => {
+                                      const startTime = new Date(st.startTime);
+                                      const timeStr = startTime.toLocaleTimeString('vi-VN', { 
+                                        hour: '2-digit', 
+                                        minute: '2-digit' 
+                                      });
+
+                                      return (
+                                        <Button
+                                          key={stIdx}
+                                          size="large"
+                                          onClick={() => navigate(`/booking/${st._id}`)}
+                                          style={{
+                                            background: 'linear-gradient(135deg, #ff4d4f 0%, #ff7a45 100%)',
+                                            border: 'none',
+                                            color: '#fff',
+                                            minWidth: '110px',
+                                            padding: '10px 16px',
+                                            borderRadius: '8px',
+                                            transition: 'all 0.3s ease',
+                                            height: 'auto',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            gap: '4px'
+                                          }}
+                                          onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(-2px)';
+                                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 77, 79, 0.4)';
+                                          }}
+                                          onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = 'none';
+                                          }}
+                                        >
+                                          <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                                            {timeStr}
+                                          </span>
+                                          <span style={{ fontSize: '11px', opacity: 0.9 }}>
+                                            {(st.totalSeats - (st.bookedSeats || 0))} ghế
+                                          </span>
+                                          {(st.isFirstShow || st.isLastShow) && (
+                                            <Tag 
+                                              color={st.isFirstShow ? 'blue' : 'purple'} 
+                                              style={{ margin: 0, fontSize: '9px', padding: '0 4px' }}
+                                            >
+                                              {st.isFirstShow ? 'Đầu' : 'Cuối'}
+                                            </Tag>
+                                          )}
+                                        </Button>
+                                      );
+                                    })}
+                                </div>
+                              </Card>
+                            ))}
+                          </Panel>
+                        );
+                      })}
+                    </Collapse>
+                  );
                 })()}
               </div>
             )}

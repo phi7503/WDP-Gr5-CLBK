@@ -292,6 +292,7 @@ const ChatBot = () => {
                           margin: 0,
                           whiteSpace: "pre-wrap",
                           wordBreak: "break-word",
+                          color: msg.role === "user" ? "white" : "black",
                         }}
                       >
                         {msg.content}

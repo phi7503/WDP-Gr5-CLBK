@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Typography, Row, Col, Card, Spin, Empty, Button, message } from 'antd';
+import { Layout, Typography, Row, Col, Card, Spin, Empty, Button, message, Tag } from 'antd';
 import { CreditCardOutlined } from '@ant-design/icons';
 import Header from './Header';
 import Footer from './Footer';
-import { comboAPI, payOSAPI } from '../services/api';
+import { comboAPI, payOSAPI, getImageUrl } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -92,107 +92,330 @@ const ComboPage = () => {
     }
   };
 
+  // Get category color based on category type
+  const getCategoryColor = (category) => {
+    const categoryColors = {
+      'combo': { bg: 'rgba(239, 68, 68, 0.2)', border: '#ef4444', text: '#ef4444' },
+      'popcorn': { bg: 'rgba(239, 68, 68, 0.15)', border: '#ef4444', text: '#ef4444' },
+      'drinks': { bg: 'rgba(220, 38, 38, 0.15)', border: '#dc2626', text: '#dc2626' },
+    };
+    return categoryColors[category?.toLowerCase()] || { bg: 'rgba(239, 68, 68, 0.1)', border: '#ef4444', text: '#ef4444' };
+  };
+
   return (
-    <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+    <Layout style={{ 
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%)', 
+      minHeight: '100vh',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Background Glow Effects */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '500px',
+        background: 'radial-gradient(ellipse at top, rgba(239, 68, 68, 0.1) 0%, transparent 70%)',
+        pointerEvents: 'none',
+        zIndex: 0
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '500px',
+        background: 'radial-gradient(ellipse at bottom, rgba(220, 38, 38, 0.08) 0%, transparent 70%)',
+        pointerEvents: 'none',
+        zIndex: 0
+      }} />
+      
       <Header />
       
-      <Content style={{ padding: '80px 24px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <Title level={2} style={{ color: '#fff', marginBottom: '24px' }}>
-            Combos & Concessions
-          </Title>
+      <Content style={{ 
+        padding: '100px 24px', 
+        position: 'relative',
+        zIndex: 1
+      }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          {/* Header Section */}
+          <div style={{ 
+            textAlign: 'center', 
+            marginBottom: '60px',
+            position: 'relative'
+          }}>
+            <Title 
+              level={1} 
+              style={{ 
+                color: '#fff', 
+                marginBottom: '16px',
+                fontSize: '48px',
+                fontWeight: '800',
+                background: 'linear-gradient(135deg, #ffffff 0%, #ef4444 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: '0 4px 20px rgba(239, 68, 68, 0.3)'
+              }}
+            >
+              Combos & Concessions
+            </Title>
+            <Text style={{ 
+              color: '#999', 
+              fontSize: '18px',
+              display: 'block'
+            }}>
+              Lựa chọn combo hoàn hảo cho trải nghiệm xem phim của bạn
+            </Text>
+          </div>
           
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '80px 0' }}>
-              <Spin size="large" />
-              <div style={{ marginTop: '16px' }}>
-                <Text style={{ color: '#999' }}>Loading combos...</Text>
+            <div style={{ textAlign: 'center', padding: '120px 0' }}>
+              <Spin size="large" style={{ color: '#ef4444' }} />
+              <div style={{ marginTop: '24px' }}>
+                <Text style={{ color: '#999', fontSize: '16px' }}>Đang tải combos...</Text>
               </div>
             </div>
           ) : combos.length === 0 ? (
             <Empty
               description={
-                <Text style={{ color: '#999' }}>
-                  No combos available
+                <Text style={{ color: '#999', fontSize: '16px' }}>
+                  Không có combo nào khả dụng
                 </Text>
               }
-              style={{ margin: '80px 0' }}
+              style={{ margin: '120px 0' }}
             />
           ) : (
-            <Row gutter={[24, 24]}>
-              {combos.map(combo => (
-                <Col xs={24} sm={12} md={8} lg={6} key={combo._id}>
-                  <Card
-                    style={{ 
-                      background: '#1a1a1a',
-                      border: '1px solid #333',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      height: '100%'
-                    }}
-                    cover={
-                      <img
-                        alt={combo.name}
-                        src={combo.image ? (combo.image.startsWith('http://') || combo.image.startsWith('https://') ? combo.image : `http://localhost:5000/${combo.image}`) : 'https://via.placeholder.com/300x200/333/fff?text=Combo'}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'cover'
+            <Row gutter={[32, 32]}>
+              {combos.map((combo, index) => {
+                const categoryColor = getCategoryColor(combo.category);
+                return (
+                  <Col xs={24} sm={12} md={8} lg={6} key={combo._id}>
+                    <div
+                      style={{
+                        position: 'relative',
+                        height: '100%',
+                        animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                      }}
+                      onMouseEnter={(e) => {
+                        const card = e.currentTarget;
+                        card.style.transform = 'translateY(-8px)';
+                        card.style.boxShadow = '0 20px 40px rgba(239, 68, 68, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        const card = e.currentTarget;
+                        card.style.transform = 'translateY(0)';
+                        card.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.5)';
+                      }}
+                    >
+                      {/* Glass-morphism Card */}
+                      <Card
+                        style={{ 
+                          background: 'rgba(26, 26, 26, 0.8)',
+                          backdropFilter: 'blur(20px)',
+                          WebkitBackdropFilter: 'blur(20px)',
+                          border: `2px solid rgba(239, 68, 68, 0.2)`,
+                          borderRadius: '24px',
+                          overflow: 'hidden',
+                          height: '100%',
+                          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+                          cursor: 'pointer'
                         }}
-                      />
-                    }
-                    actions={[
-                      <Button 
-                        type="primary" 
-                        className="primary-button"
-                        icon={<CreditCardOutlined />}
-                        style={{ width: '100%' }}
-                        loading={processingPayment}
-                        onClick={() => handlePayment(combo)}
+                        bodyStyle={{ padding: 0 }}
                       >
-                        Thanh toán
-                      </Button>
-                    ]}
-                  >
-                    <Card.Meta
-                      title={
-                        <Title level={5} style={{ color: '#fff', margin: 0 }}>
-                          {combo.name}
-                        </Title>
-                      }
-                      description={
-                        <div>
-                          <Text style={{ color: '#999', fontSize: '12px', display: 'block', marginBottom: '8px' }}>
-                            {combo.description}
-                          </Text>
-                          <div style={{ marginBottom: '8px' }}>
-                            <Text style={{ color: '#fff', fontSize: '14px' }}>
-                              Items:
-                            </Text>
-                            <ul style={{ color: '#999', fontSize: '12px', margin: '4px 0', paddingLeft: '16px' }}>
-                              {combo.items?.map((item, index) => (
-                                <li key={index}>{item.name} x{item.quantity}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}>
-                              {combo.price.toLocaleString('vi-VN')}₫
-                            </Text>
-                            <Text style={{ color: '#999', fontSize: '12px' }}>
+                        {/* Image Container with Gradient Overlay */}
+                        <div style={{ position: 'relative', overflow: 'hidden' }}>
+                          <img
+                            alt={combo.name}
+                            src={combo.image ? getImageUrl(combo.image) : 'https://via.placeholder.com/400x300/1a1a1a/ef4444?text=Combo'}
+                            style={{
+                              width: '100%',
+                              height: '240px',
+                              objectFit: 'cover',
+                              transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                              display: 'block'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'scale(1.1)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'scale(1)';
+                            }}
+                          />
+                          {/* Gradient Overlay */}
+                          <div style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            height: '60%',
+                            background: 'linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, transparent 100%)'
+                          }} />
+                          
+                          {/* Category Badge */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '16px',
+                            right: '16px',
+                            padding: '6px 14px',
+                            background: categoryColor.bg,
+                            border: `1px solid ${categoryColor.border}`,
+                            borderRadius: '20px',
+                            backdropFilter: 'blur(10px)',
+                            zIndex: 2
+                          }}>
+                            <Text style={{ 
+                              color: categoryColor.text, 
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px'
+                            }}>
                               {combo.category}
                             </Text>
                           </div>
                         </div>
-                      }
-                    />
-                  </Card>
-                </Col>
-              ))}
+
+                        {/* Content Section */}
+                        <div style={{ padding: '24px' }}>
+                          {/* Title */}
+                          <Title 
+                            level={4} 
+                            style={{ 
+                              color: '#fff', 
+                              marginBottom: '12px',
+                              fontSize: '20px',
+                              fontWeight: '700',
+                              lineHeight: '1.4'
+                            }}
+                          >
+                            {combo.name}
+                          </Title>
+
+                          {/* Description */}
+                          <Text 
+                            style={{ 
+                              color: '#999', 
+                              fontSize: '14px', 
+                              display: 'block', 
+                              marginBottom: '16px',
+                              lineHeight: '1.6'
+                            }}
+                          >
+                            {combo.description}
+                          </Text>
+
+                          {/* Items List */}
+                          {combo.items && combo.items.length > 0 && (
+                            <div style={{ marginBottom: '16px' }}>
+                              <Text style={{ 
+                                color: '#ef4444', 
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                display: 'block',
+                                marginBottom: '8px'
+                              }}>
+                                Items:
+                              </Text>
+                              <ul style={{ 
+                                color: '#ccc', 
+                                fontSize: '13px', 
+                                margin: 0, 
+                                paddingLeft: '20px',
+                                lineHeight: '1.8'
+                              }}>
+                                {combo.items.map((item, itemIndex) => (
+                                  <li key={itemIndex}>
+                                    <span style={{ color: '#fff', fontWeight: '500' }}>
+                                      {item.name}
+                                    </span>
+                                    <span style={{ color: '#999', marginLeft: '8px' }}>
+                                      x{item.quantity}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Price and Action */}
+                          <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            paddingTop: '16px',
+                            borderTop: '1px solid rgba(239, 68, 68, 0.2)'
+                          }}>
+                            <div>
+                              <Text style={{ 
+                                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                                fontSize: '24px', 
+                                fontWeight: '800',
+                                display: 'block'
+                              }}>
+                                {combo.price.toLocaleString('vi-VN')}₫
+                              </Text>
+                            </div>
+                            <Button 
+                              type="primary" 
+                              icon={<CreditCardOutlined />}
+                              loading={processingPayment}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePayment(combo);
+                              }}
+                              style={{ 
+                                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                border: 'none',
+                                borderRadius: '12px',
+                                height: '44px',
+                                padding: '0 24px',
+                                fontWeight: '600',
+                                fontSize: '15px',
+                                boxShadow: '0 4px 16px rgba(239, 68, 68, 0.4)',
+                                transition: 'all 0.3s ease'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'scale(1.05)';
+                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.6)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'scale(1)';
+                                e.currentTarget.style.boxShadow = '0 4px 16px rgba(239, 68, 68, 0.4)';
+                              }}
+                            >
+                              Thanh toán
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+                  </Col>
+                );
+              })}
             </Row>
           )}
         </div>
       </Content>
+      
+      {/* Add CSS animations */}
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
       
       <Footer />
     </Layout>

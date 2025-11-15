@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Voucher from "../models/voucherModel.js";
+import Booking from "../models/bookingModel.js";
 
 // @desc    Create a new voucher
 // @route   POST /api/vouchers
@@ -121,12 +122,52 @@ const deleteVoucher = asyncHandler(async (req, res) => {
 // @access  Public
 const getVoucherByCode = asyncHandler(async (req, res) => {
     const voucher = await Voucher.findOne({ code: req.params.code });
-    if (voucher) {
-        res.json(voucher);
-    } else {
+    if (!voucher) {
         res.status(404);
         throw new Error("Voucher not found");
     }
+    
+    // ✅ Kiểm tra xem user đã dùng voucher này chưa (nếu có user)
+    let alreadyUsed = false;
+    const userId = req.user?._id;
+    const customerEmail = req.query?.email; // Cho phép truyền email qua query param cho guest
+    const customerPhone = req.query?.phone; // Cho phép truyền phone qua query param cho guest
+    
+    if (userId) {
+        // Nếu có user (đã đăng nhập), kiểm tra theo userId
+        const existingBooking = await Booking.findOne({
+            user: userId,
+            voucher: voucher._id,
+            paymentStatus: 'completed',
+            bookingStatus: { $in: ['confirmed', 'completed'] }
+        });
+        alreadyUsed = !!existingBooking;
+    } else if (customerEmail) {
+        // Nếu là guest booking, kiểm tra theo email
+        const existingBooking = await Booking.findOne({
+            'customerInfo.email': customerEmail,
+            voucher: voucher._id,
+            paymentStatus: 'completed',
+            bookingStatus: { $in: ['confirmed', 'completed'] }
+        });
+        alreadyUsed = !!existingBooking;
+    } else if (customerPhone) {
+        // Nếu không có email, kiểm tra theo phone
+        const existingBooking = await Booking.findOne({
+            'customerInfo.phone': customerPhone,
+            voucher: voucher._id,
+            paymentStatus: 'completed',
+            bookingStatus: { $in: ['confirmed', 'completed'] }
+        });
+        alreadyUsed = !!existingBooking;
+    }
+    
+    // Trả về voucher với thông tin đã dùng
+    res.json({
+        ...voucher.toObject(),
+        alreadyUsed: alreadyUsed,
+        canUse: !alreadyUsed
+    });
 });
 
 

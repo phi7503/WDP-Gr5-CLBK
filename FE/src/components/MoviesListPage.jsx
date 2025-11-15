@@ -38,7 +38,7 @@ const MoviesListPage = () => {
 
   useEffect(() => {
     loadMovies();
-  }, [currentPage, searchTerm, selectedGenre, selectedStatus, sortBy]);
+  }, [currentPage, searchTerm, selectedGenre, selectedStatus, sortBy, pageSize]); // ✅ Thêm pageSize vào dependency
 
   const loadMovies = async () => {
     try {
@@ -120,14 +120,17 @@ const MoviesListPage = () => {
                     <Text style={{ color: '#999', marginRight: '8px' }}>Hiển thị:</Text>
                     <Select
                       value={pageSize}
-                      onChange={setPageSize}
+                      onChange={(value) => {
+                        setPageSize(value);
+                        setCurrentPage(1); // ✅ Reset về trang 1 khi đổi pageSize
+                      }}
                       style={{ width: 80 }}
                       size="small"
                     >
-                      <Option value={12}>12</Option>
+                      <Option value={5}>5</Option>
+                      <Option value={10}>10</Option>
                       <Option value={20}>20</Option>
-                      <Option value={40}>40</Option>
-                      <Option value={60}>60</Option>
+                      
                     </Select>
                   </Col>
                   <Col>
@@ -254,13 +257,81 @@ const MoviesListPage = () => {
             </Empty>
           ) : (
             <>
-              <Row gutter={[24, 24]}>
-                {movies.map((movie) => (
-                  <Col key={movie._id} xs={24} sm={12} md={8} lg={6}>
-                    <MovieCard movie={movie} />
-                  </Col>
-                ))}
-              </Row>
+              {/* Grid View */}
+              {viewMode === 'grid' ? (
+                <Row gutter={[24, 24]}>
+                  {movies.map((movie) => (
+                    <Col key={movie._id} xs={24} sm={12} md={8} lg={6}>
+                      <MovieCard movie={movie} />
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                /* List View */
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {movies.map((movie) => (
+                    <Card
+                      key={movie._id}
+                      hoverable
+                      onClick={() => window.location.href = `/movie/${movie._id}`}
+                      style={{
+                        background: '#1a1a1a',
+                        border: '1px solid #333',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      bodyStyle={{ padding: '20px' }}
+                    >
+                      <Row gutter={[24, 0]} align="middle">
+                        <Col xs={24} sm={6} md={4}>
+                          <img
+                            src={movie.poster ? `http://localhost:5000/${movie.poster}` : 'https://via.placeholder.com/200x300'}
+                            alt={movie.title}
+                            style={{
+                              width: '100%',
+                              borderRadius: '8px',
+                              aspectRatio: '2/3',
+                              objectFit: 'cover'
+                            }}
+                          />
+                        </Col>
+                        <Col xs={24} sm={18} md={20}>
+                          <div>
+                            <Title level={4} style={{ color: '#fff', marginBottom: '8px' }}>
+                              {movie.title}
+                            </Title>
+                            <div style={{ marginBottom: '8px' }}>
+                              <Text style={{ color: '#999', fontSize: '14px' }}>
+                                {movie.genre && movie.genre.join(' • ')}
+                              </Text>
+                            </div>
+                            <div style={{ marginBottom: '8px' }}>
+                              <Text style={{ color: '#d1d5db', fontSize: '14px' }}>
+                                {movie.duration ? `${Math.floor(movie.duration / 60)}h ${movie.duration % 60}m` : 'N/A'} 
+                                {' • '}
+                                {movie.rating || 0}/10
+                              </Text>
+                            </div>
+                            <Text 
+                              style={{ 
+                                color: '#999', 
+                                fontSize: '14px',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                              }}
+                            >
+                              {movie.description}
+                            </Text>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card>
+                  ))}
+                </div>
+              )}
 
               {/* Pagination */}
               {totalPages > 1 && (

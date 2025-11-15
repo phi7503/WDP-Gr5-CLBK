@@ -132,7 +132,8 @@ const BranchListPage = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
+        const newLocation = { lat: latitude, lng: longitude };
+        setUserLocation(newLocation);
         setLocationLoading(false);
         
         if (showNotification) {
@@ -143,15 +144,7 @@ const BranchListPage = () => {
           });
         }
         
-        // Fly to user location on map
-        if (map && window.L) {
-          setTimeout(() => {
-            map.setView([latitude, longitude], 15, {
-              animate: true,
-              duration: 1.0
-            });
-          }, 100);
-        }
+        // Fly to user location on map (will be handled by useEffect)
       },
       (error) => {
         console.error('Geolocation error:', error);
@@ -343,52 +336,7 @@ const BranchListPage = () => {
 
         setMap(leafletMap);
 
-        // Add user location marker (LỚN HƠN)
-        if (userLocation) {
-          const userIcon = window.L.divIcon({
-            className: 'custom-user-marker',
-            html: `
-              <div style="
-                background-color: #ff4d4f;
-                width: 28px;
-                height: 28px;
-                border-radius: 50%;
-                border: 4px solid white;
-                box-shadow: 0 3px 12px rgba(255, 77, 79, 0.6);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: pulse 2s infinite;
-              ">
-                <div style="
-                  width: 12px;
-                  height: 12px;
-                  background-color: white;
-                  border-radius: 50%;
-                "></div>
-              </div>
-              <style>
-                @keyframes pulse {
-                  0% { box-shadow: 0 3px 12px rgba(255, 77, 79, 0.6); }
-                  50% { box-shadow: 0 3px 20px rgba(255, 77, 79, 0.9); }
-                  100% { box-shadow: 0 3px 12px rgba(255, 77, 79, 0.6); }
-                }
-              </style>
-            `,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14]
-          });
-
-          const userMarker = window.L.marker([userLocation.lat, userLocation.lng], { 
-            icon: userIcon,
-            zIndexOffset: 1000 // Luôn ở trên cùng
-          })
-            .addTo(leafletMap)
-            .bindPopup('📍 Vị trí của bạn')
-            .openPopup();
-          
-          userLocationMarkerRef.current = userMarker;
-        }
+        // User location marker will be added by separate useEffect when userLocation changes
 
         // Invalidate size sau khi map được tạo và khi container resize
         const invalidateSize = () => {
@@ -402,6 +350,15 @@ const BranchListPage = () => {
         setTimeout(invalidateSize, 300);
         setTimeout(invalidateSize, 500);
         setTimeout(invalidateSize, 1000);
+        
+        // Force re-render map after a delay to ensure it displays
+        setTimeout(() => {
+          if (leafletMap && mapRef.current) {
+            leafletMap.invalidateSize();
+            // Trigger a resize event to force Leaflet to recalculate
+            window.dispatchEvent(new Event('resize'));
+          }
+        }, 1500);
         
         // Invalidate khi window resize
         window.addEventListener('resize', invalidateSize);
@@ -431,11 +388,80 @@ const BranchListPage = () => {
     };
   }, [mapLoaded, userLocation, map, branches]);
 
+  // Update user location marker when userLocation changes
+  useEffect(() => {
+    if (!map || !window.L || !userLocation) return;
+
+    // Remove old user location marker
+    if (userLocationMarkerRef.current) {
+      map.removeLayer(userLocationMarkerRef.current);
+      userLocationMarkerRef.current = null;
+    }
+
+    // Add new user location marker
+    const userIcon = window.L.divIcon({
+      className: 'custom-user-marker',
+      html: `
+        <div style="
+          background-color: #ff4d4f;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 4px solid white;
+          box-shadow: 0 3px 12px rgba(255, 77, 79, 0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: pulse 2s infinite;
+        ">
+          <div style="
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+          "></div>
+        </div>
+        <style>
+          @keyframes pulse {
+            0% { box-shadow: 0 3px 12px rgba(255, 77, 79, 0.6); }
+            50% { box-shadow: 0 3px 20px rgba(255, 77, 79, 0.9); }
+            100% { box-shadow: 0 3px 12px rgba(255, 77, 79, 0.6); }
+          }
+        </style>
+      `,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+
+    const userMarker = window.L.marker([userLocation.lat, userLocation.lng], { 
+      icon: userIcon,
+      zIndexOffset: 1000 // Luôn ở trên cùng
+    })
+      .addTo(map)
+      .bindPopup('📍 Vị trí của bạn')
+      .openPopup();
+    
+    userLocationMarkerRef.current = userMarker;
+
+    // Fly to user location
+    setTimeout(() => {
+      map.setView([userLocation.lat, userLocation.lng], 15, {
+        animate: true,
+        duration: 1.0
+      });
+      map.invalidateSize();
+    }, 100);
+  }, [map, userLocation]);
+
   // Add branch markers to Leaflet map
   useEffect(() => {
     if (map && branches.length > 0 && window.L) {
-      // Clear existing markers
-      markers.forEach(marker => map.removeLayer(marker));
+      // Clear existing markers (except user location marker)
+      markers.forEach(marker => {
+        if (marker !== userLocationMarkerRef.current) {
+          map.removeLayer(marker);
+        }
+      });
       const newMarkers = [];
 
       const paginatedBranches = filteredBranches.slice(
@@ -548,6 +574,11 @@ const BranchListPage = () => {
           if (bounds.isValid()) {
             map.fitBounds(bounds.pad(0.1));
             hasFittedBounds.current = true;
+            
+            // Invalidate size after fitBounds
+            setTimeout(() => {
+              map.invalidateSize();
+            }, 200);
           }
         } catch (error) {
           console.error('Error fitting map bounds:', error);
@@ -556,6 +587,11 @@ const BranchListPage = () => {
       
       // Update last page
       lastPageRef.current = currentPage;
+
+      // Invalidate size to ensure map renders correctly
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
     }
   }, [map, branches, filteredBranches, currentPage, userLocation]); // BỎ highlightedBranchId khỏi dependency
 
