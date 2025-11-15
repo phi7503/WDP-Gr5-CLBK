@@ -4,7 +4,7 @@ import { EyeOutlined, DownloadOutlined, CalendarOutlined, ClockCircleOutlined, Q
 import { Link, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import { bookingAPI } from '../services/api';
+import { bookingAPI, getImageUrl } from '../services/api';
 import dayjs from 'dayjs';
 
 const { Content } = Layout;
@@ -155,12 +155,18 @@ const BookingHistoryPage = () => {
                       {/* Movie Poster */}
                       <Col xs={24} sm={6} md={4}>
                         <img
-                          src={booking.showtime?.movie?.poster || booking.movie?.poster}
-                          alt={booking.showtime?.movie?.title || booking.movie?.title}
+                          src={getImageUrl(booking.showtime?.movie?.poster || booking.movie?.poster) || 'https://via.placeholder.com/150x225/333/fff?text=No+Poster'}
+                          alt={booking.showtime?.movie?.title || booking.movie?.title || 'Movie Poster'}
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/150x225/333/fff?text=No+Poster';
+                          }}
                           style={{
                             width: '100%',
                             borderRadius: '8px',
-                            maxWidth: '150px'
+                            maxWidth: '150px',
+                            objectFit: 'cover',
+                            aspectRatio: '2/3',
+                            background: '#1a1a1a'
                           }}
                         />
                       </Col>

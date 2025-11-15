@@ -19,8 +19,16 @@ const BookingPageModern = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const socketRef = useRef(null);
+  const selectedSeatsRef = useRef([]);
+  const hasSyncedSeatsRef = useRef(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedSeatsRef.current = selectedSeats;
+  }, [selectedSeats]);
   const [seats, setSeats] = useState([]);
   const [showtime, setShowtime] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -105,6 +113,30 @@ const BookingPageModern = () => {
     }
   }, [showtimeId]);
 
+  // Sync selected seats with backend after socket connects (only once after restore)
+  useEffect(() => {
+    if (socketConnected && selectedSeats.length > 0 && showtimeId && !hasSyncedSeatsRef.current) {
+      // Chỉ sync một lần sau khi restore từ backend
+      const syncTimer = setTimeout(() => {
+        console.log('🔄 Syncing', selectedSeats.length, 'restored seats with backend');
+        if (socketRef.current) {
+          socketRef.current.emit('select-seats', {
+            showtimeId,
+            seatIds: selectedSeats
+          });
+          hasSyncedSeatsRef.current = true;
+        }
+      }, 1000);
+      
+      return () => clearTimeout(syncTimer);
+    }
+  }, [socketConnected, selectedSeats.length, showtimeId]); // Chỉ sync khi socket connect và có ghế được restore
+  
+  // Reset sync flag when showtime changes
+  useEffect(() => {
+    hasSyncedSeatsRef.current = false;
+  }, [showtimeId]);
+
   // Update customer info when user loads
   useEffect(() => {
     if (user) {
@@ -117,7 +149,21 @@ const BookingPageModern = () => {
   }, [user]);
 
   const initializeSocket = () => {
-    const socketOptions = {};
+    // Disconnect existing socket if any
+    if (socketRef.current) {
+      console.log('🔄 Disconnecting existing socket before reconnecting');
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
+    const socketOptions = {
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: Infinity,
+      timeout: 20000,
+    };
+    
     const token = localStorage.getItem('token');
     const currentUser = user;
     
@@ -137,6 +183,16 @@ const BookingPageModern = () => {
       // Join showtime room
       console.log('🚪 Joining showtime room:', showtimeId);
       socketRef.current.emit('join-showtime', showtimeId);
+      
+      // Re-sync selected seats with backend after reconnection
+      const currentSelectedSeats = selectedSeatsRef.current;
+      if (currentSelectedSeats.length > 0) {
+        console.log('🔄 Re-syncing', currentSelectedSeats.length, 'selected seats after reconnection');
+        socketRef.current.emit('select-seats', {
+          showtimeId,
+          seatIds: currentSelectedSeats
+        });
+      }
     });
 
     socketRef.current.on('disconnect', () => {
@@ -144,9 +200,52 @@ const BookingPageModern = () => {
       setSocketConnected(false);
     });
 
+    socketRef.current.on('reconnect', (attemptNumber) => {
+      console.log('🔄 Reconnected after', attemptNumber, 'attempts');
+      setSocketConnected(true);
+      
+      // Rejoin room and re-sync seats after reconnect
+      if (showtimeId) {
+        socketRef.current.emit('join-showtime', showtimeId);
+        
+        const currentSelectedSeats = selectedSeatsRef.current;
+        if (currentSelectedSeats.length > 0) {
+          console.log('🔄 Re-syncing', currentSelectedSeats.length, 'selected seats after reconnect');
+          socketRef.current.emit('select-seats', {
+            showtimeId,
+            seatIds: currentSelectedSeats
+          });
+        }
+      }
+    });
+
+    socketRef.current.on('connect_error', (error) => {
+      console.error('❌ Socket connection error:', error);
+      setSocketConnected(false);
+    });
+
+    // Listen for active users list when joining
+    socketRef.current.on('active-users-list', (data) => {
+      console.log('📋 Received active users list:', data);
+      if (data.users && Array.isArray(data.users)) {
+        setActiveUsers(data.users);
+        console.log(`✅ Loaded ${data.users.length} active users`);
+      }
+    });
+
     // Listen for user join events
     socketRef.current.on('user-joined', (data) => {
       console.log('👥 User joined:', data);
+      // Add new user to active users list
+      setActiveUsers(prev => {
+        // Check if user already exists (by userId)
+        const exists = prev.some(u => u.userId === data.userId);
+        if (!exists) {
+          return [...prev, data];
+        }
+        return prev;
+      });
+      
       const userTypeText = data.isGuest ? 'Guest' : 'User';
       message.info({
         content: `${userTypeText} "${data.userName}" đã vào phòng`,
@@ -156,6 +255,9 @@ const BookingPageModern = () => {
 
     socketRef.current.on('user-left', (data) => {
       console.log('👋 User left:', data);
+      // Remove user from active users list
+      setActiveUsers(prev => prev.filter(u => u.userId !== data.userId));
+      
       const userTypeText = data.isGuest ? 'Guest' : 'User';
       message.info({
         content: `${userTypeText} "${data.userName}" đã rời phòng`,
@@ -166,42 +268,74 @@ const BookingPageModern = () => {
     // Listen for seat selection events
     socketRef.current.on('seats-being-selected', (data) => {
       console.log('📍 Seats being selected by another user:', data);
-      // Update seat status to 'selecting' for seats selected by others
-      setSeats(prevSeats => {
-        return prevSeats.map(seat => {
-          if (data.seatIds.includes(seat._id) && data.userId !== (currentUser?._id || 'anonymous')) {
-            return {
-              ...seat,
-              availability: {
-                ...seat.availability,
-                status: 'selecting'
-              }
-            };
-          }
-          return seat;
+      const currentUserId = currentUser?._id?.toString();
+      const selectingUserId = data.userId?.toString() || data.userId;
+      
+      // Only update if selected by another user
+      if (selectingUserId !== currentUserId && selectingUserId !== 'anonymous') {
+        setSeats(prevSeats => {
+          const currentSelected = selectedSeatsRef.current;
+          return prevSeats.map(seat => {
+            // Only update if not already selected by current user
+            if (data.seatIds.includes(seat._id) && !currentSelected.includes(seat._id)) {
+              return {
+                ...seat,
+                availability: {
+                  ...seat.availability,
+                  status: 'selecting'
+                }
+              };
+            }
+            return seat;
+          });
         });
-      });
+      }
     });
 
     socketRef.current.on('seats-released', (data) => {
       console.log('🔄 Seats released:', data);
-      // Update seat status back to 'available'
-      setSeats(prevSeats => {
-        return prevSeats.map(seat => {
-          if (data.seatIds.includes(seat._id)) {
-            return {
-              ...seat,
-              availability: {
-                ...seat.availability,
-                status: 'available'
+      const currentUserId = currentUser?._id?.toString();
+      const releasingUserId = data.userId?.toString() || data.userId;
+      
+      // Only update if released by another user or if it's our own release
+      if (releasingUserId !== currentUserId || !currentUserId) {
+        setSeats(prevSeats => {
+          const currentSelected = selectedSeatsRef.current;
+          return prevSeats.map(seat => {
+            if (data.seatIds.includes(seat._id)) {
+              // Only update to available if it's not our selected seat
+              if (!currentSelected.includes(seat._id)) {
+                return {
+                  ...seat,
+                  availability: {
+                    ...seat.availability,
+                    status: 'available'
+                  }
+                };
               }
-            };
-          }
-          return seat;
+            }
+            return seat;
+          });
         });
-      });
-      // Remove from selected seats if it was selected
-      setSelectedSeats(prev => prev.filter(id => !data.seatIds.includes(id)));
+      } else {
+        // Our own release - update both seats and selectedSeats
+        setSeats(prevSeats => {
+          return prevSeats.map(seat => {
+            if (data.seatIds.includes(seat._id)) {
+              return {
+                ...seat,
+                availability: {
+                  ...seat.availability,
+                  status: 'available'
+                }
+              };
+            }
+            return seat;
+          });
+        });
+        // Remove from selected seats
+        setSelectedSeats(prev => prev.filter(id => !data.seatIds.includes(id)));
+      }
     });
 
     socketRef.current.on('seats-booked', (data) => {
@@ -276,13 +410,30 @@ const BookingPageModern = () => {
           console.log('Seat status response:', statusResponse);
           
           if (statusResponse && statusResponse.seatStatuses) {
-            // Update seat availability based on status
+            const currentUserId = user?._id?.toString();
+            
+            // Update seat availability based on status and restore user's selected seats
+            const mySelectedSeats = [];
             const updatedSeats = transformedSeats.map(seat => {
-              const seatStatus = statusResponse.seatStatuses.find(ss => ss.seat._id === seat._id);
+              const seatStatus = statusResponse.seatStatuses.find(ss => 
+                ss.seat?._id?.toString() === seat._id || 
+                ss.seat?._id === seat._id
+              );
               if (seatStatus) {
+                // Check if this seat is selected by current user
+                const isMySelection = (seatStatus.status === 'selecting' || seatStatus.status === 'reserved') &&
+                                      seatStatus.reservedBy &&
+                                      (seatStatus.reservedBy._id?.toString() === currentUserId || 
+                                       seatStatus.reservedBy.toString() === currentUserId);
+                
+                if (isMySelection) {
+                  mySelectedSeats.push(seat._id);
+                  console.log('🔄 Restoring user selected seat:', seat._id);
+                }
+                
                 return {
                   ...seat,
-                  occupied: seatStatus.status === 'booked' || seatStatus.status === 'reserved',
+                  occupied: seatStatus.status === 'booked' || (seatStatus.status === 'reserved' && !isMySelection),
                   availability: {
                     status: seatStatus.status,
                     price: seatStatus.price || seat.availability.price
@@ -291,6 +442,12 @@ const BookingPageModern = () => {
               }
               return seat;
             });
+            
+            // Restore selected seats for current user
+            if (mySelectedSeats.length > 0) {
+              console.log('✅ Restoring', mySelectedSeats.length, 'selected seats for user');
+              setSelectedSeats(mySelectedSeats);
+            }
             
             console.log('Updated seats with status:', updatedSeats);
             setSeats(updatedSeats);
@@ -1356,6 +1513,66 @@ const BookingPageModern = () => {
                     }}>
                       {(calculateTotal() * 24000).toLocaleString('vi-VN')} đ
                     </Text>
+                  </div>
+                </div>
+
+                {/* Active Users */}
+                <div style={{ 
+                  borderTop: '1px solid #333', 
+                  paddingTop: '16px',
+                  marginTop: '16px'
+                }}>
+                  <Title level={5} style={{ color: '#fff', marginBottom: '12px' }}>
+                    👥 Người Dùng Đang Hoạt Động ({activeUsers.length})
+                  </Title>
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '8px',
+                    maxHeight: '200px',
+                    overflowY: 'auto'
+                  }}>
+                    {activeUsers.length > 0 ? (
+                      activeUsers.map((activeUser) => (
+                        <div 
+                          key={activeUser.userId} 
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '8px 12px',
+                            background: activeUser.isGuest ? 'rgba(107, 114, 128, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                            borderRadius: '6px',
+                            border: `1px solid ${activeUser.isGuest ? '#6b7280' : '#3b82f6'}`,
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          <UserOutlined style={{ 
+                            color: activeUser.isGuest ? '#9ca3af' : '#60a5fa',
+                            fontSize: '16px'
+                          }} />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ 
+                              color: '#fff', 
+                              fontSize: '13px', 
+                              fontWeight: '600'
+                            }}>
+                              {activeUser.userName}
+                            </div>
+                            <div style={{ 
+                              color: '#999', 
+                              fontSize: '11px'
+                            }}>
+                              {activeUser.isGuest ? '👤 Guest' : '✅ User'} • {new Date(activeUser.timestamp).toLocaleTimeString('vi-VN')}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <Text style={{ color: '#666', fontSize: '13px', textAlign: 'center', padding: '12px' }}>
+                        Hiện không có người dùng nào khác đang xem
+                      </Text>
+                    )}
                   </div>
                 </div>
               </div>

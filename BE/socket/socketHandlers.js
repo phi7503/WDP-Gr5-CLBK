@@ -4,7 +4,10 @@ import SeatStatus from "../models/seatStatusModel.js";
 import mongoose from "mongoose";
 
 // Store active connections by showtime
-const activeConnections = new Map();
+const activeConnections = new Map(); // Map<showtimeId, Set<socketId>>
+
+// Store active users info by showtime
+const activeUsersByShowtime = new Map(); // Map<showtimeId, Map<socketId, userInfo>>
 
 // Store guest seat selections by socket.id (for tracking guest selections)
 const guestSeatSelections = new Map(); // Map<socketId, Set<seatId>>
@@ -59,6 +62,7 @@ export const initializeSocketHandlers = (io) => {
     // Join showtime room
     socket.on("join-showtime", (showtimeId) => {
       const userName = socket.user?.name || 'Guest';
+      const userId = socket.userId || 'anonymous';
       console.log(`🚪 User ${userName} joining showtime room: showtime-${showtimeId}`);
       socket.join(`showtime-${showtimeId}`);
       socket.currentShowtime = showtimeId;
@@ -69,11 +73,44 @@ export const initializeSocketHandlers = (io) => {
       }
       activeConnections.get(showtimeId).add(socket.id);
 
+      // Track active users info
+      if (!activeUsersByShowtime.has(showtimeId)) {
+        activeUsersByShowtime.set(showtimeId, new Map());
+      }
+      
+      const userInfo = {
+        userId: userId,
+        userName: userName,
+        isGuest: !socket.userId,
+        userType: socket.userId ? 'user' : 'guest',
+        socketId: socket.id,
+        joinedAt: new Date(),
+      };
+      
+      activeUsersByShowtime.get(showtimeId).set(socket.id, userInfo);
+
       console.log(`👥 User ${userName} joined showtime ${showtimeId}`);
+
+      // Get list of existing active users (excluding the new user)
+      const existingUsers = Array.from(activeUsersByShowtime.get(showtimeId).values())
+        .filter(u => u.socketId !== socket.id)
+        .map(u => ({
+          userId: u.userId,
+          userName: u.userName,
+          isGuest: u.isGuest,
+          userType: u.userType,
+          timestamp: u.joinedAt,
+        }));
+
+      // Send existing users to the new user
+      socket.emit("active-users-list", {
+        users: existingUsers,
+        timestamp: new Date(),
+      });
 
       // Notify others about new user
       socket.to(`showtime-${showtimeId}`).emit("user-joined", {
-        userId: socket.userId || 'anonymous',
+        userId: userId,
         userName: userName,
         isGuest: !socket.userId,
         userType: socket.userId ? 'user' : 'guest',
@@ -90,6 +127,14 @@ export const initializeSocketHandlers = (io) => {
         activeConnections.get(showtimeId).delete(socket.id);
         if (activeConnections.get(showtimeId).size === 0) {
           activeConnections.delete(showtimeId);
+        }
+      }
+
+      // Remove user info from tracking
+      if (activeUsersByShowtime.has(showtimeId)) {
+        activeUsersByShowtime.get(showtimeId).delete(socket.id);
+        if (activeUsersByShowtime.get(showtimeId).size === 0) {
+          activeUsersByShowtime.delete(showtimeId);
         }
       }
 
@@ -772,11 +817,13 @@ export const initializeSocketHandlers = (io) => {
       }
 
       if (socket.currentShowtime) {
+        const showtimeId = socket.currentShowtime;
+        
         // Release any selecting seats
         try {
           await SeatStatus.updateMany(
             {
-              showtime: socket.currentShowtime,
+              showtime: showtimeId,
               reservedBy: socket.userId,
               status: "selecting",
             },
@@ -791,17 +838,24 @@ export const initializeSocketHandlers = (io) => {
           );
 
           // Clean up active connections
-          if (activeConnections.has(socket.currentShowtime)) {
-            activeConnections.get(socket.currentShowtime).delete(socket.id);
-            if (activeConnections.get(socket.currentShowtime).size === 0) {
-              activeConnections.delete(socket.currentShowtime);
+          if (activeConnections.has(showtimeId)) {
+            activeConnections.get(showtimeId).delete(socket.id);
+            if (activeConnections.get(showtimeId).size === 0) {
+              activeConnections.delete(showtimeId);
+            }
+          }
+
+          // Clean up active users info
+          if (activeUsersByShowtime.has(showtimeId)) {
+            activeUsersByShowtime.get(showtimeId).delete(socket.id);
+            if (activeUsersByShowtime.get(showtimeId).size === 0) {
+              activeUsersByShowtime.delete(showtimeId);
             }
           }
 
           // Notify others
-          const userName = socket.user?.name || 'Guest';
           socket
-            .to(`showtime-${socket.currentShowtime}`)
+            .to(`showtime-${showtimeId}`)
             .emit("user-disconnected", {
               userId: socket.userId || 'anonymous',
               userName: userName,
