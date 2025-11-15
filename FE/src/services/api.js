@@ -397,6 +397,12 @@ export const bookingAPI = {
 
 // PayOS API calls
 export const payOSAPI = {
+  // Create payment link (generic)
+  createPayment: (paymentData) => apiCall('/payos/create', {
+    method: 'POST',
+    body: JSON.stringify(paymentData),
+  }),
+
   // Create payment link from booking ID
   createPaymentFromBooking: (bookingId) => apiCall(`/payos/create-from-booking/${bookingId}`, {
     method: 'POST',

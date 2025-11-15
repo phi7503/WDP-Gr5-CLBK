@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Typography, Row, Col, Card, Spin, Empty, Button } from 'antd';
-import { ShoppingCartOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Layout, Typography, Row, Col, Card, Spin, Empty, Button, message } from 'antd';
+import { CreditCardOutlined } from '@ant-design/icons';
 import Header from './Header';
 import Footer from './Footer';
-import { comboAPI } from '../services/api';
+import { comboAPI, payOSAPI } from '../services/api';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -12,6 +11,7 @@ const { Title, Text } = Typography;
 const ComboPage = () => {
   const [combos, setCombos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   useEffect(() => {
     loadCombos();
@@ -29,6 +29,66 @@ const ComboPage = () => {
       setCombos([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePayment = async (combo) => {
+    try {
+      setProcessingPayment(true);
+      
+      // Tạo orderCode duy nhất: timestamp (seconds) * 1000 + random 3 digits + hash từ combo ID
+      // Đảm bảo orderCode là số nguyên duy nhất
+      const timestamp = Math.floor(Date.now() / 1000);
+      const random = Math.floor(Math.random() * 1000);
+      const comboHash = combo._id ? parseInt(combo._id.slice(-6), 16) % 1000 : 0;
+      const orderCode = timestamp * 10000 + random * 10 + comboHash;
+      
+      // Lưu thông tin combo vào localStorage để hiển thị sau khi thanh toán thành công
+      const paymentInfo = {
+        orderCode: orderCode,
+        combo: {
+          _id: combo._id,
+          name: combo.name,
+          description: combo.description,
+          price: combo.price,
+          image: combo.image,
+          category: combo.category,
+          items: combo.items
+        },
+        type: 'combo', // Đánh dấu đây là thanh toán combo
+        timestamp: Date.now()
+      };
+      localStorage.setItem(`payment_combo_${orderCode}`, JSON.stringify(paymentInfo));
+      
+      // Tạo description từ tên combo (tối đa 25 ký tự cho PayOS)
+      const description = combo.name.length > 22 
+        ? combo.name.substring(0, 22) + '...' 
+        : combo.name;
+
+      // Gọi API PayOS để tạo payment link
+      const paymentData = {
+        orderCode: orderCode,
+        amount: combo.price,
+        description: description,
+      };
+
+      console.log('🔄 Creating PayOS payment for combo:', combo.name);
+      const response = await payOSAPI.createPayment(paymentData);
+      
+      if (response && response.checkoutUrl) {
+        console.log('✅ Payment link created, redirecting to PayOS');
+        message.success('Đang chuyển đến trang thanh toán...');
+        
+        // Redirect đến PayOS payment page
+        window.location.href = response.checkoutUrl;
+      } else {
+        throw new Error('Không nhận được link thanh toán từ PayOS');
+      }
+    } catch (error) {
+      console.error('❌ Error creating payment:', error);
+      const errorMessage = error?.message || error?.data?.message || 'Không thể tạo link thanh toán. Vui lòng thử lại.';
+      message.error(errorMessage);
+      setProcessingPayment(false);
     }
   };
 
@@ -85,10 +145,12 @@ const ComboPage = () => {
                       <Button 
                         type="primary" 
                         className="primary-button"
-                        icon={<ShoppingCartOutlined />}
+                        icon={<CreditCardOutlined />}
                         style={{ width: '100%' }}
+                        loading={processingPayment}
+                        onClick={() => handlePayment(combo)}
                       >
-                        Add to Cart
+                        Thanh toán
                       </Button>
                     ]}
                   >

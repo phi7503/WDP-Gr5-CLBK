@@ -100,9 +100,12 @@ const MovieDetail = () => {
 
   // Helper function to filter showtimes by date
   const filterShowtimesByDate = (showtimesList, date) => {
+    const now = new Date();
     const filtered = showtimesList.filter(st => {
       const showtimeDate = new Date(st.startTime).toISOString().split('T')[0];
-      return showtimeDate === date;
+      const startTime = new Date(st.startTime);
+      // ✅ Lọc theo ngày VÀ chỉ giữ lại các suất chiếu chưa bắt đầu
+      return showtimeDate === date && startTime > now;
     });
     console.log(`Filtered showtimes for ${date}:`, filtered.length);
     setShowtimes(filtered);

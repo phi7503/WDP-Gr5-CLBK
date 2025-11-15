@@ -338,10 +338,52 @@ const BookingPageModern = () => {
     }
   };
 
+  // Helper function to get seat category color based on price
+  const getSeatCategoryColor = (price) => {
+    if (price >= 200000) {
+      return {
+        bg: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
+        border: '#c084fc',
+        color: '#fff',
+        glow: 'rgba(147, 51, 234, 0.5)'
+      };
+    } else if (price >= 150000) {
+      return {
+        bg: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+        border: '#9ca3af',
+        color: '#fff',
+        glow: 'rgba(107, 114, 128, 0.5)'
+      };
+    } else if (price >= 100000) {
+      return {
+        bg: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        border: '#fcd34d',
+        color: '#fff',
+        glow: 'rgba(245, 158, 11, 0.5)'
+      };
+    } else if (price >= 70000) {
+      return {
+        bg: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        border: '#6ee7b7',
+        color: '#fff',
+        glow: 'rgba(16, 185, 129, 0.5)'
+      };
+    } else {
+      return {
+        bg: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+        border: '#93c5fd',
+        color: '#fff',
+        glow: 'rgba(59, 130, 246, 0.5)'
+      };
+    }
+  };
+
   const getSeatStyle = (seat) => {
     console.log('Getting style for seat:', seat._id, 'occupied:', seat.occupied, 'status:', seat.availability?.status);
     
     const status = seat.availability?.status || (seat.occupied ? 'booked' : 'available');
+    const seatPrice = seat.availability?.price || seat.price || 50000;
+    const categoryColors = getSeatCategoryColor(seatPrice);
     
     if (status === 'booked' || status === 'reserved') {
       return {
@@ -356,28 +398,26 @@ const BookingPageModern = () => {
     if (selectedSeats.includes(seat._id)) {
       return {
         background: '#DC2626',
-        border: '1px solid #DC2626',
+        border: '2px solid #DC2626',
         color: '#fff',
         cursor: 'pointer',
         pointerEvents: 'auto',
         transform: 'scale(1.05)',
-        boxShadow: '0 4px 16px rgba(220, 38, 38, 0.6)'
+        boxShadow: '0 4px 16px rgba(220, 38, 38, 0.6)',
+        fontWeight: 'bold'
       };
     }
     
-    // Available seat - should be clickable
+    // Available seat - color based on seat category (price)
     return {
-      background: '#F5DEB3',
-      border: '1px solid #D4A574',
-      color: '#8B4513',
+      background: categoryColors.bg,
+      border: `2px solid ${categoryColors.border}`,
+      color: categoryColors.color,
       cursor: 'pointer',
       pointerEvents: 'auto',
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      '&:hover': {
-        transform: 'scale(1.1)',
-        boxShadow: '0 4px 12px rgba(245, 222, 179, 0.4)',
-        borderColor: '#DC2626'
-      }
+      boxShadow: `0 2px 8px ${categoryColors.glow}`,
+      textShadow: '0 1px 2px rgba(0,0,0,0.3)'
     };
   };
 
@@ -727,6 +767,26 @@ const BookingPageModern = () => {
                                   userSelect: 'none',
                                   ...getSeatStyle(seat)
                                 }}
+                                onMouseEnter={(e) => {
+                                  const status = seat.availability?.status || (seat.occupied ? 'booked' : 'available');
+                                  if (status === 'available' && !selectedSeats.includes(seat._id)) {
+                                    const seatPrice = seat.availability?.price || seat.price || 50000;
+                                    const categoryColors = getSeatCategoryColor(seatPrice);
+                                    e.currentTarget.style.transform = 'scale(1.15) translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = `0 6px 20px ${categoryColors.glow}, inset 0 1px 0 rgba(255,255,255,0.3)`;
+                                    e.currentTarget.style.borderWidth = '3px';
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  const status = seat.availability?.status || (seat.occupied ? 'booked' : 'available');
+                                  if (status === 'available' && !selectedSeats.includes(seat._id)) {
+                                    const seatPrice = seat.availability?.price || seat.price || 50000;
+                                    const categoryColors = getSeatCategoryColor(seatPrice);
+                                    e.currentTarget.style.transform = 'scale(1)';
+                                    e.currentTarget.style.boxShadow = `0 2px 8px ${categoryColors.glow}`;
+                                    e.currentTarget.style.borderWidth = '2px';
+                                  }
+                                }}
                                 aria-label={`Ghế ${seat.row}${seat.number}, ${seat.occupied ? 'đã đặt' : 'còn trống'}, giá ${((seat.availability?.price || 0) * 24000).toLocaleString('vi-VN')}đ`}
                                 tabIndex={0}
                                 onKeyDown={(e) => {
@@ -753,42 +813,49 @@ const BookingPageModern = () => {
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'center', 
-                  gap: '32px',
+                  gap: '24px',
                   marginBottom: '32px',
-                  flexWrap: 'wrap'
+                  flexWrap: 'wrap',
+                  padding: '16px',
+                  background: 'rgba(255,255,255,0.02)',
+                  borderRadius: '8px',
+                  border: '1px solid #333'
                 }}>
                   <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{
-                      width: '20px',
-                      height: '20px',
-                      background: '#F5DEB3',
-                      border: '1px solid #D4A574',
-                      borderRadius: '4px 4px 1px 1px'
+                      width: '24px',
+                      height: '24px',
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                      border: '2px solid #93c5fd',
+                      borderRadius: '4px 4px 1px 1px',
+                      boxShadow: '0 2px 4px rgba(59, 130, 246, 0.4)'
                     }} />
-                    <Text style={{ color: '#999', fontSize: '14px' }}>Ghế trống</Text>
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Ghế trống (theo hạng)</Text>
                   </div>
                   
                   <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{
-                      width: '20px',
-                      height: '20px',
+                      width: '24px',
+                      height: '24px',
                       background: '#DC2626',
-                      border: '1px solid #DC2626',
-                      borderRadius: '4px 4px 1px 1px'
+                      border: '2px solid #DC2626',
+                      borderRadius: '4px 4px 1px 1px',
+                      boxShadow: '0 2px 4px rgba(220, 38, 38, 0.6)',
+                      transform: 'scale(1.1)'
                     }} />
-                    <Text style={{ color: '#999', fontSize: '14px' }}>Ghế đang chọn</Text>
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Ghế đang chọn</Text>
                   </div>
                   
                   <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{
-                      width: '20px',
-                      height: '20px',
+                      width: '24px',
+                      height: '24px',
                       background: '#4B5563',
                       border: '1px solid #6B7280',
                       borderRadius: '4px 4px 1px 1px',
                       opacity: 0.6
                     }} />
-                    <Text style={{ color: '#999', fontSize: '14px' }}>Ghế đã đặt</Text>
+                    <Text style={{ color: '#ccc', fontSize: '14px', fontWeight: '500' }}>Ghế đã đặt</Text>
                   </div>
                 </div>
 
@@ -809,27 +876,95 @@ const BookingPageModern = () => {
                     gap: '12px' 
                   }}>
                     {[
-                      { price: 250000, name: 'DIAMOND', icon: '💎', color: '#9333ea' },
-                      { price: 180000, name: 'PLATINUM', icon: '👑', color: '#6b7280' },
-                      { price: 120000, name: 'GOLD VIP', icon: '🥇', color: '#f59e0b' },
-                      { price: 80000, name: 'SILVER', icon: '🥈', color: '#10b981' },
-                      { price: 50000, name: 'STANDARD', icon: '🎬', color: '#3b82f6' }
+                      { 
+                        price: 250000, 
+                        name: 'DIAMOND', 
+                        icon: '💎', 
+                        color: '#9333ea',
+                        bgGradient: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
+                        borderColor: '#c084fc',
+                        glowColor: 'rgba(147, 51, 234, 0.5)'
+                      },
+                      { 
+                        price: 180000, 
+                        name: 'PLATINUM', 
+                        icon: '👑', 
+                        color: '#e5e7eb',
+                        bgGradient: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+                        borderColor: '#9ca3af',
+                        glowColor: 'rgba(107, 114, 128, 0.5)'
+                      },
+                      { 
+                        price: 120000, 
+                        name: 'GOLD VIP', 
+                        icon: '🥇', 
+                        color: '#fbbf24',
+                        bgGradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                        borderColor: '#fcd34d',
+                        glowColor: 'rgba(245, 158, 11, 0.5)'
+                      },
+                      { 
+                        price: 80000, 
+                        name: 'SILVER', 
+                        icon: '🥈', 
+                        color: '#34d399',
+                        bgGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                        borderColor: '#6ee7b7',
+                        glowColor: 'rgba(16, 185, 129, 0.5)'
+                      },
+                      { 
+                        price: 50000, 
+                        name: 'STANDARD', 
+                        icon: '🎬', 
+                        color: '#60a5fa',
+                        bgGradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        borderColor: '#93c5fd',
+                        glowColor: 'rgba(59, 130, 246, 0.5)'
+                      }
                     ].map((category, index) => (
-                      <div key={index} style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 12px',
-                        background: 'rgba(255,255,255,0.03)',
-                        borderRadius: '6px',
-                        border: `1px solid ${category.color}40`
-                      }}>
-                        <span style={{ fontSize: '16px' }}>{category.icon}</span>
+                      <div 
+                        key={index} 
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '12px 16px',
+                          background: category.bgGradient,
+                          borderRadius: '8px',
+                          border: `2px solid ${category.borderColor}`,
+                          boxShadow: `0 4px 12px ${category.glowColor}, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                          transition: 'all 0.3s ease',
+                          cursor: 'default'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = `0 6px 20px ${category.glowColor}, inset 0 1px 0 rgba(255,255,255,0.3)`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = `0 4px 12px ${category.glowColor}, inset 0 1px 0 rgba(255,255,255,0.2)`;
+                        }}
+                      >
+                        <span style={{ fontSize: '20px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
+                          {category.icon}
+                        </span>
                         <div>
-                          <div style={{ color: category.color, fontWeight: 'bold', fontSize: '11px' }}>
+                          <div style={{ 
+                            color: '#fff', 
+                            fontWeight: 'bold', 
+                            fontSize: '12px',
+                            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                            letterSpacing: '0.5px'
+                          }}>
                             {category.name}
                           </div>
-                          <div style={{ color: '#fff', fontSize: '10px' }}>
+                          <div style={{ 
+                            color: '#fff', 
+                            fontSize: '11px',
+                            fontWeight: '600',
+                            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                            opacity: 0.95
+                          }}>
                             {category.price.toLocaleString('vi-VN')} ₫
                           </div>
                         </div>

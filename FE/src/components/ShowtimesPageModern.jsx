@@ -382,7 +382,12 @@ const ShowtimesPageModern = () => {
         });
       }
 
-
+      // ✅ Filter out showtimes that have already started
+      const now = new Date();
+      showtimesList = showtimesList.filter(st => {
+        const startTime = new Date(st.startTime);
+        return startTime > now; // Chỉ giữ lại các suất chiếu chưa bắt đầu
+      });
 
       setShowtimes(showtimesList);
       setLoading(false);
@@ -647,12 +652,12 @@ const ShowtimesPageModern = () => {
       if (nearestBranchFilter) {
         const nearest = branchesWithDistance[0];
         setSelectedBranch(nearest._id);
-        message.success(`🎯 Đã tự động lọc phim tại ${nearest.name} (${nearest.distance.toFixed(1)} km)`);
+        message.success(` Đã tự động lọc phim tại ${nearest.name} (${nearest.distance.toFixed(1)} km)`);
       } else {
-        message.success(`📍 Tìm thấy ${branchesWithDistance.length} rạp gần bạn`);
+        message.success(` Tìm thấy ${branchesWithDistance.length} rạp gần bạn`);
       }
     } else {
-      message.warning('⚠️ Không tìm thấy rạp gần bạn. Vui lòng chọn thủ công.');
+      message.warning(' Không tìm thấy rạp gần bạn. Vui lòng chọn thủ công.');
     }
   };
 
@@ -1395,26 +1400,10 @@ const ShowtimesPageModern = () => {
                   height: '40px'
                 }}
               >
-                {userLocation ? '📍 Đã bật định vị' : '🌍 Tìm rạp gần tôi'}
+                {userLocation ? ' Đã bật định vị' : ' Tìm rạp gần tôi'}
               </Button>
 
-              {/* Test Message Button */}
-              <Button
-                onClick={() => {
-                  message.success('✅ Message hoạt động!');
-                  message.error('❌ Lỗi test!');
-                  message.warning('⚠️ Cảnh báo test!');
-                  message.info('ℹ️ Thông tin test!');
-                }}
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#fff',
-                  height: '40px'
-                }}
-              >
-                🧪 Test Message
-              </Button>
+              
 
               {/* Toggle Nearest Branch Filter */}
               {userLocation && (
@@ -1427,11 +1416,11 @@ const ShowtimesPageModern = () => {
                       // Bật lọc - tự động chọn rạp gần nhất
                       const nearest = nearbyBranches[0];
                       setSelectedBranch(nearest._id);
-                      message.success(`🎯 Đã bật lọc rạp gần nhất: ${nearest.name}`);
+                      message.success(` Đã bật lọc rạp gần nhất: ${nearest.name}`);
                     } else {
                       // Tắt lọc - reset về tất cả rạp
                       setSelectedBranch('all');
-                      message.success('🌍 Đã tắt lọc rạp gần nhất - Hiển thị tất cả rạp');
+                      message.success(' Đã tắt lọc rạp gần nhất - Hiển thị tất cả rạp');
                     }
                   }}
                   style={{
@@ -1441,7 +1430,7 @@ const ShowtimesPageModern = () => {
                     height: '40px'
                   }}
                 >
-                  {nearestBranchFilter ? '🎯 Lọc rạp gần (Bật)' : '🌍 Hiển thị tất cả rạp'}
+                  {nearestBranchFilter ? ' Lọc rạp gần (Bật)' : ' Hiển thị tất cả rạp'}
                 </Button>
               )}
 
@@ -1454,7 +1443,7 @@ const ShowtimesPageModern = () => {
                     // Auto select nearest branch
                     const nearest = nearbyBranches[0];
                     setSelectedBranch(nearest._id);
-                    message.success(`🎯 Đã lọc phim tại ${nearest.name} (${nearest.distance.toFixed(1)} km)`);
+                    message.success(` Đã lọc phim tại ${nearest.name} (${nearest.distance.toFixed(1)} km)`);
                   }}
                   style={{
                     background: 'linear-gradient(135deg, #f59e0b, #d97706)',
@@ -1462,7 +1451,7 @@ const ShowtimesPageModern = () => {
                     height: '40px'
                   }}
                 >
-                  🎯 Lọc phim rạp gần nhất
+                   Lọc phim rạp gần nhất
                 </Button>
               )}
               
@@ -1474,7 +1463,7 @@ const ShowtimesPageModern = () => {
 
               {nearestBranchFilter && userLocation && nearbyBranches.length > 0 && (
                 <Text style={{ color: '#f59e0b', fontSize: '13px' }}>
-                  🎯 Đang lọc theo rạp gần nhất
+                   Đang lọc theo rạp gần nhất
                 </Text>
               )}
               

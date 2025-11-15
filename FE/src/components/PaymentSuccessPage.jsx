@@ -16,10 +16,44 @@ const PaymentSuccessPage = () => {
   const orderCode = searchParams.get('orderCode'); // ✅ Lấy orderCode từ URL
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(null);
+  const [comboPayment, setComboPayment] = useState(null); // ✅ Thông tin thanh toán combo
   const [checkingPayment, setCheckingPayment] = useState(false);
 
   useEffect(() => {
-    const checkBookingStatus = async () => {
+    const checkPaymentStatus = async () => {
+      // ✅ Xử lý thanh toán combo (không có bookingId nhưng có orderCode)
+      if (!bookingId && orderCode && paymentStatus === 'PAID') {
+        console.log('✅ Combo payment detected:', orderCode);
+        try {
+          // Lấy thông tin combo từ localStorage
+          const paymentInfo = localStorage.getItem(`payment_combo_${orderCode}`);
+          if (paymentInfo) {
+            const payment = JSON.parse(paymentInfo);
+            setComboPayment(payment);
+            setLoading(false);
+            
+            // Xóa thông tin payment sau 5 phút để tránh localStorage bị đầy
+            setTimeout(() => {
+              localStorage.removeItem(`payment_combo_${orderCode}`);
+            }, 5 * 60 * 1000);
+            return;
+          } else {
+            // Nếu không tìm thấy trong localStorage, vẫn hiển thị success nhưng không có chi tiết combo
+            // Có thể là do localStorage đã bị xóa hoặc refresh trang
+            console.warn('⚠️ Combo payment info not found in localStorage, orderCode:', orderCode);
+            // Vẫn đánh dấu là combo payment nhưng không có chi tiết
+            setComboPayment({ orderCode: orderCode, type: 'combo', noDetails: true });
+            setLoading(false);
+            return;
+          }
+        } catch (error) {
+          console.error('Error loading combo payment info:', error);
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // ✅ Xử lý thanh toán booking (có bookingId)
       if (!bookingId) {
         setLoading(false);
         return;
@@ -136,8 +170,8 @@ const PaymentSuccessPage = () => {
       }
     };
 
-    checkBookingStatus();
-  }, [bookingId]);
+    checkPaymentStatus();
+  }, [bookingId, orderCode, paymentStatus]);
 
   return (
     <Layout style={{ background: '#0a0a0a', minHeight: '100vh' }}>
@@ -162,7 +196,65 @@ const PaymentSuccessPage = () => {
               subTitle={
                 <div style={{ color: '#ccc', marginTop: '20px' }}>
                   <p>Cảm ơn bạn đã thanh toán!</p>
-                  {booking?.paymentStatus === 'completed' ? (
+                  {comboPayment ? (
+                    <>
+                      {comboPayment.noDetails ? (
+                        <>
+                          <p style={{ marginTop: '16px' }}>
+                            Bạn đã thanh toán combo thành công!
+                          </p>
+                          <p style={{ marginTop: '8px', fontSize: '14px' }}>
+                            Mã đơn hàng: <strong style={{ color: '#fff' }}>{orderCode}</strong>
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p style={{ marginTop: '16px', color: '#fff', fontSize: '16px', fontWeight: '500' }}>
+                            Bạn đã thanh toán thành công cho:
+                          </p>
+                          <div style={{ 
+                            background: '#1a1a1a', 
+                            border: '1px solid #333', 
+                            borderRadius: '8px', 
+                            padding: '16px', 
+                            marginTop: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px'
+                          }}>
+                            {comboPayment.combo.image && (
+                              <img 
+                                src={comboPayment.combo.image.startsWith('http://') || comboPayment.combo.image.startsWith('https://') 
+                                  ? comboPayment.combo.image 
+                                  : `http://localhost:5000/${comboPayment.combo.image}`}
+                                alt={comboPayment.combo.name}
+                                style={{
+                                  width: '80px',
+                                  height: '80px',
+                                  objectFit: 'cover',
+                                  borderRadius: '8px'
+                                }}
+                              />
+                            )}
+                            <div style={{ flex: 1 }}>
+                              <p style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: 0 }}>
+                                {comboPayment.combo.name}
+                              </p>
+                              <p style={{ color: '#999', fontSize: '14px', margin: '4px 0' }}>
+                                {comboPayment.combo.description}
+                              </p>
+                              <p style={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold', margin: 0 }}>
+                                {comboPayment.combo.price.toLocaleString('vi-VN')}₫
+                              </p>
+                            </div>
+                          </div>
+                          <p style={{ marginTop: '16px', fontSize: '14px' }}>
+                            Mã đơn hàng: <strong style={{ color: '#fff' }}>{orderCode}</strong>
+                          </p>
+                        </>
+                      )}
+                    </>
+                  ) : booking?.paymentStatus === 'completed' ? (
                     <>
                       <p>Mã QR code đã được gửi đến email của bạn.</p>
                       <p>Vui lòng kiểm tra email để nhận mã QR code và check-in tại rạp.</p>
@@ -173,22 +265,45 @@ const PaymentSuccessPage = () => {
                 </div>
               }
               extra={[
-                <Button
-                  type="primary"
-                  key="booking-details"
-                  size="large"
-                  onClick={() => bookingId && navigate(`/booking-details/${bookingId}`)}
-                  style={{ marginRight: '10px' }}
-                >
-                  Xem chi tiết booking
-                </Button>,
-                <Button
-                  key="home"
-                  size="large"
-                  onClick={() => navigate('/')}
-                >
-                  Về trang chủ
-                </Button>,
+                comboPayment ? (
+                  <>
+                    <Button
+                      type="primary"
+                      key="combo-page"
+                      size="large"
+                      onClick={() => navigate('/combos')}
+                      style={{ marginRight: '10px' }}
+                    >
+                      Xem thêm combo
+                    </Button>
+                    <Button
+                      key="home"
+                      size="large"
+                      onClick={() => navigate('/')}
+                    >
+                      Về trang chủ
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      type="primary"
+                      key="booking-details"
+                      size="large"
+                      onClick={() => bookingId && navigate(`/booking-details/${bookingId}`)}
+                      style={{ marginRight: '10px' }}
+                    >
+                      Xem chi tiết booking
+                    </Button>
+                    <Button
+                      key="home"
+                      size="large"
+                      onClick={() => navigate('/')}
+                    >
+                      Về trang chủ
+                    </Button>
+                  </>
+                ),
               ]}
             />
           )}
