@@ -75,6 +75,8 @@ export const initializeSocketHandlers = (io) => {
       socket.to(`showtime-${showtimeId}`).emit("user-joined", {
         userId: socket.userId || 'anonymous',
         userName: userName,
+        isGuest: !socket.userId,
+        userType: socket.userId ? 'user' : 'guest',
         timestamp: new Date(),
       });
     });
@@ -97,6 +99,8 @@ export const initializeSocketHandlers = (io) => {
       socket.to(`showtime-${showtimeId}`).emit("user-left", {
         userId: socket.userId || 'anonymous',
         userName: userName,
+        isGuest: !socket.userId,
+        userType: socket.userId ? 'user' : 'guest',
         timestamp: new Date(),
       });
     });

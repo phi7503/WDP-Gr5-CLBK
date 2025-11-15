@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Layout, Typography, Button, Row, Col, Card, Space, message, notification, Modal, Input, Select, Steps, Badge } from 'antd';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CheckCircleOutlined, ClockCircleOutlined, UserOutlined, CreditCardOutlined, CheckOutlined } from '@ant-design/icons';
+import io from 'socket.io-client';
 import Header from './Header';
 import Footer from './Footer';
-import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI } from '../services/api';
+import { showtimeAPI, seatAPI, seatStatusAPI, bookingAPI, comboAPI, voucherAPI, BACKEND_URL } from '../services/api';
+import { useAuth } from '../context/app.context';
 import '../booking-animations.css';
 
 const { Content } = Layout;
@@ -15,6 +17,9 @@ const { Step } = Steps;
 const BookingPageModern = () => {
   const { showtimeId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const socketRef = useRef(null);
+  const [socketConnected, setSocketConnected] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [seats, setSeats] = useState([]);
   const [showtime, setShowtime] = useState(null);
@@ -75,12 +80,161 @@ const BookingPageModern = () => {
     }
   };
 
+  // Initialize socket connection
+  useEffect(() => {
+    if (showtimeId) {
+      const initTimer = setTimeout(() => {
+        initializeSocket();
+      }, 100);
+      
+      return () => {
+        clearTimeout(initTimer);
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+          socketRef.current = null;
+        }
+      };
+    }
+  }, [showtimeId, user]);
+
+  // Load showtime data when component mounts
   useEffect(() => {
     if (showtimeId) {
       loadShowtimeData();
       loadCombos();
     }
   }, [showtimeId]);
+
+  // Update customer info when user loads
+  useEffect(() => {
+    if (user) {
+      setCustomerInfo({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+    }
+  }, [user]);
+
+  const initializeSocket = () => {
+    const socketOptions = {};
+    const token = localStorage.getItem('token');
+    const currentUser = user;
+    
+    if (token) {
+      socketOptions.auth = { token };
+      console.log('🔑 Initializing socket with token for user:', currentUser?.name || 'Unknown');
+    } else {
+      console.log('👤 Initializing socket as guest (no token)');
+    }
+    
+    socketRef.current = io(BACKEND_URL, socketOptions);
+
+    socketRef.current.on('connect', () => {
+      console.log('🔌 Connected to server', token ? `(Authenticated as: ${currentUser?.name || 'Unknown'})` : '(Guest)');
+      setSocketConnected(true);
+      
+      // Join showtime room
+      console.log('🚪 Joining showtime room:', showtimeId);
+      socketRef.current.emit('join-showtime', showtimeId);
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('🔌 Disconnected from server');
+      setSocketConnected(false);
+    });
+
+    // Listen for user join events
+    socketRef.current.on('user-joined', (data) => {
+      console.log('👥 User joined:', data);
+      const userTypeText = data.isGuest ? 'Guest' : 'User';
+      message.info({
+        content: `${userTypeText} "${data.userName}" đã vào phòng`,
+        duration: 2,
+      });
+    });
+
+    socketRef.current.on('user-left', (data) => {
+      console.log('👋 User left:', data);
+      const userTypeText = data.isGuest ? 'Guest' : 'User';
+      message.info({
+        content: `${userTypeText} "${data.userName}" đã rời phòng`,
+        duration: 2,
+      });
+    });
+
+    // Listen for seat selection events
+    socketRef.current.on('seats-being-selected', (data) => {
+      console.log('📍 Seats being selected by another user:', data);
+      // Update seat status to 'selecting' for seats selected by others
+      setSeats(prevSeats => {
+        return prevSeats.map(seat => {
+          if (data.seatIds.includes(seat._id) && data.userId !== (currentUser?._id || 'anonymous')) {
+            return {
+              ...seat,
+              availability: {
+                ...seat.availability,
+                status: 'selecting'
+              }
+            };
+          }
+          return seat;
+        });
+      });
+    });
+
+    socketRef.current.on('seats-released', (data) => {
+      console.log('🔄 Seats released:', data);
+      // Update seat status back to 'available'
+      setSeats(prevSeats => {
+        return prevSeats.map(seat => {
+          if (data.seatIds.includes(seat._id)) {
+            return {
+              ...seat,
+              availability: {
+                ...seat.availability,
+                status: 'available'
+              }
+            };
+          }
+          return seat;
+        });
+      });
+      // Remove from selected seats if it was selected
+      setSelectedSeats(prev => prev.filter(id => !data.seatIds.includes(id)));
+    });
+
+    socketRef.current.on('seats-booked', (data) => {
+      console.log('✅ Seats booked:', data);
+      // Update seat status to 'booked'
+      setSeats(prevSeats => {
+        return prevSeats.map(seat => {
+          if (data.seatIds.includes(seat._id)) {
+            return {
+              ...seat,
+              occupied: true,
+              availability: {
+                ...seat.availability,
+                status: 'booked'
+              }
+            };
+          }
+          return seat;
+        });
+      });
+    });
+
+    socketRef.current.on('seat-selection-success', (data) => {
+      console.log('✅ Seat selection successful:', data);
+    });
+
+    socketRef.current.on('seat-selection-failed', (data) => {
+      console.log('❌ Seat selection failed:', data);
+      message.error(data.message || 'Không thể chọn ghế này');
+      // Remove from selected seats
+      setSelectedSeats(prev => prev.filter(id => !data.seatIds?.includes(id)));
+    });
+  };
 
   const loadShowtimeData = async () => {
     try {
@@ -211,17 +365,64 @@ const BookingPageModern = () => {
     const seat = seats.find(s => s._id === seatId);
     console.log('Found seat:', seat);
     
-    if (!seat || seat.occupied || seat.availability?.status !== 'available') {
-      console.log('Seat not available');
+    // Check if seat is available (not booked, not reserved, not selecting)
+    if (!seat || seat.occupied || 
+        seat.availability?.status === 'booked' || 
+        seat.availability?.status === 'reserved' ||
+        (seat.availability?.status === 'selecting' && !selectedSeats.includes(seatId))) {
+      if (seat?.availability?.status === 'selecting') {
+        message.warning('Ghế này đang được người dùng khác chọn');
+      } else if (seat?.availability?.status === 'reserved') {
+        message.warning('Ghế này đã được giữ chỗ');
+      } else if (seat?.occupied || seat?.availability?.status === 'booked') {
+        message.warning('Ghế này đã được đặt');
+      }
       return;
     }
     
     if (selectedSeats.includes(seatId)) {
+      // Remove seat from selection
       setSelectedSeats(selectedSeats.filter(id => id !== seatId));
       console.log('Seat deselected:', seatId);
+      
+      // Release seat via socket
+      if (socketRef.current && socketConnected) {
+        socketRef.current.emit('release-seats', {
+          showtimeId,
+          seatIds: [seatId]
+        });
+      }
     } else {
+      // Add seat to selection
       setSelectedSeats([...selectedSeats, seatId]);
       console.log('Seat selected:', seatId);
+      
+      // Lock seat via socket
+      if (socketRef.current && socketConnected) {
+        console.log('🔒 Emitting select-seats for:', seatId);
+        socketRef.current.emit('select-seats', {
+          showtimeId,
+          seatIds: [seatId]
+        });
+        
+        // Optimistically update seat status
+        setSeats(prevSeats => {
+          return prevSeats.map(s => {
+            if (s._id === seatId) {
+              return {
+                ...s,
+                availability: {
+                  ...s.availability,
+                  status: 'selecting'
+                }
+              };
+            }
+            return s;
+          });
+        });
+      } else {
+        console.log('❌ Socket not connected or not available');
+      }
     }
   };
 
@@ -392,6 +593,19 @@ const BookingPageModern = () => {
         cursor: 'not-allowed',
         opacity: 0.6,
         pointerEvents: 'none'
+      };
+    }
+    
+    // Seat is being selected by another user
+    if (status === 'selecting' && !selectedSeats.includes(seat._id)) {
+      return {
+        background: '#F59E0B',
+        border: '2px solid #D97706',
+        color: '#fff',
+        cursor: 'not-allowed',
+        opacity: 0.8,
+        pointerEvents: 'none',
+        boxShadow: '0 2px 8px rgba(245, 158, 11, 0.5)'
       };
     }
     
